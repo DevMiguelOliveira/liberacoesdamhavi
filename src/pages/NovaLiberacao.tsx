@@ -125,7 +125,7 @@ export default function NovaLiberacao() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="cpf">CPF *</Label>
+                <Label htmlFor="cpf">CPF (opcional)</Label>
                 <Input
                   id="cpf"
                   placeholder="000.000.000-00"

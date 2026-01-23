@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Shield } from "lucide-react";
 import { toast } from "sonner";
-import damhaLogo from "@/assets/damha6_logo.jpg";
+import damhaLogo from "@/assets/logo_damha_nova.jpg";
 
 export default function Login() {
   const { signIn, user } = useAuth();
@@ -55,13 +55,13 @@ export default function Login() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md animate-fade-in shadow-card">
+      <Card className="w-full max-w-md animate-fade-in shadow-card border-none bg-white/90 backdrop-blur-sm">
         <CardHeader className="text-center space-y-4">
-          <div className="flex justify-center">
+          <div className="flex justify-center mb-4">
             <img
               src={damhaLogo}
               alt="Damha VI"
-              className="h-20 w-auto object-contain"
+              className="h-32 w-auto object-contain animate-[pulse_4s_ease-in-out_infinite] hover:scale-105 transition-transform duration-500"
             />
           </div>
           <div>

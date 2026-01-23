@@ -37,6 +37,7 @@ export default function Consultar() {
   const [quadra, setQuadra] = useState("");
   const [lote, setLote] = useState("");
   const [status, setStatus] = useState<string>("all");
+  const [dataFiltro, setDataFiltro] = useState("");
 
   const handleSearch = async () => {
     setIsLoading(true);
@@ -62,6 +63,10 @@ export default function Consultar() {
     if (lote.trim()) {
       query = query.ilike("lote", `%${lote.trim()}%`);
     }
+    if (dataFiltro) {
+      // Filter where the selected date is within the range [data_inicio, data_fim]
+      query = query.lte("data_inicio", dataFiltro).gte("data_fim", dataFiltro);
+    }
     if (status !== "all") {
       query = query.eq("status", status as "ativo" | "expirado");
     }
@@ -84,6 +89,7 @@ export default function Consultar() {
     setQuadra("");
     setLote("");
     setStatus("all");
+    setDataFiltro("");
     setLiberacoes([]);
     setHasSearched(false);
   };
@@ -124,13 +130,23 @@ export default function Consultar() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="cpf">CPF</Label>
+              <Label htmlFor="cpf">CPF (opcional)</Label>
               <Input
                 id="cpf"
                 placeholder="000.000.000-00"
                 value={cpf}
                 onChange={(e) => setCpf(formatCPF(e.target.value))}
                 maxLength={14}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="data">Data</Label>
+              <Input
+                id="data"
+                type="date"
+                value={dataFiltro}
+                onChange={(e) => setDataFiltro(e.target.value)}
               />
             </div>
 
@@ -239,7 +255,7 @@ export default function Consultar() {
                         {format(new Date(lib.data_fim + "T00:00:00"), "dd/MM/yyyy")}
                       </TableCell>
                       <TableCell>
-                        <Badge 
+                        <Badge
                           variant={lib.status === "ativo" ? "default" : "secondary"}
                           className={lib.status === "ativo" ? "bg-success" : ""}
                         >

@@ -28,7 +28,7 @@ create table public.liberacoes (
   id uuid not null default gen_random_uuid (),
   admin_id uuid null,
   nome_pessoa text not null,
-  cpf text not null,
+  cpf text null,
   tipo_acesso public.tipo_acesso not null,
   quadra text not null,
   lote text not null,
