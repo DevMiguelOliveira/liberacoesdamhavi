@@ -62,7 +62,7 @@ export default function Login() {
               <img
                 src={damhaLogo}
                 alt="Damha VI"
-                className="h-32 w-auto object-contain animate-[pulse_4s_ease-in-out_infinite] hover:scale-105 transition-transform duration-500"
+                className="h-32 w-auto object-contain"
               />
             </div>
             <div>
