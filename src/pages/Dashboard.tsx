@@ -202,10 +202,10 @@ export default function Dashboard() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Horário</TableHead>
+                    <TableHead>Destino</TableHead>
                     <TableHead>Nome</TableHead>
                     <TableHead>Tipo</TableHead>
-                    <TableHead>Destino</TableHead>
+                    <TableHead>Horário</TableHead>
                     <TableHead>Validade</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Remover Liberação</TableHead>
@@ -214,8 +214,11 @@ export default function Dashboard() {
                 <TableBody>
                   {todayLiberacoes.map((lib) => (
                     <TableRow key={lib.id}>
-                      <TableCell className="text-muted-foreground text-sm">
-                        {format(new Date(lib.criado_em), "HH:mm")}
+                      <TableCell>
+                        <div className="flex flex-col text-sm">
+                          <span>Quadra: <span className="font-bold text-base">{lib.quadra}</span></span>
+                          <span>Lote: <span className="font-bold text-base">{lib.lote}</span></span>
+                        </div>
                       </TableCell>
                       <TableCell className="font-medium">{lib.nome_pessoa}</TableCell>
                       <TableCell>
@@ -230,11 +233,8 @@ export default function Dashboard() {
                           {lib.tipo_acesso === "visitante" ? "Visitante" : "Prestador"}
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col text-sm">
-                          <span>Quadra: <span className="font-bold text-base">{lib.quadra}</span></span>
-                          <span>Lote: <span className="font-bold text-base">{lib.lote}</span></span>
-                        </div>
+                      <TableCell className="text-muted-foreground text-sm">
+                        {format(new Date(lib.criado_em), "HH:mm")}
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
                         Até {format(new Date(lib.data_fim + "T00:00:00"), "dd/MM", { locale: ptBR })}
