@@ -219,7 +219,14 @@ export default function Dashboard() {
                       </TableCell>
                       <TableCell className="font-medium">{lib.nome_pessoa}</TableCell>
                       <TableCell>
-                        <Badge variant="outline">
+                        <Badge
+                          variant="secondary"
+                          className={
+                            lib.tipo_acesso === "visitante"
+                              ? "bg-sky-200 text-sky-900 hover:bg-sky-300 border-sky-300"
+                              : "bg-yellow-200 text-yellow-900 hover:bg-yellow-300 border-yellow-300"
+                          }
+                        >
                           {lib.tipo_acesso === "visitante" ? "Visitante" : "Prestador"}
                         </Badge>
                       </TableCell>
