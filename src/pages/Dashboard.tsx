@@ -31,7 +31,9 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchTodayLiberacoes = async () => {
-    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    // Get today's date in YYYY-MM-DD format using local time (Brazil/System)
+    const todayDate = new Date();
+    const today = format(todayDate, "yyyy-MM-dd");
 
     // Fetch active liberacoes valid for today
     const { data, error } = await supabase
@@ -77,7 +79,7 @@ export default function Dashboard() {
   const menuItems = [
     {
       title: "Nova Liberação",
-      description: "Registrar entrada de visitante ou prestador",
+      description: "Registrar liberação de visitante ou prestador",
       icon: Plus,
       path: "/nova-liberacao",
       variant: "default" as const,
