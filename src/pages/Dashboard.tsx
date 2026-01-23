@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Search, History, Users, Phone, MessageCircle, Loader2, Trash2 } from "lucide-react";
+import { Plus, Search, History, Users, Phone, MessageCircle, Loader2, Trash2, Monitor } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -130,6 +130,22 @@ export default function Dashboard() {
       variant: "outline" as const,
     },
   ];
+
+  const handleCreateShortcut = () => {
+    const shortcutContent = `[InternetShortcut]\nURL=${window.location.origin}\nIconIndex=0\nIconFile=${window.location.origin}/favicon.ico`;
+    const blob = new Blob([shortcutContent], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Liberações Damha VI.url";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success("Atalho baixado!", {
+      description: "Mova o arquivo baixado para sua Área de Trabalho.",
+    });
+  };
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -295,7 +311,7 @@ export default function Dashboard() {
       </AlertDialog>
 
       {/* Info & Contacts Section */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-3">
         <Card className="bg-secondary/50">
           <CardContent className="pt-6">
             <div className="flex items-start gap-4">
@@ -306,7 +322,7 @@ export default function Dashboard() {
                 <h3 className="font-semibold">Sistema de Portaria</h3>
                 <p className="text-sm text-muted-foreground mt-1">
                   Registre liberações de visitantes e prestadores de serviço.
-                  Todas as entradas ficam salvas no histórico para consulta futura.
+                  Todas as entradas ficam salvas no histórico.
                 </p>
               </div>
             </div>
@@ -324,13 +340,32 @@ export default function Dashboard() {
                 <div className="space-y-2 mt-2">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Phone className="h-4 w-4" />
-                    <span>Telefone Portaria Social: (17) 3512-9009</span>
+                    <span>Portaria Social: (17) 3512-9009</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <MessageCircle className="h-4 w-4" />
-                    <span>Whatsapp Portaria Social: (14) 99106-0771</span>
+                    <span>Whatsapp: (14) 99106-0771</span>
                   </div>
                 </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card
+          className="bg-secondary/50 cursor-pointer hover:bg-secondary/70 transition-colors group"
+          onClick={handleCreateShortcut}
+        >
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-4">
+              <div className="rounded-lg bg-accent p-3 group-hover:bg-primary/10 transition-colors">
+                <Monitor className="h-6 w-6 text-accent-foreground group-hover:text-primary transition-colors" />
+              </div>
+              <div>
+                <h3 className="font-semibold group-hover:text-primary transition-colors">Acesso Rápido</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Clique aqui para baixar um atalho para sua Área de Trabalho.
+                </p>
               </div>
             </div>
           </CardContent>
