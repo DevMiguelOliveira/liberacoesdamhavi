@@ -14,7 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ArrowLeft, CalendarIcon, Loader2, Save, X } from "lucide-react";
+import { ArrowLeft, CalendarIcon, Loader2, Save, X, User, FileText, MapPin, Clock, Calendar as CalendarIconLucide } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -101,23 +101,30 @@ export default function NovaLiberacao() {
         </div>
       </div>
 
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle>Dados da Liberação</CardTitle>
+      <Card className="max-w-2xl mx-auto shadow-lg border-primary/20">
+        <CardHeader className="bg-muted/50 border-b">
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-primary" />
+            Dados da Liberação
+          </CardTitle>
           <CardDescription>
-            Preencha todos os campos obrigatórios
+            Preencha os dados do visitante e o período de acesso
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Nome e CPF */}
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-6 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="nome_pessoa">Nome*</Label>
+                <Label htmlFor="nome_pessoa" className="flex items-center gap-2 text-primary uppercase text-xs font-bold tracking-wider">
+                  <User className="h-3.5 w-3.5" />
+                  Nome Completo *
+                </Label>
                 <Input
                   id="nome_pessoa"
                   placeholder="João da Silva"
                   {...register("nome_pessoa")}
+                  className="bg-background"
                 />
                 {errors.nome_pessoa && (
                   <p className="text-sm text-destructive">{errors.nome_pessoa.message}</p>
@@ -125,7 +132,10 @@ export default function NovaLiberacao() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="cpf">CPF (opcional)</Label>
+                <Label htmlFor="cpf" className="flex items-center gap-2 text-primary uppercase text-xs font-bold tracking-wider">
+                  <FileText className="h-3.5 w-3.5" />
+                  CPF (opcional)
+                </Label>
                 <Input
                   id="cpf"
                   placeholder="000.000.000-00"
@@ -136,6 +146,7 @@ export default function NovaLiberacao() {
                       e.target.value = formatted;
                     },
                   })}
+                  className="bg-background"
                 />
                 {errors.cpf && (
                   <p className="text-sm text-destructive">{errors.cpf.message}</p>
@@ -145,13 +156,16 @@ export default function NovaLiberacao() {
 
             {/* Tipo de Acesso */}
             <div className="space-y-2">
-              <Label>Tipo de Acesso *</Label>
+              <Label className="flex items-center gap-2 text-primary uppercase text-xs font-bold tracking-wider">
+                <User className="h-3.5 w-3.5" />
+                Tipo de Acesso *
+              </Label>
               <Controller
                 name="tipo_acesso"
                 control={control}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Selecione o tipo" />
                     </SelectTrigger>
                     <SelectContent>
@@ -167,13 +181,17 @@ export default function NovaLiberacao() {
             </div>
 
             {/* Quadra e Lote */}
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-6 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="quadra">Quadra *</Label>
+                <Label htmlFor="quadra" className="flex items-center gap-2 text-primary uppercase text-xs font-bold tracking-wider">
+                  <MapPin className="h-3.5 w-3.5" />
+                  Quadra *
+                </Label>
                 <Input
                   id="quadra"
                   placeholder="Ex: A"
                   {...register("quadra")}
+                  className="bg-background"
                 />
                 {errors.quadra && (
                   <p className="text-sm text-destructive">{errors.quadra.message}</p>
@@ -181,11 +199,15 @@ export default function NovaLiberacao() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="lote">Lote *</Label>
+                <Label htmlFor="lote" className="flex items-center gap-2 text-primary uppercase text-xs font-bold tracking-wider">
+                  <MapPin className="h-3.5 w-3.5" />
+                  Lote *
+                </Label>
                 <Input
                   id="lote"
                   placeholder="Ex: 15"
                   {...register("lote")}
+                  className="bg-background"
                 />
                 {errors.lote && (
                   <p className="text-sm text-destructive">{errors.lote.message}</p>
@@ -194,9 +216,12 @@ export default function NovaLiberacao() {
             </div>
 
             {/* Data e Dias */}
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-6 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label>Data Inicial *</Label>
+                <Label className="flex items-center gap-2 text-primary uppercase text-xs font-bold tracking-wider">
+                  <CalendarIconLucide className="h-3.5 w-3.5" />
+                  Data Inicial *
+                </Label>
                 <Controller
                   name="data_inicio"
                   control={control}
@@ -206,7 +231,7 @@ export default function NovaLiberacao() {
                         <Button
                           variant="outline"
                           className={cn(
-                            "w-full justify-start text-left font-normal",
+                            "w-full justify-start text-left font-normal bg-background",
                             !field.value && "text-muted-foreground"
                           )}
                         >
@@ -236,13 +261,17 @@ export default function NovaLiberacao() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="dias_liberados">Dias Liberados *</Label>
+                <Label htmlFor="dias_liberados" className="flex items-center gap-2 text-primary uppercase text-xs font-bold tracking-wider">
+                  <Clock className="h-3.5 w-3.5" />
+                  Dias Liberados *
+                </Label>
                 <Input
                   id="dias_liberados"
                   type="number"
                   min={1}
                   max={365}
                   {...register("dias_liberados", { valueAsNumber: true })}
+                  className="bg-background"
                 />
                 {errors.dias_liberados && (
                   <p className="text-sm text-destructive">{errors.dias_liberados.message}</p>
@@ -250,20 +279,18 @@ export default function NovaLiberacao() {
               </div>
             </div>
 
-
-
             {/* Actions */}
-            <div className="flex gap-3 pt-4">
+            <div className="flex gap-3 pt-6 border-t mt-6">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => navigate("/")}
-                className="gap-2"
+                className="gap-2 w-1/3 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 transition-colors"
               >
                 <X className="h-4 w-4" />
                 Cancelar
               </Button>
-              <Button type="submit" disabled={isLoading} className="gap-2 flex-1">
+              <Button type="submit" disabled={isLoading} className="gap-2 flex-1 bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg transition-all">
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (

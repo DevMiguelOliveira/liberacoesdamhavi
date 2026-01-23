@@ -76,33 +76,36 @@ export default function Historico() {
       </div>
 
       {/* Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">
+      <Card className="shadow-lg border-primary/10">
+        <CardHeader className="bg-muted/50 border-b pb-4">
+          <CardTitle className="text-lg flex items-center gap-2">
             Liberações
-            <span className="ml-2 text-sm font-normal text-muted-foreground">
-              ({liberacoes.length} registros)
-            </span>
+            <Badge variant="secondary" className="ml-2 font-normal">
+              {liberacoes.length} registros
+            </Badge>
           </CardTitle>
           <CardDescription>
-            Ordenadas por data de registro (mais recentes primeiro)
+            Histórico completo ordenado por data de registro
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           {isLoading ? (
-            <div className="flex items-center justify-center py-8">
+            <div className="flex items-center justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : liberacoes.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              Nenhuma liberação registrada
+            <div className="text-center py-12 text-muted-foreground flex flex-col items-center gap-2">
+              <div className="p-4 rounded-full bg-muted">
+                <RefreshCw className="h-8 w-8 opacity-50" />
+              </div>
+              <p>Nenhuma liberação registrada no sistema.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
-                <TableHeader>
+                <TableHeader className="bg-background">
                   <TableRow>
-                    <TableHead>Registro</TableHead>
+                    <TableHead className="pl-6">Registro</TableHead>
                     <TableHead>Nome</TableHead>
                     <TableHead>CPF</TableHead>
                     <TableHead>Tipo</TableHead>
@@ -127,13 +130,13 @@ export default function Historico() {
                       <TableCell>{lib.quadra}/{lib.lote}</TableCell>
                       <TableCell>
                         <div className="text-sm">
-                          {format(new Date(lib.data_inicio + "T00:00:00"), "dd/MM")} 
+                          {format(new Date(lib.data_inicio + "T00:00:00"), "dd/MM")}
                           {" - "}
                           {format(new Date(lib.data_fim + "T00:00:00"), "dd/MM/yyyy")}
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge 
+                        <Badge
                           variant={lib.status === "ativo" ? "default" : "secondary"}
                           className={lib.status === "ativo" ? "bg-success" : ""}
                         >

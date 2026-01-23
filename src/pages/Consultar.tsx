@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Loader2, Search, X } from "lucide-react";
+import { ArrowLeft, Loader2, Search, X, Filter, User, MapPin, Calendar, FileText } from "lucide-react";
 
 interface Liberacao {
   id: string;
@@ -112,16 +112,22 @@ export default function Consultar() {
 
       {/* Filters */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Filtros</CardTitle>
+        <CardHeader className="bg-muted/50 border-b pb-4">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Filter className="h-5 w-5 text-primary" />
+            Filtros
+          </CardTitle>
           <CardDescription>
-            Combine os filtros para refinar sua busca
+            Refine sua busca utilizando os campos abaixo
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <CardContent className="pt-6">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <div className="space-y-2">
-              <Label htmlFor="nome">Nome</Label>
+              <Label htmlFor="nome" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                <User className="h-3 w-3" />
+                Nome
+              </Label>
               <Input
                 id="nome"
                 placeholder="Nome do visitante"
@@ -131,7 +137,10 @@ export default function Consultar() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="cpf">CPF (opcional)</Label>
+              <Label htmlFor="cpf" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                <FileText className="h-3 w-3" />
+                CPF (opcional)
+              </Label>
               <Input
                 id="cpf"
                 placeholder="000.000.000-00"
@@ -142,7 +151,10 @@ export default function Consultar() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="data">Data</Label>
+              <Label htmlFor="data" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                <Calendar className="h-3 w-3" />
+                Data
+              </Label>
               <Input
                 id="data"
                 type="date"
@@ -152,7 +164,10 @@ export default function Consultar() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="quadra">Quadra</Label>
+              <Label htmlFor="quadra" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                <MapPin className="h-3 w-3" />
+                Quadra
+              </Label>
               <Input
                 id="quadra"
                 placeholder="Ex: A"
@@ -162,7 +177,10 @@ export default function Consultar() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="lote">Lote</Label>
+              <Label htmlFor="lote" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                <MapPin className="h-3 w-3" />
+                Lote
+              </Label>
               <Input
                 id="lote"
                 placeholder="Ex: 15"
@@ -172,7 +190,7 @@ export default function Consultar() {
             </div>
 
             <div className="space-y-2">
-              <Label>Status</Label>
+              <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">Status</Label>
               <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger>
                   <SelectValue placeholder="Todos" />
@@ -186,14 +204,14 @@ export default function Consultar() {
             </div>
           </div>
 
-          <div className="flex gap-3 mt-6">
-            <Button onClick={handleSearch} className="gap-2">
-              <Search className="h-4 w-4" />
-              Buscar
-            </Button>
-            <Button variant="outline" onClick={clearFilters} className="gap-2">
+          <div className="flex justify-end gap-3 mt-8 pt-4 border-t">
+            <Button variant="outline" onClick={clearFilters} className="gap-2 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50">
               <X className="h-4 w-4" />
               Limpar
+            </Button>
+            <Button onClick={handleSearch} className="gap-2 bg-primary hover:bg-primary/90 shadow-sm">
+              <Search className="h-4 w-4" />
+              Buscar
             </Button>
           </div>
         </CardContent>
