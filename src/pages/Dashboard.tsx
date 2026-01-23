@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Plus, Search, History, Users } from "lucide-react";
 
+import damhaLogo from "@/assets/logo_damha_nova.jpg";
+
 export default function Dashboard() {
   const { admin } = useAuth();
   const navigate = useNavigate();
@@ -35,7 +37,14 @@ export default function Dashboard() {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Welcome Section */}
-      <div className="space-y-2">
+      <div className="space-y-2 text-center sm:text-left">
+        <div className="flex justify-center sm:justify-start mb-6">
+          <img
+            src={damhaLogo}
+            alt="Damha VI Logo"
+            className="h-24 w-auto object-contain animate-fade-in hover:scale-105 transition-transform duration-700 ease-in-out"
+          />
+        </div>
         <h1 className="text-3xl font-bold tracking-tight">
           Olá, {admin?.nome?.split(" ")[0]}!
         </h1>
@@ -54,11 +63,10 @@ export default function Dashboard() {
           >
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <div className={`rounded-lg p-3 ${
-                  item.variant === "default" 
-                    ? "bg-primary text-primary-foreground" 
+                <div className={`rounded-lg p-3 ${item.variant === "default"
+                    ? "bg-primary text-primary-foreground"
                     : "bg-secondary text-secondary-foreground"
-                }`}>
+                  }`}>
                   <item.icon className="h-6 w-6" />
                 </div>
               </div>
@@ -83,7 +91,7 @@ export default function Dashboard() {
             <div>
               <h3 className="font-semibold">Sistema de Portaria</h3>
               <p className="text-sm text-muted-foreground mt-1">
-                Registre liberações de visitantes e prestadores de serviço. 
+                Registre liberações de visitantes e prestadores de serviço.
                 Todas as entradas ficam salvas no histórico para consulta futura.
               </p>
             </div>
