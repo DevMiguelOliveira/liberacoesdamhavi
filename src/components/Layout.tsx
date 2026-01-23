@@ -29,7 +29,7 @@ export function Layout() {
             />
             <div className="hidden sm:block">
               <h1 className="text-lg font-semibold text-foreground">
-                Controle de Acesso
+                Controle de Liberações
               </h1>
               <p className="text-xs text-muted-foreground">
                 Damha VI - Parque Residencial

@@ -66,7 +66,7 @@ export default function Login() {
               />
             </div>
             <div>
-              <CardTitle className="text-2xl">Controle de Acesso</CardTitle>
+              <CardTitle className="text-2xl">Controle de Liberações</CardTitle>
               <CardDescription className="mt-2">
                 Sistema de liberação de visitantes e prestadores
               </CardDescription>
