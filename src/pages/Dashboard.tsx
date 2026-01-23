@@ -115,7 +115,7 @@ export default function Dashboard() {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <MessageCircle className="h-4 w-4" />
-                    <span>Whatsapp Portaria Social Damha VI: (14) 99106-0771</span>
+                    <span>Whatsapp Portaria Social: (14) 99106-0771</span>
                   </div>
                 </div>
               </div>
