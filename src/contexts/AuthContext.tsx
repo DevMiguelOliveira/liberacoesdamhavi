@@ -47,6 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(session?.user ?? null);
 
         if (session?.user) {
+          setLoading(true); // Prevent access denied flash
           // Use setTimeout to avoid potential deadlock
           setTimeout(async () => {
             const adminData = await fetchAdmin(session.user.id);
