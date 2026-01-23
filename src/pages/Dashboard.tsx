@@ -132,7 +132,7 @@ export default function Dashboard() {
   ];
 
   const handleCreateShortcut = () => {
-    const shortcutContent = `[InternetShortcut]\nURL=${window.location.origin}\nIconIndex=0\nIconFile=${window.location.origin}/favicon.ico`;
+    const shortcutContent = `[InternetShortcut]\nURL=${window.location.origin}\nIconIndex=0\nIconFile=${window.location.origin}/damha6%20logo.jpg`;
     const blob = new Blob([shortcutContent], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
