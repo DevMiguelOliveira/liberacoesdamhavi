@@ -3,12 +3,23 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Search, History, Users, Phone, MessageCircle, Loader2 } from "lucide-react";
+import { Plus, Search, History, Users, Phone, MessageCircle, Loader2, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 import damhaLogo from "@/assets/logo_damha_nova.jpg";
 
@@ -29,6 +40,25 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [todayLiberacoes, setTodayLiberacoes] = useState<Liberacao[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [liberacaoToDelete, setLiberacaoToDelete] = useState<string | null>(null);
+
+  const handleDelete = async () => {
+    if (!liberacaoToDelete) return;
+
+    const { error } = await supabase
+      .from("liberacoes")
+      .delete()
+      .eq("id", liberacaoToDelete);
+
+    if (error) {
+      toast.error("Erro ao excluir liberação");
+      console.error(error);
+    } else {
+      toast.success("Liberação excluída com sucesso");
+      fetchTodayLiberacoes();
+    }
+    setLiberacaoToDelete(null);
+  };
 
   const fetchTodayLiberacoes = async () => {
     // Get today's date in YYYY-MM-DD format using local time (Brazil/System)
@@ -152,7 +182,7 @@ export default function Dashboard() {
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-2">
             <Users className="h-5 w-5 text-primary" />
-            Liberações Ativas Hoje
+            LIBERAÇÕES ATIVAS HOJE
           </CardTitle>
           <CardDescription>
             Visitantes e prestadores com acesso permitido para hoje
@@ -178,6 +208,7 @@ export default function Dashboard() {
                     <TableHead>Destino</TableHead>
                     <TableHead>Validade</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -201,6 +232,16 @@ export default function Dashboard() {
                           Ativo
                         </Badge>
                       </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setLiberacaoToDelete(lib.id)}
+                          className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -209,6 +250,23 @@ export default function Dashboard() {
           )}
         </CardContent>
       </Card>
+
+      <AlertDialog open={!!liberacaoToDelete} onOpenChange={() => setLiberacaoToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir Liberação?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir esta liberação? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Info & Contacts Section */}
       <div className="grid gap-4 md:grid-cols-2">

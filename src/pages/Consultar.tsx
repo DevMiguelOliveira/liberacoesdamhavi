@@ -11,7 +11,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Loader2, Search, X, Filter, User, MapPin, Calendar, FileText } from "lucide-react";
+import { ArrowLeft, Loader2, Search, X, Filter, User, MapPin, Calendar, FileText, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 interface Liberacao {
   id: string;
@@ -31,6 +42,25 @@ export default function Consultar() {
   const [liberacoes, setLiberacoes] = useState<Liberacao[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [liberacaoToDelete, setLiberacaoToDelete] = useState<string | null>(null);
+
+  const handleDelete = async () => {
+    if (!liberacaoToDelete) return;
+
+    const { error } = await supabase
+      .from("liberacoes")
+      .delete()
+      .eq("id", liberacaoToDelete);
+
+    if (error) {
+      toast.error("Erro ao excluir liberação");
+      console.error(error);
+    } else {
+      toast.success("Liberação excluída com sucesso");
+      handleSearch(); // Refresh list
+    }
+    setLiberacaoToDelete(null);
+  };
 
   // Filters
   const [nome, setNome] = useState("");
@@ -255,6 +285,7 @@ export default function Consultar() {
                     <TableHead>Início</TableHead>
                     <TableHead>Fim</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -285,6 +316,16 @@ export default function Consultar() {
                           {lib.status === "ativo" ? "Ativo" : "Expirado"}
                         </Badge>
                       </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setLiberacaoToDelete(lib.id)}
+                          className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -293,6 +334,23 @@ export default function Consultar() {
           )}
         </CardContent>
       </Card>
+
+      <AlertDialog open={!!liberacaoToDelete} onOpenChange={() => setLiberacaoToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir Liberação?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir esta liberação? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

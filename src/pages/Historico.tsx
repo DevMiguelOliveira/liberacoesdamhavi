@@ -8,7 +8,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Loader2, RefreshCw } from "lucide-react";
+import { ArrowLeft, Loader2, RefreshCw, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 interface Liberacao {
   id: string;
@@ -27,6 +38,25 @@ export default function Historico() {
   const navigate = useNavigate();
   const [liberacoes, setLiberacoes] = useState<Liberacao[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [liberacaoToDelete, setLiberacaoToDelete] = useState<string | null>(null);
+
+  const handleDelete = async () => {
+    if (!liberacaoToDelete) return;
+
+    const { error } = await supabase
+      .from("liberacoes")
+      .delete()
+      .eq("id", liberacaoToDelete);
+
+    if (error) {
+      toast.error("Erro ao excluir liberação");
+      console.error(error);
+    } else {
+      toast.success("Liberação excluída com sucesso");
+      fetchLiberacoes();
+    }
+    setLiberacaoToDelete(null);
+  };
 
   const fetchLiberacoes = async () => {
     setIsLoading(true);
@@ -112,6 +142,7 @@ export default function Historico() {
                     <TableHead>Quadra/Lote</TableHead>
                     <TableHead>Período</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -143,6 +174,16 @@ export default function Historico() {
                           {lib.status === "ativo" ? "Ativo" : "Expirado"}
                         </Badge>
                       </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setLiberacaoToDelete(lib.id)}
+                          className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -151,6 +192,23 @@ export default function Historico() {
           )}
         </CardContent>
       </Card>
+
+      <AlertDialog open={!!liberacaoToDelete} onOpenChange={() => setLiberacaoToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir Liberação?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir esta liberação? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
