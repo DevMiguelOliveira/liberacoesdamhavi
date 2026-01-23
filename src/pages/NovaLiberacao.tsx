@@ -101,7 +101,7 @@ export default function NovaLiberacao() {
         </div>
       </div>
 
-      <Card className="max-w-2xl">
+      <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle>Dados da Liberação</CardTitle>
           <CardDescription>
