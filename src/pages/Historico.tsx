@@ -135,13 +135,13 @@ export default function Historico() {
               <Table>
                 <TableHeader className="bg-background">
                   <TableRow>
-                    <TableHead className="pl-6">Registro</TableHead>
+                    <TableHead className="pl-6">Quadra/Lote</TableHead>
                     <TableHead>Nome</TableHead>
                     <TableHead>CPF</TableHead>
                     <TableHead>Tipo</TableHead>
-                    <TableHead>Quadra/Lote</TableHead>
                     <TableHead>Período</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Registro</TableHead>
                     <TableHead>Remover Liberação</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -155,8 +155,17 @@ export default function Historico() {
                           : "bg-yellow-50/50 hover:bg-yellow-100/50 data-[state=selected]:bg-yellow-100"
                       }
                     >
-                      <TableCell className="text-muted-foreground text-sm">
-                        {format(new Date(lib.criado_em), "dd/MM/yy HH:mm")}
+                      <TableCell className="pl-6">
+                        <div className="flex items-center gap-2">
+                          <div className="flex flex-col items-center justify-center bg-background/60 p-1.5 px-3 rounded-md border shadow-sm min-w-[4rem]">
+                            <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest">Quadra</span>
+                            <span className="text-xl font-black text-foreground">{lib.quadra}</span>
+                          </div>
+                          <div className="flex flex-col items-center justify-center bg-background/60 p-1.5 px-3 rounded-md border shadow-sm min-w-[4rem]">
+                            <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest">Lote</span>
+                            <span className="text-xl font-black text-foreground">{lib.lote}</span>
+                          </div>
+                        </div>
                       </TableCell>
                       <TableCell className="font-medium">{lib.nome_pessoa}</TableCell>
                       <TableCell>{formatCPF(lib.cpf)}</TableCell>
@@ -173,18 +182,6 @@ export default function Historico() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
-                          <div className="flex flex-col items-center justify-center bg-background/60 p-1.5 px-3 rounded-md border shadow-sm min-w-[4rem]">
-                            <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest">Quadra</span>
-                            <span className="text-xl font-black text-foreground">{lib.quadra}</span>
-                          </div>
-                          <div className="flex flex-col items-center justify-center bg-background/60 p-1.5 px-3 rounded-md border shadow-sm min-w-[4rem]">
-                            <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest">Lote</span>
-                            <span className="text-xl font-black text-foreground">{lib.lote}</span>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
                         <div className="text-sm">
                           {format(new Date(lib.data_inicio + "T00:00:00"), "dd/MM")}
                           {" - "}
@@ -198,6 +195,9 @@ export default function Historico() {
                         >
                           {lib.status === "ativo" ? "Ativo" : "Expirado"}
                         </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-sm">
+                        {format(new Date(lib.criado_em), "dd/MM/yy HH:mm")}
                       </TableCell>
                       <TableCell>
                         <Button

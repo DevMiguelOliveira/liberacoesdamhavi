@@ -277,14 +277,14 @@ export default function Consultar() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Horário</TableHead>
+                    <TableHead>Quadra/Lote</TableHead>
                     <TableHead>Nome</TableHead>
                     <TableHead>CPF</TableHead>
                     <TableHead>Tipo</TableHead>
-                    <TableHead>Quadra/Lote</TableHead>
                     <TableHead>Início</TableHead>
                     <TableHead>Fim</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Horário</TableHead>
                     <TableHead>Remover Liberação</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -298,8 +298,17 @@ export default function Consultar() {
                           : "bg-yellow-50/50 hover:bg-yellow-100/50 data-[state=selected]:bg-yellow-100"
                       }
                     >
-                      <TableCell className="text-muted-foreground text-sm">
-                        {format(new Date(lib.criado_em), "HH:mm")}
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <div className="flex flex-col items-center justify-center bg-background/60 p-1.5 px-3 rounded-md border shadow-sm min-w-[4rem]">
+                            <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest">Quadra</span>
+                            <span className="text-xl font-black text-foreground">{lib.quadra}</span>
+                          </div>
+                          <div className="flex flex-col items-center justify-center bg-background/60 p-1.5 px-3 rounded-md border shadow-sm min-w-[4rem]">
+                            <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest">Lote</span>
+                            <span className="text-xl font-black text-foreground">{lib.lote}</span>
+                          </div>
+                        </div>
                       </TableCell>
                       <TableCell className="font-medium">{lib.nome_pessoa}</TableCell>
                       <TableCell>{formatCPF(lib.cpf)}</TableCell>
@@ -316,18 +325,6 @@ export default function Consultar() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
-                          <div className="flex flex-col items-center justify-center bg-background/60 p-1.5 px-3 rounded-md border shadow-sm min-w-[4rem]">
-                            <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest">Quadra</span>
-                            <span className="text-xl font-black text-foreground">{lib.quadra}</span>
-                          </div>
-                          <div className="flex flex-col items-center justify-center bg-background/60 p-1.5 px-3 rounded-md border shadow-sm min-w-[4rem]">
-                            <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest">Lote</span>
-                            <span className="text-xl font-black text-foreground">{lib.lote}</span>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
                         {format(new Date(lib.data_inicio + "T00:00:00"), "dd/MM/yyyy")}
                       </TableCell>
                       <TableCell>
@@ -340,6 +337,9 @@ export default function Consultar() {
                         >
                           {lib.status === "ativo" ? "Ativo" : "Expirado"}
                         </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-sm">
+                        {format(new Date(lib.criado_em), "HH:mm")}
                       </TableCell>
                       <TableCell>
                         <Button

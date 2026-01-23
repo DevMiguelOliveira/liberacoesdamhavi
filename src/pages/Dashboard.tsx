@@ -205,9 +205,9 @@ export default function Dashboard() {
                     <TableHead>Destino</TableHead>
                     <TableHead>Nome</TableHead>
                     <TableHead>Tipo</TableHead>
-                    <TableHead>Horário do Registro</TableHead>
                     <TableHead>Validade</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Horário do Registro</TableHead>
                     <TableHead>Remover Liberação</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -246,9 +246,6 @@ export default function Dashboard() {
                           {lib.tipo_acesso === "visitante" ? "Visitante" : "Prestador"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-muted-foreground text-sm">
-                        {format(new Date(lib.criado_em), "HH:mm")}
-                      </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
                         Até {format(new Date(lib.data_fim + "T00:00:00"), "dd/MM", { locale: ptBR })}
                       </TableCell>
@@ -256,6 +253,9 @@ export default function Dashboard() {
                         <Badge className="bg-success hover:bg-success/80">
                           Ativo
                         </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-sm">
+                        {format(new Date(lib.criado_em), "HH:mm")}
                       </TableCell>
                       <TableCell>
                         <Button
