@@ -54,74 +54,83 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md animate-fade-in shadow-card border-none bg-white/90 backdrop-blur-sm">
-        <CardHeader className="text-center space-y-4">
-          <div className="flex justify-center mb-4">
-            <img
-              src={damhaLogo}
-              alt="Damha VI"
-              className="h-32 w-auto object-contain animate-[pulse_4s_ease-in-out_infinite] hover:scale-105 transition-transform duration-500"
-            />
-          </div>
-          <div>
-            <CardTitle className="text-2xl">Controle de Acesso</CardTitle>
-            <CardDescription className="mt-2">
-              Sistema de liberação de visitantes e prestadores
-            </CardDescription>
-          </div>
-        </CardHeader>
-
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="login">Login</Label>
-              <Input
-                id="login"
-                type="text"
-                placeholder="admin"
-                autoComplete="username"
-                {...register("login")}
+    <div className="flex min-h-screen flex-col bg-background">
+      <div className="flex flex-1 items-center justify-center p-4">
+        <Card className="w-full max-w-md animate-fade-in shadow-card border-none bg-white/90 backdrop-blur-sm">
+          <CardHeader className="text-center space-y-4">
+            <div className="flex justify-center mb-4">
+              <img
+                src={damhaLogo}
+                alt="Damha VI"
+                className="h-32 w-auto object-contain animate-[pulse_4s_ease-in-out_infinite] hover:scale-105 transition-transform duration-500"
               />
-              {errors.login && (
-                <p className="text-sm text-destructive">{errors.login.message}</p>
-              )}
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                autoComplete="current-password"
-                {...register("password")}
-              />
-              {errors.password && (
-                <p className="text-sm text-destructive">{errors.password.message}</p>
-              )}
+            <div>
+              <CardTitle className="text-2xl">Controle de Acesso</CardTitle>
+              <CardDescription className="mt-2">
+                Sistema de liberação de visitantes e prestadores
+              </CardDescription>
             </div>
+          </CardHeader>
 
-            <Button
-              type="submit"
-              className="w-full gap-2"
-              size="lg"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Shield className="h-4 w-4" />
-              )}
-              Entrar
-            </Button>
-          </form>
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="login">Login</Label>
+                <Input
+                  id="login"
+                  type="text"
+                  placeholder="admin"
+                  autoComplete="username"
+                  {...register("login")}
+                />
+                {errors.login && (
+                  <p className="text-sm text-destructive">{errors.login.message}</p>
+                )}
+              </div>
 
-          <div className="mt-6 text-center text-sm text-muted-foreground">
-            <p>Acesso restrito a administradores</p>
-          </div>
-        </CardContent>
-      </Card>
+              <div className="space-y-2">
+                <Label htmlFor="password">Senha</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                  {...register("password")}
+                />
+                {errors.password && (
+                  <p className="text-sm text-destructive">{errors.password.message}</p>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full gap-2"
+                size="lg"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Shield className="h-4 w-4" />
+                )}
+                Entrar
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center text-sm text-muted-foreground">
+              <p>Acesso restrito a administradores</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Footer */}
+      <footer className="py-4 text-center">
+        <p className="text-sm text-muted-foreground bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent animate-pulse font-medium">
+          Desenvolvido por Luis Miguel todos os direitos reservados 2026
+        </p>
+      </footer>
     </div>
   );
 }

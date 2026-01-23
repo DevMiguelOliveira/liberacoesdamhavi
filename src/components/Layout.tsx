@@ -18,13 +18,13 @@ export function Layout() {
       {/* Header */}
       <header className="sticky top-0 z-50 border-b bg-card shadow-sm">
         <div className="container flex h-16 items-center justify-between">
-          <div 
-            className="flex items-center gap-3 cursor-pointer" 
+          <div
+            className="flex items-center gap-3 cursor-pointer"
             onClick={() => navigate("/")}
           >
-            <img 
-              src={damhaLogo} 
-              alt="Damha VI" 
+            <img
+              src={damhaLogo}
+              alt="Damha VI"
               className="h-10 w-auto object-contain"
             />
             <div className="hidden sm:block">
@@ -42,9 +42,9 @@ export function Layout() {
               <Shield className="h-4 w-4 text-primary" />
               <span>{admin?.nome}</span>
             </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleSignOut}
               className="gap-2"
             >
@@ -56,9 +56,18 @@ export function Layout() {
       </header>
 
       {/* Main Content */}
-      <main className="container py-6">
+      <main className="container py-6 flex-1">
         <Outlet />
       </main>
+
+      {/* Footer */}
+      <footer className="border-t bg-card py-4 mt-auto">
+        <div className="container flex justify-center items-center">
+          <p className="text-sm text-muted-foreground bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent animate-pulse font-medium">
+            Desenvolvido por Luis Miguel todos os direitos reservados 2026
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
