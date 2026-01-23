@@ -138,7 +138,7 @@ export default function Dashboard() {
           <img
             src={damhaLogo}
             alt="Damha VI Logo"
-            className="h-40 w-auto object-contain animate-pulse hover:scale-105 transition-transform duration-700 ease-in-out"
+            className="h-40 w-auto object-contain animate-float hover:scale-105 transition-transform duration-700 ease-in-out"
           />
         </div>
         <h1 className="text-3xl font-bold tracking-tight">
