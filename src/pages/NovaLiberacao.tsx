@@ -96,7 +96,7 @@ export default function NovaLiberacao() {
         <div>
           <h1 className="text-2xl font-bold">Nova Liberação</h1>
           <p className="text-muted-foreground">
-            Registrar entrada de visitante ou prestador
+            Registrar entrada de Visitante ou Prestador
           </p>
         </div>
       </div>
@@ -113,7 +113,7 @@ export default function NovaLiberacao() {
             {/* Nome e CPF */}
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="nome_pessoa">Nome Completo *</Label>
+                <Label htmlFor="nome_pessoa">Nome*</Label>
                 <Input
                   id="nome_pessoa"
                   placeholder="João da Silva"
