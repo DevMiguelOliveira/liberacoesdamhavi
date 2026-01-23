@@ -304,7 +304,7 @@ export default function Consultar() {
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="font-bold text-base">Quadra: {lib.quadra}</span>
-                          <span className="text-xs text-muted-foreground">Lote: {lib.lote}</span>
+                          <span className="text-sm">Lote: {lib.lote}</span>
                         </div>
                       </TableCell>
                       <TableCell>
