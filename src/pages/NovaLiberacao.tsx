@@ -250,15 +250,7 @@ export default function NovaLiberacao() {
               </div>
             </div>
 
-            {/* Data Final Calculada */}
-            {dataFim && (
-              <div className="rounded-lg bg-secondary p-4">
-                <p className="text-sm text-muted-foreground">Data de Expiração</p>
-                <p className="text-lg font-semibold text-secondary-foreground">
-                  {format(dataFim, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-                </p>
-              </div>
-            )}
+
 
             {/* Actions */}
             <div className="flex gap-3 pt-4">
