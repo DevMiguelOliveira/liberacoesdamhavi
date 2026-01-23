@@ -37,12 +37,12 @@ export default function Dashboard() {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Welcome Section */}
-      <div className="space-y-2 text-center sm:text-left">
-        <div className="flex justify-center sm:justify-start mb-6">
+      <div className="space-y-2 text-center">
+        <div className="flex justify-center mb-6">
           <img
             src={damhaLogo}
             alt="Damha VI Logo"
-            className="h-24 w-auto object-contain animate-fade-in hover:scale-105 transition-transform duration-700 ease-in-out"
+            className="h-32 w-auto object-contain animate-fade-in hover:scale-105 transition-transform duration-700 ease-in-out"
           />
         </div>
         <h1 className="text-3xl font-bold tracking-tight">
