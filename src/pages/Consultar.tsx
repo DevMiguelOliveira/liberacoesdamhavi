@@ -23,6 +23,7 @@ interface Liberacao {
   data_inicio: string;
   data_fim: string;
   status: "ativo" | "expirado";
+  criado_em: string;
 }
 
 export default function Consultar() {
@@ -104,7 +105,7 @@ export default function Consultar() {
         <div>
           <h1 className="text-2xl font-bold">Consultar Liberações</h1>
           <p className="text-muted-foreground">
-            Busque por nome, CPF, endereço ou status
+            Busque por nome, CPF, quadra, lote, data ou status.
           </p>
         </div>
       </div>
@@ -228,6 +229,7 @@ export default function Consultar() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Horário</TableHead>
                     <TableHead>Nome</TableHead>
                     <TableHead>CPF</TableHead>
                     <TableHead>Tipo</TableHead>
@@ -240,6 +242,9 @@ export default function Consultar() {
                 <TableBody>
                   {liberacoes.map((lib) => (
                     <TableRow key={lib.id}>
+                      <TableCell className="text-muted-foreground text-sm">
+                        {format(new Date(lib.criado_em), "HH:mm")}
+                      </TableCell>
                       <TableCell className="font-medium">{lib.nome_pessoa}</TableCell>
                       <TableCell>{formatCPF(lib.cpf)}</TableCell>
                       <TableCell>

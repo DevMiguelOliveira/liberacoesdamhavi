@@ -21,6 +21,7 @@ interface Liberacao {
   data_inicio: string;
   data_fim: string;
   status: "ativo" | "expirado";
+  criado_em: string;
 }
 
 export default function Dashboard() {
@@ -83,7 +84,7 @@ export default function Dashboard() {
     },
     {
       title: "Consultar Liberações",
-      description: "Buscar liberações ativas por nome, CPF ou endereço",
+      description: "Buscar liberações ativas ou expiradas.",
       icon: Search,
       path: "/consultar",
       variant: "outline" as const,
@@ -169,6 +170,7 @@ export default function Dashboard() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Horário</TableHead>
                     <TableHead>Nome</TableHead>
                     <TableHead>Tipo</TableHead>
                     <TableHead>Destino</TableHead>
@@ -179,6 +181,9 @@ export default function Dashboard() {
                 <TableBody>
                   {todayLiberacoes.map((lib) => (
                     <TableRow key={lib.id}>
+                      <TableCell className="text-muted-foreground text-sm">
+                        {format(new Date(lib.criado_em), "HH:mm")}
+                      </TableCell>
                       <TableCell className="font-medium">{lib.nome_pessoa}</TableCell>
                       <TableCell>
                         <Badge variant="outline">
