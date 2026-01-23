@@ -1,7 +1,7 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LogOut, Shield, Phone, MessageCircle } from "lucide-react";
+import { LogOut, Shield } from "lucide-react";
 import damhaLogo from "@/assets/damha6_logo.jpg";
 
 export function Layout() {
@@ -63,16 +63,6 @@ export function Layout() {
       {/* Footer */}
       <footer className="border-t bg-card py-6 mt-auto">
         <div className="container flex flex-col items-center gap-3 text-center">
-          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Phone className="h-4 w-4" />
-              <span>Telefone Portaria Social: (17) 3512-9009</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <MessageCircle className="h-4 w-4" />
-              <span>Whatsapp Portaria Social Damha VI: (14) 99106-0771</span>
-            </div>
-          </div>
           <p className="text-xs bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent animate-pulse font-medium">
             Desenvolvido por Luis Miguel. Todos os direitos reservados © 2026.
           </p>
