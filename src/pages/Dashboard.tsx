@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Search, History, Users } from "lucide-react";
+import { Plus, Search, History, Users, Phone, MessageCircle } from "lucide-react";
 
 import damhaLogo from "@/assets/logo_damha_nova.jpg";
 
@@ -64,8 +64,8 @@ export default function Dashboard() {
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className={`rounded-lg p-3 ${item.variant === "default"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-secondary-foreground"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary text-secondary-foreground"
                   }`}>
                   <item.icon className="h-6 w-6" />
                 </div>
@@ -81,23 +81,48 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Info Section */}
-      <Card className="bg-secondary/50">
-        <CardContent className="pt-6">
-          <div className="flex items-start gap-4">
-            <div className="rounded-lg bg-accent p-3">
-              <Users className="h-6 w-6 text-accent-foreground" />
+      {/* Info & Contacts Section */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card className="bg-secondary/50">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-4">
+              <div className="rounded-lg bg-accent p-3">
+                <Users className="h-6 w-6 text-accent-foreground" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Sistema de Portaria</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Registre liberações de visitantes e prestadores de serviço.
+                  Todas as entradas ficam salvas no histórico para consulta futura.
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold">Sistema de Portaria</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                Registre liberações de visitantes e prestadores de serviço.
-                Todas as entradas ficam salvas no histórico para consulta futura.
-              </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-secondary/50">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-4">
+              <div className="rounded-lg bg-accent p-3">
+                <Phone className="h-6 w-6 text-accent-foreground" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Contatos Úteis</h3>
+                <div className="space-y-2 mt-2">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Phone className="h-4 w-4" />
+                    <span>Telefone Portaria Social: (17) 3512-9009</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <MessageCircle className="h-4 w-4" />
+                    <span>Whatsapp Portaria Social Damha VI: (14) 99106-0771</span>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
