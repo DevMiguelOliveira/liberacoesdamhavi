@@ -205,7 +205,7 @@ export default function Dashboard() {
                     <TableHead>Destino</TableHead>
                     <TableHead>Nome</TableHead>
                     <TableHead>Tipo</TableHead>
-                    <TableHead>Horário</TableHead>
+                    <TableHead>Horário do Registro</TableHead>
                     <TableHead>Validade</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Remover Liberação</TableHead>
