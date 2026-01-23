@@ -316,9 +316,15 @@ export default function Consultar() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="flex flex-col text-sm">
-                          <span>Quadra: <span className="font-bold text-base">{lib.quadra}</span></span>
-                          <span>Lote: <span className="font-bold text-base">{lib.lote}</span></span>
+                        <div className="flex items-center gap-2">
+                          <div className="flex flex-col items-center justify-center bg-background/60 p-1.5 px-3 rounded-md border shadow-sm min-w-[4rem]">
+                            <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest">Quadra</span>
+                            <span className="text-xl font-black text-foreground">{lib.quadra}</span>
+                          </div>
+                          <div className="flex flex-col items-center justify-center bg-background/60 p-1.5 px-3 rounded-md border shadow-sm min-w-[4rem]">
+                            <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest">Lote</span>
+                            <span className="text-xl font-black text-foreground">{lib.lote}</span>
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>
