@@ -293,7 +293,7 @@ export default function NovaLiberacao() {
               </Label>
               <Textarea
                 id="observacoes"
-                placeholder="Ex: Prestador entrará com ferramentas..."
+                placeholder="Ex: Deixar a entrega na garagem, etc..."
                 className="bg-background min-h-[100px]"
                 {...register("observacoes")}
               />
