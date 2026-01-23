@@ -1,14 +1,77 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Search, History, Users, Phone, MessageCircle } from "lucide-react";
+import { Plus, Search, History, Users, Phone, MessageCircle, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 import damhaLogo from "@/assets/logo_damha_nova.jpg";
+
+interface Liberacao {
+  id: string;
+  nome_pessoa: string;
+  tipo_acesso: "visitante" | "prestador";
+  quadra: string;
+  lote: string;
+  data_inicio: string;
+  data_fim: string;
+  status: "ativo" | "expirado";
+}
 
 export default function Dashboard() {
   const { admin } = useAuth();
   const navigate = useNavigate();
+  const [todayLiberacoes, setTodayLiberacoes] = useState<Liberacao[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchTodayLiberacoes = async () => {
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+
+    // Fetch active liberacoes valid for today
+    const { data, error } = await supabase
+      .from("liberacoes")
+      .select("*")
+      .eq("status", "ativo")
+      .lte("data_inicio", today)
+      .gte("data_fim", today)
+      .order("criado_em", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching today's liberacoes:", error);
+    } else {
+      setTodayLiberacoes(data || []);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchTodayLiberacoes();
+
+    // Realtime subscription
+    const channel = supabase
+      .channel("schema-db-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "liberacoes",
+        },
+        () => {
+          fetchTodayLiberacoes();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const menuItems = [
     {
@@ -80,6 +143,65 @@ export default function Dashboard() {
           </Card>
         ))}
       </div>
+
+      {/* Today's Active Liberacoes */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Users className="h-5 w-5 text-primary" />
+            Liberações Ativas Hoje
+          </CardTitle>
+          <CardDescription>
+            Visitantes e prestadores com acesso permitido para hoje
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="flex justify-center py-6">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : todayLiberacoes.length === 0 ? (
+            <p className="text-center text-muted-foreground py-6">
+              Nenhuma liberação ativa encontrada para hoje.
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Tipo</TableHead>
+                    <TableHead>Destino</TableHead>
+                    <TableHead>Validade</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {todayLiberacoes.map((lib) => (
+                    <TableRow key={lib.id}>
+                      <TableCell className="font-medium">{lib.nome_pessoa}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">
+                          {lib.tipo_acesso === "visitante" ? "Visitante" : "Prestador"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{lib.quadra}/{lib.lote}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        Até {format(new Date(lib.data_fim + "T00:00:00"), "dd/MM", { locale: ptBR })}
+                      </TableCell>
+                      <TableCell>
+                        <Badge className="bg-success hover:bg-success/80">
+                          Ativo
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Info & Contacts Section */}
       <div className="grid gap-4 md:grid-cols-2">
