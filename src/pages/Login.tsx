@@ -139,7 +139,7 @@ export default function Login() {
             </div>
           </div>
           <p className="text-xs bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent animate-pulse font-medium">
-            Desenvolvido por Luis Miguel todos os direitos reservados 2026
+            Desenvolvido por Luis Miguel. Todos os direitos reservados © 2026.
           </p>
         </div>
       </footer>
