@@ -147,14 +147,28 @@ export default function Historico() {
                 </TableHeader>
                 <TableBody>
                   {liberacoes.map((lib) => (
-                    <TableRow key={lib.id}>
+                    <TableRow
+                      key={lib.id}
+                      className={
+                        lib.tipo_acesso === "visitante"
+                          ? "bg-sky-50/50 hover:bg-sky-100/50 data-[state=selected]:bg-sky-100"
+                          : "bg-yellow-50/50 hover:bg-yellow-100/50 data-[state=selected]:bg-yellow-100"
+                      }
+                    >
                       <TableCell className="text-muted-foreground text-sm">
                         {format(new Date(lib.criado_em), "dd/MM/yy HH:mm")}
                       </TableCell>
                       <TableCell className="font-medium">{lib.nome_pessoa}</TableCell>
                       <TableCell>{formatCPF(lib.cpf)}</TableCell>
                       <TableCell>
-                        <Badge variant="outline">
+                        <Badge
+                          variant="secondary"
+                          className={
+                            lib.tipo_acesso === "visitante"
+                              ? "bg-sky-200 text-sky-900 hover:bg-sky-300 border-sky-300"
+                              : "bg-yellow-200 text-yellow-900 hover:bg-yellow-300 border-yellow-300"
+                          }
+                        >
                           {lib.tipo_acesso === "visitante" ? "Visitante" : "Prestador"}
                         </Badge>
                       </TableCell>

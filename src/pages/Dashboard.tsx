@@ -213,7 +213,14 @@ export default function Dashboard() {
                 </TableHeader>
                 <TableBody>
                   {todayLiberacoes.map((lib) => (
-                    <TableRow key={lib.id}>
+                    <TableRow
+                      key={lib.id}
+                      className={
+                        lib.tipo_acesso === "visitante"
+                          ? "bg-sky-50/50 hover:bg-sky-100/50 data-[state=selected]:bg-sky-100"
+                          : "bg-yellow-50/50 hover:bg-yellow-100/50 data-[state=selected]:bg-yellow-100"
+                      }
+                    >
                       <TableCell>
                         <div className="flex flex-col text-sm">
                           <span>Quadra: <span className="font-bold text-base">{lib.quadra}</span></span>
