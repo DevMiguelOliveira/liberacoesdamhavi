@@ -142,7 +142,7 @@ export default function Historico() {
                     <TableHead>Quadra/Lote</TableHead>
                     <TableHead>Período</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Ações</TableHead>
+                    <TableHead>Remover Liberação</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -160,8 +160,8 @@ export default function Historico() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="font-bold text-base">Q. {lib.quadra}</span>
-                          <span className="text-xs text-muted-foreground">Lote {lib.lote}</span>
+                          <span className="font-bold text-base">Quadra: {lib.quadra}</span>
+                          <span className="text-xs text-muted-foreground">Lote: {lib.lote}</span>
                         </div>
                       </TableCell>
                       <TableCell>
