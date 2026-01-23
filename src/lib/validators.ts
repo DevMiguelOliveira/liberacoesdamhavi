@@ -74,7 +74,7 @@ export type LiberacaoFormData = z.infer<typeof liberacaoSchema>;
 
 // Login schema
 export const loginSchema = z.object({
-  email: z.string().email("E-mail inválido"),
+  login: z.string().trim().min(3, "Login deve ter pelo menos 3 caracteres"),
   password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
 });
 

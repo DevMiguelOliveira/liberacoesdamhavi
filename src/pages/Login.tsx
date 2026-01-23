@@ -36,12 +36,14 @@ export default function Login() {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
-    
-    const { error } = await signIn(data.email, data.password);
-    
+
+    // Append fake domain to satisfy Supabase email requirement
+    const email = `${data.login.toLowerCase()}@damhavi.com`;
+    const { error } = await signIn(email, data.password);
+
     if (error) {
       toast.error("Credenciais inválidas", {
-        description: "Verifique seu e-mail e senha.",
+        description: "Verifique seu login e senha.",
       });
       setIsLoading(false);
       return;
@@ -56,9 +58,9 @@ export default function Login() {
       <Card className="w-full max-w-md animate-fade-in shadow-card">
         <CardHeader className="text-center space-y-4">
           <div className="flex justify-center">
-            <img 
-              src={damhaLogo} 
-              alt="Damha VI" 
+            <img
+              src={damhaLogo}
+              alt="Damha VI"
               className="h-20 w-auto object-contain"
             />
           </div>
@@ -69,20 +71,20 @@ export default function Login() {
             </CardDescription>
           </div>
         </CardHeader>
-        
+
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+              <Label htmlFor="login">Login</Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="admin@damha6.com"
-                autoComplete="email"
-                {...register("email")}
+                id="login"
+                type="text"
+                placeholder="AdminDamhaVI"
+                autoComplete="username"
+                {...register("login")}
               />
-              {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message}</p>
+              {errors.login && (
+                <p className="text-sm text-destructive">{errors.login.message}</p>
               )}
             </div>
 
@@ -100,9 +102,9 @@ export default function Login() {
               )}
             </div>
 
-            <Button 
-              type="submit" 
-              className="w-full gap-2" 
+            <Button
+              type="submit"
+              className="w-full gap-2"
               size="lg"
               disabled={isLoading}
             >

@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 interface Admin {
   id: string;
   nome: string;
-  email: string;
+  login: string;
 }
 
 interface AuthContextType {
@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const fetchAdmin = async (userId: string) => {
     const { data, error } = await supabase
       .from("admins")
-      .select("id, nome, email")
+      .select("id, nome, login")
       .eq("user_id", userId)
       .maybeSingle();
 
