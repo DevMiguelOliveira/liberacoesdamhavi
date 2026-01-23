@@ -118,12 +118,21 @@ begin
 end;
 $$;
 
--- --- INSTRUCTIONS FOR ADMIN USER CREATION ---
--- To create the global admin 'AdminDamhaVI' with password 'damha654321', 
--- you should create a user in the Supabase Authentication Dashboard:
--- Email: AdminDamhaVI@damhavi.com
--- Password: damha654321
+-- --- MANUAL ADMIN INSERTION (If User already exists in Auth) ---
+-- User: admin@damhavi.com
+-- UID: 00e64973-73db-4a4e-88e8-86ee31c94d07
+-- Login para acessar: admin
+
+INSERT INTO public.admins (user_id, login, nome)
+VALUES ('00e64973-73db-4a4e-88e8-86ee31c94d07', 'admin', 'Administrador Global')
+ON CONFLICT (user_id) DO UPDATE
+SET login = 'admin', nome = 'Administrador Global';
+
+-- --- INSTRUCTIONS FOR NEW ADMIN CREATION ---
+-- To create a new admin manually via Supabase Dashboard:
+-- 1. Go to Authentication > Users > Add User
+-- 2. Email: seu-login@damhavi.com (Ex: portaria@damhavi.com -> Login será 'portaria')
+-- 3. Password: [sua senha]
 -- 
--- The trigger above will automatically create the record in the 'admins' table
--- with login = 'AdminDamhaVI'.
+-- The trigger above will automatically create the record in the 'admins' table.
 -- ---------------------------------------------

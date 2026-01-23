@@ -79,7 +79,7 @@ export default function Login() {
               <Input
                 id="login"
                 type="text"
-                placeholder="AdminDamhaVI"
+                placeholder="admin"
                 autoComplete="username"
                 {...register("login")}
               />
