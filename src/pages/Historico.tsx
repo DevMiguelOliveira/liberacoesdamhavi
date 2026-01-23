@@ -159,9 +159,9 @@ export default function Historico() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="flex flex-col">
-                          <span className="font-bold text-base">Quadra: {lib.quadra}</span>
-                          <span className="text-sm">Lote: {lib.lote}</span>
+                        <div className="flex flex-col text-sm">
+                          <span>Quadra: <span className="font-bold text-base">{lib.quadra}</span></span>
+                          <span>Lote: <span className="font-bold text-base">{lib.lote}</span></span>
                         </div>
                       </TableCell>
                       <TableCell>
