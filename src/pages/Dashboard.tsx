@@ -232,8 +232,8 @@ export default function Dashboard() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
-                          <span>Quadra:</span><span className="font-bold text-base"> {lib.quadra}</span>
-                          <span>Lote:</span><span className="font-bold text-base"> {lib.lote}</span>
+                          <span className="font-bold text-base">Quadra: {lib.quadra}</span>
+                          <span className="font-bold text-base">Lote: {lib.lote}</span>
                         </div>
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
