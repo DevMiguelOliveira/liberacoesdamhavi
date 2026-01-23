@@ -1,0 +1,259 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { supabase } from "@/integrations/supabase/client";
+import { formatCPF } from "@/lib/validators";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Loader2, Search, X } from "lucide-react";
+
+interface Liberacao {
+  id: string;
+  nome_pessoa: string;
+  cpf: string;
+  tipo_acesso: "visitante" | "prestador";
+  quadra: string;
+  lote: string;
+  data_inicio: string;
+  data_fim: string;
+  status: "ativo" | "expirado";
+}
+
+export default function Consultar() {
+  const navigate = useNavigate();
+  const [liberacoes, setLiberacoes] = useState<Liberacao[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+
+  // Filters
+  const [nome, setNome] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [quadra, setQuadra] = useState("");
+  const [lote, setLote] = useState("");
+  const [status, setStatus] = useState<string>("all");
+
+  const handleSearch = async () => {
+    setIsLoading(true);
+    setHasSearched(true);
+
+    // First, update expired status
+    await supabase.rpc("update_expired_liberacoes");
+
+    let query = supabase
+      .from("liberacoes")
+      .select("*")
+      .order("criado_em", { ascending: false });
+
+    if (nome.trim()) {
+      query = query.ilike("nome_pessoa", `%${nome.trim()}%`);
+    }
+    if (cpf.trim()) {
+      query = query.ilike("cpf", `%${cpf.replace(/\D/g, "")}%`);
+    }
+    if (quadra.trim()) {
+      query = query.ilike("quadra", `%${quadra.trim()}%`);
+    }
+    if (lote.trim()) {
+      query = query.ilike("lote", `%${lote.trim()}%`);
+    }
+    if (status !== "all") {
+      query = query.eq("status", status as "ativo" | "expirado");
+    }
+
+    const { data, error } = await query.limit(100);
+
+    setIsLoading(false);
+
+    if (error) {
+      console.error("Error fetching liberacoes:", error);
+      return;
+    }
+
+    setLiberacoes(data || []);
+  };
+
+  const clearFilters = () => {
+    setNome("");
+    setCpf("");
+    setQuadra("");
+    setLote("");
+    setStatus("all");
+    setLiberacoes([]);
+    setHasSearched(false);
+  };
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <div>
+          <h1 className="text-2xl font-bold">Consultar Liberações</h1>
+          <p className="text-muted-foreground">
+            Busque por nome, CPF, endereço ou status
+          </p>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Filtros</CardTitle>
+          <CardDescription>
+            Combine os filtros para refinar sua busca
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="space-y-2">
+              <Label htmlFor="nome">Nome</Label>
+              <Input
+                id="nome"
+                placeholder="Nome do visitante"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="cpf">CPF</Label>
+              <Input
+                id="cpf"
+                placeholder="000.000.000-00"
+                value={cpf}
+                onChange={(e) => setCpf(formatCPF(e.target.value))}
+                maxLength={14}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="quadra">Quadra</Label>
+              <Input
+                id="quadra"
+                placeholder="Ex: A"
+                value={quadra}
+                onChange={(e) => setQuadra(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="lote">Lote</Label>
+              <Input
+                id="lote"
+                placeholder="Ex: 15"
+                value={lote}
+                onChange={(e) => setLote(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Status</Label>
+              <Select value={status} onValueChange={setStatus}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Todos" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="ativo">Ativo</SelectItem>
+                  <SelectItem value="expirado">Expirado</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="flex gap-3 mt-6">
+            <Button onClick={handleSearch} className="gap-2">
+              <Search className="h-4 w-4" />
+              Buscar
+            </Button>
+            <Button variant="outline" onClick={clearFilters} className="gap-2">
+              <X className="h-4 w-4" />
+              Limpar
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Results */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">
+            Resultados
+            {hasSearched && (
+              <span className="ml-2 text-sm font-normal text-muted-foreground">
+                ({liberacoes.length} encontrados)
+              </span>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : !hasSearched ? (
+            <div className="text-center py-8 text-muted-foreground">
+              Use os filtros acima para buscar liberações
+            </div>
+          ) : liberacoes.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              Nenhuma liberação encontrada
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>CPF</TableHead>
+                    <TableHead>Tipo</TableHead>
+                    <TableHead>Quadra/Lote</TableHead>
+                    <TableHead>Início</TableHead>
+                    <TableHead>Fim</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {liberacoes.map((lib) => (
+                    <TableRow key={lib.id}>
+                      <TableCell className="font-medium">{lib.nome_pessoa}</TableCell>
+                      <TableCell>{formatCPF(lib.cpf)}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">
+                          {lib.tipo_acesso === "visitante" ? "Visitante" : "Prestador"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{lib.quadra}/{lib.lote}</TableCell>
+                      <TableCell>
+                        {format(new Date(lib.data_inicio + "T00:00:00"), "dd/MM/yyyy")}
+                      </TableCell>
+                      <TableCell>
+                        {format(new Date(lib.data_fim + "T00:00:00"), "dd/MM/yyyy")}
+                      </TableCell>
+                      <TableCell>
+                        <Badge 
+                          variant={lib.status === "ativo" ? "default" : "secondary"}
+                          className={lib.status === "ativo" ? "bg-success" : ""}
+                        >
+                          {lib.status === "ativo" ? "Ativo" : "Expirado"}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
