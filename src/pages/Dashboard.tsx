@@ -33,6 +33,7 @@ interface Liberacao {
   data_fim: string;
   status: "ativo" | "expirado";
   criado_em: string;
+  observacoes?: string;
 }
 
 export default function Dashboard() {

@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { liberacaoSchema, LiberacaoFormData, formatCPF } from "@/lib/validators";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -68,6 +69,7 @@ export default function NovaLiberacao() {
       data_fim: format(dataFimCalculada, "yyyy-MM-dd"),
       status,
       admin_id: admin.id,
+      observacoes: data.observacoes?.trim() || null,
     });
 
     setIsLoading(false);
@@ -281,6 +283,20 @@ export default function NovaLiberacao() {
                   <p className="text-sm text-destructive">{errors.dias_liberados.message}</p>
                 )}
               </div>
+            </div>
+
+            {/* Observações */}
+            <div className="space-y-2">
+              <Label htmlFor="observacoes" className="flex items-center gap-2 text-primary uppercase text-xs font-bold tracking-wider">
+                <FileText className="h-3.5 w-3.5" />
+                Observações
+              </Label>
+              <Textarea
+                id="observacoes"
+                placeholder="Ex: Prestador entrará com ferramentas..."
+                className="bg-background min-h-[100px]"
+                {...register("observacoes")}
+              />
             </div>
 
             {/* Actions */}

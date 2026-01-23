@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Loader2, Search, X, Filter, User, MapPin, Calendar, FileText, Trash2 } from "lucide-react";
+import { ArrowLeft, Loader2, Search, X, Filter, User, MapPin, Calendar, FileText, Trash2, Download } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,6 +35,7 @@ interface Liberacao {
   data_fim: string;
   status: "ativo" | "expirado";
   criado_em: string;
+  observacoes?: string;
 }
 
 export default function Consultar() {
@@ -123,6 +124,57 @@ export default function Consultar() {
     setDataFiltro("");
     setLiberacoes([]);
     setHasSearched(false);
+  };
+
+  const downloadCSV = () => {
+    if (liberacoes.length === 0) {
+      toast.error("Não há dados para exportar");
+      return;
+    }
+
+    // CSV Header
+    const headers = [
+      "Nome",
+      "CPF",
+      "Quadra",
+      "Lote",
+      "Tipo de Acesso",
+      "Data Início",
+      "Data Fim",
+      "Status",
+      "Observações",
+      "Data de Registro"
+    ];
+
+    // CSV Rows
+    const rows = liberacoes.map(lib => [
+      `"${lib.nome_pessoa}"`,
+      `"${lib.cpf || ""}"`,
+      `"${lib.quadra}"`,
+      `"${lib.lote}"`,
+      `"${lib.tipo_acesso}"`,
+      `"${format(new Date(lib.data_inicio + "T00:00:00"), "dd/MM/yyyy")}"`,
+      `"${format(new Date(lib.data_fim + "T00:00:00"), "dd/MM/yyyy")}"`,
+      `"${lib.status}"`,
+      `"${lib.observacoes || ""}"`,
+      `"${format(new Date(lib.criado_em), "dd/MM/yyyy HH:mm")}"`
+    ]);
+
+    // Combine header and rows
+    const csvContent = [
+      headers.join(";"),
+      ...rows.map(row => row.join(";"))
+    ].join("\n");
+
+    // Create and trigger download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `liberacoes_export_${format(new Date(), "yyyy-MM-dd_HH-mm")}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -249,7 +301,7 @@ export default function Consultar() {
 
       {/* Results */}
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-lg">
             Resultados
             {hasSearched && (
@@ -258,6 +310,12 @@ export default function Consultar() {
               </span>
             )}
           </CardTitle>
+          {hasSearched && liberacoes.length > 0 && (
+            <Button variant="outline" size="sm" onClick={downloadCSV} className="gap-2">
+              <Download className="h-4 w-4" />
+              Exportar CSV
+            </Button>
+          )}
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -280,6 +338,7 @@ export default function Consultar() {
                     <TableHead>Quadra/Lote</TableHead>
                     <TableHead>Nome</TableHead>
                     <TableHead>CPF</TableHead>
+                    <TableHead>Obs</TableHead>
                     <TableHead>Tipo</TableHead>
                     <TableHead>Início</TableHead>
                     <TableHead>Fim</TableHead>
@@ -312,6 +371,7 @@ export default function Consultar() {
                       </TableCell>
                       <TableCell className="font-medium">{lib.nome_pessoa}</TableCell>
                       <TableCell>{formatCPF(lib.cpf)}</TableCell>
+                      <TableCell className="max-w-[200px] truncate text-muted-foreground" title={lib.observacoes}>{lib.observacoes || "-"}</TableCell>
                       <TableCell>
                         <Badge
                           variant="secondary"

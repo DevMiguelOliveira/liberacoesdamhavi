@@ -71,6 +71,7 @@ export const liberacaoSchema = z.object({
     .number()
     .min(1, "Mínimo de 1 dia")
     .max(365, "Máximo de 365 dias"),
+  observacoes: z.string().optional(),
 });
 
 export type LiberacaoFormData = z.infer<typeof liberacaoSchema>;

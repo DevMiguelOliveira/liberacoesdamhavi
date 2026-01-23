@@ -32,6 +32,7 @@ interface Liberacao {
   data_fim: string;
   status: "ativo" | "expirado";
   criado_em: string;
+  observacoes?: string;
 }
 
 export default function Historico() {
@@ -138,6 +139,7 @@ export default function Historico() {
                     <TableHead className="pl-6">Quadra/Lote</TableHead>
                     <TableHead>Nome</TableHead>
                     <TableHead>CPF</TableHead>
+                    <TableHead>Obs</TableHead>
                     <TableHead>Tipo</TableHead>
                     <TableHead>Período</TableHead>
                     <TableHead>Status</TableHead>
@@ -169,6 +171,7 @@ export default function Historico() {
                       </TableCell>
                       <TableCell className="font-medium">{lib.nome_pessoa}</TableCell>
                       <TableCell>{formatCPF(lib.cpf)}</TableCell>
+                      <TableCell className="max-w-[200px] truncate text-muted-foreground" title={lib.observacoes}>{lib.observacoes || "-"}</TableCell>
                       <TableCell>
                         <Badge
                           variant="secondary"
