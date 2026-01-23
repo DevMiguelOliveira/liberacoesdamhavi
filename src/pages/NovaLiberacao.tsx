@@ -108,7 +108,7 @@ export default function NovaLiberacao() {
             Dados da Liberação
           </CardTitle>
           <CardDescription>
-            Preencha os dados do visitante e o período de acesso
+            Preencha os dados do Visitante ou Prestador e o período de acesso:
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-6">
@@ -181,37 +181,41 @@ export default function NovaLiberacao() {
             </div>
 
             {/* Quadra e Lote */}
-            <div className="grid gap-6 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="quadra" className="flex items-center gap-2 text-primary uppercase text-xs font-bold tracking-wider">
-                  <MapPin className="h-3.5 w-3.5" />
-                  Quadra *
-                </Label>
-                <Input
-                  id="quadra"
-                  placeholder="Ex: A"
-                  {...register("quadra")}
-                  className="bg-background"
-                />
-                {errors.quadra && (
-                  <p className="text-sm text-destructive">{errors.quadra.message}</p>
-                )}
+            <div className="bg-secondary/30 p-4 rounded-lg border border-secondary">
+              <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-primary">
+                <MapPin className="h-4 w-4" />
+                Destino do Acesso
               </div>
+              <div className="grid gap-6 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="quadra" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Quadra *
+                  </Label>
+                  <Input
+                    id="quadra"
+                    placeholder="Ex: A"
+                    {...register("quadra")}
+                    className="bg-background font-medium text-lg"
+                  />
+                  {errors.quadra && (
+                    <p className="text-sm text-destructive">{errors.quadra.message}</p>
+                  )}
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="lote" className="flex items-center gap-2 text-primary uppercase text-xs font-bold tracking-wider">
-                  <MapPin className="h-3.5 w-3.5" />
-                  Lote *
-                </Label>
-                <Input
-                  id="lote"
-                  placeholder="Ex: 15"
-                  {...register("lote")}
-                  className="bg-background"
-                />
-                {errors.lote && (
-                  <p className="text-sm text-destructive">{errors.lote.message}</p>
-                )}
+                <div className="space-y-2">
+                  <Label htmlFor="lote" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Lote *
+                  </Label>
+                  <Input
+                    id="lote"
+                    placeholder="Ex: 15"
+                    {...register("lote")}
+                    className="bg-background font-medium text-lg"
+                  />
+                  {errors.lote && (
+                    <p className="text-sm text-destructive">{errors.lote.message}</p>
+                  )}
+                </div>
               </div>
             </div>
 

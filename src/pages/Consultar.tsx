@@ -301,7 +301,12 @@ export default function Consultar() {
                           {lib.tipo_acesso === "visitante" ? "Visitante" : "Prestador"}
                         </Badge>
                       </TableCell>
-                      <TableCell>{lib.quadra}/{lib.lote}</TableCell>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span className="font-bold text-base">Q. {lib.quadra}</span>
+                          <span className="text-xs text-muted-foreground">Lote {lib.lote}</span>
+                        </div>
+                      </TableCell>
                       <TableCell>
                         {format(new Date(lib.data_inicio + "T00:00:00"), "dd/MM/yyyy")}
                       </TableCell>
