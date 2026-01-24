@@ -221,6 +221,7 @@ export default function Dashboard() {
                   <TableRow>
                     <TableHead>Destino</TableHead>
                     <TableHead>Nome</TableHead>
+                    <TableHead>Observações</TableHead>
                     <TableHead>Tipo</TableHead>
                     <TableHead>Validade</TableHead>
                     <TableHead>Status</TableHead>
@@ -251,6 +252,9 @@ export default function Dashboard() {
                         </div>
                       </TableCell>
                       <TableCell className="font-medium">{lib.nome_pessoa}</TableCell>
+                      <TableCell className="max-w-[200px] truncate" title={lib.observacoes}>
+                        {lib.observacoes || "-"}
+                      </TableCell>
                       <TableCell>
                         <Badge
                           variant="secondary"
