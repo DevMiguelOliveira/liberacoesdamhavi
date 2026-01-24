@@ -34,6 +34,7 @@ create table public.liberacoes (
   lote text not null,
   data_inicio date not null,
   data_fim date not null,
+  observacoes text null,
   status public.status_liberacao not null default 'ativo'::status_liberacao,
   criado_em timestamp with time zone null default now(),
   constraint liberacoes_pkey primary key (id),
