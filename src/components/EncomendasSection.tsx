@@ -47,7 +47,10 @@ export default function EncomendasSection() {
 
         const today = new Date();
         const start = startOfDay(today).toISOString();
-        const end = endOfDay(today).toISOString();
+        // Estender o final do dia em 4 horas para garantir que diferenças de fuso horário não escondam registros do final do dia
+        const endData = endOfDay(today);
+        endData.setHours(endData.getHours() + 4);
+        const end = endData.toISOString();
 
         const { data, error } = await supabase
             .from("encomendas")
