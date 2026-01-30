@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, History, Users, Phone, MessageCircle, Loader2, Trash2, Monitor } from "lucide-react";
+import { Plus, Search, History, Users, Phone, MessageCircle, Loader2, Trash2, Monitor, Package } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -180,6 +180,13 @@ export default function Dashboard() {
       path: "/historico",
       variant: "outline" as const,
     },
+    {
+      title: "Histórico de Encomendas",
+      description: "Ver todas as encomendas registradas",
+      icon: Package,
+      path: "/historico-encomendas",
+      variant: "outline" as const,
+    },
   ];
 
   const handleCreateShortcut = () => {
@@ -230,7 +237,7 @@ export default function Dashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {menuItems.map((item) => (
           <Card
             key={item.path}

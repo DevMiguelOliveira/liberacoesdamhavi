@@ -168,7 +168,7 @@ export default function EncomendasSection() {
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                             type="text"
-                            placeholder="Buscar por entregador, empresa, quadra ou lote..."
+                            placeholder="Buscar por nome do entregador ou empresa..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="pl-10"
