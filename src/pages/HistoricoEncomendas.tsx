@@ -24,8 +24,7 @@ interface Encomenda {
     id: string;
     nome_entregador: string;
     empresa: string;
-    quadra: string;
-    lote: string;
+    destino: string;
     criado_em: string;
 }
 
@@ -83,9 +82,7 @@ export default function HistoricoEncomendas() {
         const searchLower = searchTerm.toLowerCase();
         return (
             encomenda.nome_entregador.toLowerCase().includes(searchLower) ||
-            encomenda.empresa.toLowerCase().includes(searchLower) ||
-            encomenda.quadra.toLowerCase().includes(searchLower) ||
-            encomenda.lote.toLowerCase().includes(searchLower)
+            encomenda.empresa.toLowerCase().includes(searchLower)
         );
     });
 
@@ -159,10 +156,9 @@ export default function HistoricoEncomendas() {
                                                 </Badge>
                                             </TableCell>
                                             <TableCell>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-xs font-semibold text-muted-foreground uppercase">Q/L:</span>
-                                                    <span className="font-mono text-sm">{encomenda.quadra} / {encomenda.lote}</span>
-                                                </div>
+                                                <Badge variant="outline" className="bg-white/50 text-muted-foreground">
+                                                    {encomenda.destino}
+                                                </Badge>
                                             </TableCell>
                                             <TableCell className="text-muted-foreground text-sm">
                                                 {format(new Date(encomenda.criado_em), "dd/MM/yyyy HH:mm")}

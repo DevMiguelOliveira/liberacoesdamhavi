@@ -9,8 +9,7 @@ CREATE TABLE public.encomendas (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   nome_entregador TEXT NOT NULL,
   empresa TEXT NOT NULL,
-  quadra TEXT NOT NULL, -- Será preenchido com 'CON999' pelo front-end
-  lote TEXT NOT NULL,   -- Será preenchido com 'CON999' pelo front-end
+  destino TEXT NOT NULL DEFAULT 'CON999', -- Substitui quadra e lote
   criado_em TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   admin_id UUID REFERENCES public.admins(id) ON DELETE SET NULL
 );

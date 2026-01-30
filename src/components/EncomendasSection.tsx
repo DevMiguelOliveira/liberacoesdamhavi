@@ -24,8 +24,7 @@ interface Encomenda {
     id: string;
     nome_entregador: string;
     empresa: string;
-    quadra: string;
-    lote: string;
+    destino: string;
     criado_em: string;
 }
 
@@ -40,9 +39,8 @@ export default function EncomendasSection() {
     const [empresaSelecionada, setEmpresaSelecionada] = useState("");
     const [empresaManual, setEmpresaManual] = useState("");
 
-    // Quadra e Lote fixos para condomínio
-    const quadraFixa = "CON999";
-    const loteFixo = "CON999";
+    // Destino fixo para condomínio
+    const destinoFixo = "CON999";
 
     const fetchEncomendas = async () => {
         setIsLoading(true);
@@ -90,7 +88,6 @@ export default function EncomendasSection() {
         const empresaFinal = empresaSelecionada === "outra" ? empresaManual : empresaSelecionada;
 
         // Validação básica
-        // Validação básica
         if (!nomeEntregador || !empresaFinal) {
             toast.error("Preencha todos os campos obrigatórios");
             return;
@@ -101,8 +98,7 @@ export default function EncomendasSection() {
             .insert([{
                 nome_entregador: nomeEntregador,
                 empresa: empresaFinal,
-                quadra: quadraFixa,
-                lote: loteFixo
+                destino: destinoFixo
             }]);
 
         if (error) {
@@ -147,9 +143,7 @@ export default function EncomendasSection() {
         const searchLower = searchTerm.toLowerCase();
         return (
             encomenda.nome_entregador.toLowerCase().includes(searchLower) ||
-            encomenda.empresa.toLowerCase().includes(searchLower) ||
-            encomenda.quadra.toLowerCase().includes(searchLower) ||
-            encomenda.lote.toLowerCase().includes(searchLower)
+            encomenda.empresa.toLowerCase().includes(searchLower)
         );
     });
 
@@ -184,7 +178,7 @@ export default function EncomendasSection() {
                                 Registrar Nova Encomenda
                             </h3>
                             <Badge variant="outline" className="bg-white text-xs font-normal text-muted-foreground border-slate-200">
-                                Destino: {quadraFixa}
+                                Destino: {destinoFixo}
                             </Badge>
                         </div>
 
@@ -264,16 +258,9 @@ export default function EncomendasSection() {
                                                 </Badge>
                                             </TableCell>
                                             <TableCell>
-                                                <div className="flex items-center gap-2">
-                                                    <div className="flex flex-col items-center justify-center bg-blue-100 p-1 px-2 rounded-md border border-blue-300 shadow-sm min-w-[3.5rem]">
-                                                        <span className="text-[0.6rem] font-bold text-black uppercase tracking-widest">Quadra</span>
-                                                        <span className="text-lg font-black text-blue-900">{encomenda.quadra}</span>
-                                                    </div>
-                                                    <div className="flex flex-col items-center justify-center bg-blue-100 p-1 px-2 rounded-md border border-blue-300 shadow-sm min-w-[3.5rem]">
-                                                        <span className="text-[0.6rem] font-bold text-gray-700 uppercase tracking-widest">Lote</span>
-                                                        <span className="text-lg font-black text-blue-900">{encomenda.lote}</span>
-                                                    </div>
-                                                </div>
+                                                <Badge variant="outline" className="bg-white/50 text-muted-foreground">
+                                                    {encomenda.destino}
+                                                </Badge>
                                             </TableCell>
                                             <TableCell className="text-muted-foreground text-sm">
                                                 {format(new Date(encomenda.criado_em), "dd/MM/yyyy HH:mm")}
