@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Plus, Search, History, Users, Phone, MessageCircle, Loader2, Trash2, Monitor } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
@@ -42,6 +43,7 @@ export default function Dashboard() {
   const [todayLiberacoes, setTodayLiberacoes] = useState<Liberacao[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [liberacaoToDelete, setLiberacaoToDelete] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleDelete = async () => {
     if (!liberacaoToDelete) return;
@@ -171,6 +173,18 @@ export default function Dashboard() {
     });
   };
 
+  // Filtrar liberações com base no termo de busca
+  const filteredLiberacoes = todayLiberacoes.filter((lib) => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      lib.nome_pessoa.toLowerCase().includes(searchLower) ||
+      lib.quadra.toLowerCase().includes(searchLower) ||
+      lib.lote.toLowerCase().includes(searchLower) ||
+      lib.tipo_acesso.toLowerCase().includes(searchLower) ||
+      (lib.observacoes?.toLowerCase().includes(searchLower) || false)
+    );
+  });
+
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Welcome Section */}
@@ -228,6 +242,16 @@ export default function Dashboard() {
           <CardDescription>
             Visitantes e prestadores com acesso permitido para hoje
           </CardDescription>
+          <div className="relative mt-4">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Buscar por nome, quadra, lote, tipo ou observações..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -237,6 +261,10 @@ export default function Dashboard() {
           ) : todayLiberacoes.length === 0 ? (
             <p className="text-center text-muted-foreground py-6">
               Nenhuma liberação ativa encontrada para hoje.
+            </p>
+          ) : filteredLiberacoes.length === 0 ? (
+            <p className="text-center text-muted-foreground py-6">
+              Nenhuma liberação encontrada com o termo "{searchTerm}".
             </p>
           ) : (
             <div className="overflow-x-auto">
@@ -254,7 +282,7 @@ export default function Dashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {todayLiberacoes.map((lib) => (
+                  {filteredLiberacoes.map((lib) => (
                     <TableRow
                       key={lib.id}
                       className={
