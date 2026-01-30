@@ -139,9 +139,9 @@ export default function HistoricoEncomendas() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
+                                        <TableHead>Destino</TableHead>
                                         <TableHead>Nome do Entregador</TableHead>
                                         <TableHead>Empresa</TableHead>
-                                        <TableHead>Destino</TableHead>
                                         <TableHead>Data/Hora</TableHead>
                                         <TableHead className="w-[100px]">Ações</TableHead>
                                     </TableRow>
@@ -149,15 +149,15 @@ export default function HistoricoEncomendas() {
                                 <TableBody>
                                     {filteredEncomendas.map((encomenda) => (
                                         <TableRow key={encomenda.id} className="hover:bg-slate-50">
+                                            <TableCell>
+                                                <Badge variant="outline" className="bg-slate-100 font-normal">
+                                                    {encomenda.destino}
+                                                </Badge>
+                                            </TableCell>
                                             <TableCell className="font-medium">{encomenda.nome_entregador}</TableCell>
                                             <TableCell>
                                                 <Badge variant="outline" className="bg-slate-100 font-normal">
                                                     {encomenda.empresa}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge variant="outline" className="bg-white/50 text-muted-foreground">
-                                                    {encomenda.destino}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-muted-foreground text-sm">

@@ -241,9 +241,9 @@ export default function EncomendasSection() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
+                                        <TableHead>Destino</TableHead>
                                         <TableHead>Nome do Entregador</TableHead>
                                         <TableHead>Empresa</TableHead>
-                                        <TableHead>Destino</TableHead>
                                         <TableHead>Data/Hora</TableHead>
                                         <TableHead>Remover</TableHead>
                                     </TableRow>
@@ -251,15 +251,15 @@ export default function EncomendasSection() {
                                 <TableBody>
                                     {filteredEncomendas.map((encomenda) => (
                                         <TableRow key={encomenda.id} className="bg-orange-50/50 hover:bg-orange-100/50">
+                                            <TableCell>
+                                                <Badge variant="outline" className="bg-white/50 text-muted-foreground">
+                                                    {encomenda.destino}
+                                                </Badge>
+                                            </TableCell>
                                             <TableCell className="font-medium">{encomenda.nome_entregador}</TableCell>
                                             <TableCell>
                                                 <Badge variant="secondary" className="bg-purple-200 text-purple-900 hover:bg-purple-300">
                                                     {encomenda.empresa}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge variant="outline" className="bg-white/50 text-muted-foreground">
-                                                    {encomenda.destino}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-muted-foreground text-sm">
