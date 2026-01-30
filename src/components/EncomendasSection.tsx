@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Loader2, Trash2, Package, Plus } from "lucide-react";
 import { format } from "date-fns";
 import {
@@ -38,11 +39,14 @@ export default function EncomendasSection() {
 
     // Estados do formulário
     const [nomeEntregador, setNomeEntregador] = useState("");
-    const [empresa, setEmpresa] = useState("");
+    const [empresaSelecionada, setEmpresaSelecionada] = useState("");
+    const [empresaManual, setEmpresaManual] = useState("");
     const [codigo, setCodigo] = useState("");
-    const [quadra, setQuadra] = useState("");
-    const [lote, setLote] = useState("");
     const [status, setStatus] = useState("Entregue");
+
+    // Quadra e Lote fixos para condomínio
+    const quadraFixa = "CON999";
+    const loteFixo = "CON999";
 
     const fetchEncomendas = async () => {
         setIsLoading(true);
@@ -86,9 +90,12 @@ export default function EncomendasSection() {
     };
 
     const handleAddEncomenda = async () => {
+        // Determinar qual nome de empresa usar
+        const empresaFinal = empresaSelecionada === "outra" ? empresaManual : empresaSelecionada;
+
         // Validação básica
-        if (!nomeEntregador || !empresa || !codigo || !quadra || !lote) {
-            toast.error("Preencha todos os campos");
+        if (!nomeEntregador || !empresaFinal || !codigo) {
+            toast.error("Preencha todos os campos obrigatórios");
             return;
         }
 
@@ -96,10 +103,10 @@ export default function EncomendasSection() {
             .from("encomendas")
             .insert([{
                 nome_entregador: nomeEntregador,
-                empresa: empresa,
+                empresa: empresaFinal,
                 codigo: codigo,
-                quadra: quadra,
-                lote: lote,
+                quadra: quadraFixa,
+                lote: loteFixo,
                 status: status
             }]);
 
@@ -110,10 +117,9 @@ export default function EncomendasSection() {
             toast.success("Encomenda registrada com sucesso");
             // Limpar formulário
             setNomeEntregador("");
-            setEmpresa("");
+            setEmpresaSelecionada("");
+            setEmpresaManual("");
             setCodigo("");
-            setQuadra("");
-            setLote("");
             setStatus("Entregue");
             fetchEncomendas();
         }
@@ -190,11 +196,32 @@ export default function EncomendasSection() {
                                 onChange={(e) => setNomeEntregador(e.target.value)}
                                 className="md:col-span-2"
                             />
-                            <Input
-                                placeholder="Empresa"
-                                value={empresa}
-                                onChange={(e) => setEmpresa(e.target.value)}
-                            />
+
+                            {/* Select de Empresa */}
+                            <div className="flex flex-col gap-2">
+                                <Select value={empresaSelecionada} onValueChange={setEmpresaSelecionada}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Selecione a empresa" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Shopee">Shopee</SelectItem>
+                                        <SelectItem value="Mercado Livre">Mercado Livre</SelectItem>
+                                        <SelectItem value="Amazon">Amazon</SelectItem>
+                                        <SelectItem value="Magalu">Magalu</SelectItem>
+                                        <SelectItem value="Correios">Correios</SelectItem>
+                                        <SelectItem value="outra">Outra (Manual)</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                {empresaSelecionada === "outra" && (
+                                    <Input
+                                        placeholder="Digite o nome da empresa"
+                                        value={empresaManual}
+                                        onChange={(e) => setEmpresaManual(e.target.value)}
+                                        className="mt-1"
+                                    />
+                                )}
+                            </div>
+
                             <Input
                                 placeholder="Código"
                                 value={codigo}
@@ -202,15 +229,15 @@ export default function EncomendasSection() {
                             />
                             <Input
                                 placeholder="Quadra"
-                                value={quadra}
-                                onChange={(e) => setQuadra(e.target.value)}
-                                className="w-24"
+                                value={quadraFixa}
+                                disabled
+                                className="w-24 bg-muted text-muted-foreground"
                             />
                             <Input
                                 placeholder="Lote"
-                                value={lote}
-                                onChange={(e) => setLote(e.target.value)}
-                                className="w-24"
+                                value={loteFixo}
+                                disabled
+                                className="w-24 bg-muted text-muted-foreground"
                             />
                         </div>
                         <div className="flex gap-3 mt-3">
@@ -226,83 +253,82 @@ export default function EncomendasSection() {
                             </Button>
                         </div>
                     </div>
-                </div>
-            </CardHeader>
-            <CardContent>
-                {isLoading ? (
-                    <div className="flex justify-center py-6">
-                        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                    </div>
-                ) : encomendas.length === 0 ? (
-                    <p className="text-center text-muted-foreground py-6">
-                        Nenhuma encomenda registrada hoje.
-                    </p>
-                ) : filteredEncomendas.length === 0 ? (
-                    <p className="text-center text-muted-foreground py-6">
-                        Nenhuma encomenda encontrada com o termo "{searchTerm}".
-                    </p>
-                ) : (
-                    <div className="overflow-x-auto">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Nome do Entregador</TableHead>
-                                    <TableHead>Empresa</TableHead>
-                                    <TableHead>Código</TableHead>
-                                    <TableHead>Destino</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Data/Hora</TableHead>
-                                    <TableHead>Remover</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {filteredEncomendas.map((encomenda) => (
-                                    <TableRow key={encomenda.id} className="bg-orange-50/50 hover:bg-orange-100/50">
-                                        <TableCell className="font-medium">{encomenda.nome_entregador}</TableCell>
-                                        <TableCell>
-                                            <Badge variant="secondary" className="bg-purple-200 text-purple-900 hover:bg-purple-300">
-                                                {encomenda.empresa}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell className="font-mono font-bold">{encomenda.codigo}</TableCell>
-                                        <TableCell>
-                                            <div className="flex items-center gap-2">
-                                                <div className="flex flex-col items-center justify-center bg-blue-100 p-1 px-2 rounded-md border border-blue-300 shadow-sm min-w-[3.5rem]">
-                                                    <span className="text-[0.6rem] font-bold text-black uppercase tracking-widest">Quadra</span>
-                                                    <span className="text-lg font-black text-blue-900">{encomenda.quadra}</span>
-                                                </div>
-                                                <div className="flex flex-col items-center justify-center bg-blue-100 p-1 px-2 rounded-md border border-blue-300 shadow-sm min-w-[3.5rem]">
-                                                    <span className="text-[0.6rem] font-bold text-gray-700 uppercase tracking-widest">Lote</span>
-                                                    <span className="text-lg font-black text-blue-900">{encomenda.lote}</span>
-                                                </div>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge className="bg-green-600 hover:bg-green-700">
-                                                {encomenda.status}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell className="text-muted-foreground text-sm">
-                                            {format(new Date(encomenda.criado_em), "dd/MM/yyyy HH:mm")}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                onClick={() => setEncomendaToDelete(encomenda.id)}
-                                                className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </TableCell>
+                </CardHeader>
+                <CardContent>
+                    {isLoading ? (
+                        <div className="flex justify-center py-6">
+                            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                        </div>
+                    ) : encomendas.length === 0 ? (
+                        <p className="text-center text-muted-foreground py-6">
+                            Nenhuma encomenda registrada hoje.
+                        </p>
+                    ) : filteredEncomendas.length === 0 ? (
+                        <p className="text-center text-muted-foreground py-6">
+                            Nenhuma encomenda encontrada com o termo "{searchTerm}".
+                        </p>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Nome do Entregador</TableHead>
+                                        <TableHead>Empresa</TableHead>
+                                        <TableHead>Código</TableHead>
+                                        <TableHead>Destino</TableHead>
+                                        <TableHead>Status</TableHead>
+                                        <TableHead>Data/Hora</TableHead>
+                                        <TableHead>Remover</TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
-                )}
-            </CardContent>
-        </Card >
+                                </TableHeader>
+                                <TableBody>
+                                    {filteredEncomendas.map((encomenda) => (
+                                        <TableRow key={encomenda.id} className="bg-orange-50/50 hover:bg-orange-100/50">
+                                            <TableCell className="font-medium">{encomenda.nome_entregador}</TableCell>
+                                            <TableCell>
+                                                <Badge variant="secondary" className="bg-purple-200 text-purple-900 hover:bg-purple-300">
+                                                    {encomenda.empresa}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell className="font-mono font-bold">{encomenda.codigo}</TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center gap-2">
+                                                    <div className="flex flex-col items-center justify-center bg-blue-100 p-1 px-2 rounded-md border border-blue-300 shadow-sm min-w-[3.5rem]">
+                                                        <span className="text-[0.6rem] font-bold text-black uppercase tracking-widest">Quadra</span>
+                                                        <span className="text-lg font-black text-blue-900">{encomenda.quadra}</span>
+                                                    </div>
+                                                    <div className="flex flex-col items-center justify-center bg-blue-100 p-1 px-2 rounded-md border border-blue-300 shadow-sm min-w-[3.5rem]">
+                                                        <span className="text-[0.6rem] font-bold text-gray-700 uppercase tracking-widest">Lote</span>
+                                                        <span className="text-lg font-black text-blue-900">{encomenda.lote}</span>
+                                                    </div>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge className="bg-green-600 hover:bg-green-700">
+                                                    {encomenda.status}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell className="text-muted-foreground text-sm">
+                                                {format(new Date(encomenda.criado_em), "dd/MM/yyyy HH:mm")}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => setEncomendaToDelete(encomenda.id)}
+                                                    className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
+                    )}
+                </CardContent>
+            </Card >
 
             <AlertDialog open={!!encomendaToDelete} onOpenChange={() => setEncomendaToDelete(null)}>
                 <AlertDialogContent>
