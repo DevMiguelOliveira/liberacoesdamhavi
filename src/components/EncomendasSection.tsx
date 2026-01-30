@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
-interface Entrega {
+interface Encomenda {
     id: string;
     nome_entregador: string;
     empresa: string;
@@ -30,62 +30,68 @@ interface Entrega {
     criado_em: string;
 }
 
-export default function EntregasSection() {
-    const [entregas, setEntregas] = useState<Entrega[]>([]);
+export default function EncomendasSection() {
+    const [encomendas, setEncomendas] = useState<Encomenda[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
-    const [entregaToDelete, setEntregaToDelete] = useState<string | null>(null);
+    const [encomendaToDelete, setEncomendaToDelete] = useState<string | null>(null);
 
-    const fetchEntregas = async () => {
+    const fetchEncomendas = async () => {
         setIsLoading(true);
 
+        // Pegar data de hoje no formato YYYY-MM-DD
+        const today = new Date();
+        const todayStr = format(today, "yyyy-MM-dd");
+
         const { data, error } = await supabase
-            .from("entregas")
+            .from("encomendas")
             .select("*")
+            .gte("criado_em", `${todayStr}T00:00:00`)
+            .lte("criado_em", `${todayStr}T23:59:59`)
             .order("criado_em", { ascending: false });
 
         if (error) {
-            console.error("Erro ao buscar entregas:", error);
-            setEntregas([]);
+            console.error("Erro ao buscar encomendas:", error);
+            setEncomendas([]);
         } else {
-            setEntregas(data || []);
+            setEncomendas(data || []);
         }
         setIsLoading(false);
     };
 
     const handleDelete = async () => {
-        if (!entregaToDelete) return;
+        if (!encomendaToDelete) return;
 
         const { error } = await supabase
-            .from("entregas")
+            .from("encomendas")
             .delete()
-            .eq("id", entregaToDelete);
+            .eq("id", encomendaToDelete);
 
         if (error) {
-            toast.error("Erro ao excluir entrega");
+            toast.error("Erro ao excluir encomenda");
             console.error(error);
         } else {
-            toast.success("Entrega excluída com sucesso");
-            fetchEntregas();
+            toast.success("Encomenda excluída com sucesso");
+            fetchEncomendas();
         }
-        setEntregaToDelete(null);
+        setEncomendaToDelete(null);
     };
 
     useEffect(() => {
-        fetchEntregas();
+        fetchEncomendas();
 
         // Realtime subscription
         const channel = supabase
-            .channel("entregas-changes")
+            .channel("encomendas-changes")
             .on(
                 "postgres_changes",
                 {
                     event: "*",
                     schema: "public",
-                    table: "entregas",
+                    table: "encomendas",
                 },
                 () => {
-                    fetchEntregas();
+                    fetchEncomendas();
                 }
             )
             .subscribe();
@@ -95,15 +101,15 @@ export default function EntregasSection() {
         };
     }, []);
 
-    // Filtrar entregas
-    const filteredEntregas = entregas.filter((entrega) => {
+    // Filtrar encomendas
+    const filteredEncomendas = encomendas.filter((encomenda) => {
         const searchLower = searchTerm.toLowerCase();
         return (
-            entrega.nome_entregador.toLowerCase().includes(searchLower) ||
-            entrega.empresa.toLowerCase().includes(searchLower) ||
-            entrega.codigo.toLowerCase().includes(searchLower) ||
-            entrega.quadra.toLowerCase().includes(searchLower) ||
-            entrega.lote.toLowerCase().includes(searchLower)
+            encomenda.nome_entregador.toLowerCase().includes(searchLower) ||
+            encomenda.empresa.toLowerCase().includes(searchLower) ||
+            encomenda.codigo.toLowerCase().includes(searchLower) ||
+            encomenda.quadra.toLowerCase().includes(searchLower) ||
+            encomenda.lote.toLowerCase().includes(searchLower)
         );
     });
 
@@ -113,10 +119,10 @@ export default function EntregasSection() {
                 <CardHeader>
                     <CardTitle className="text-xl flex items-center gap-2">
                         <Package className="h-5 w-5 text-primary" />
-                        ENTREGAS / ENCOMENDAS HOJE
+                        ENCOMENDAS HOJE
                     </CardTitle>
                     <CardDescription>
-                        Registro de entregas e encomendas recebidas
+                        Registro de encomendas recebidas
                     </CardDescription>
                     <div className="relative mt-4">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -134,13 +140,13 @@ export default function EntregasSection() {
                         <div className="flex justify-center py-6">
                             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                         </div>
-                    ) : entregas.length === 0 ? (
+                    ) : encomendas.length === 0 ? (
                         <p className="text-center text-muted-foreground py-6">
-                            Nenhuma entrega registrada hoje.
+                            Nenhuma encomenda registrada hoje.
                         </p>
-                    ) : filteredEntregas.length === 0 ? (
+                    ) : filteredEncomendas.length === 0 ? (
                         <p className="text-center text-muted-foreground py-6">
-                            Nenhuma entrega encontrada com o termo "{searchTerm}".
+                            Nenhuma encomenda encontrada com o termo "{searchTerm}".
                         </p>
                     ) : (
                         <div className="overflow-x-auto">
@@ -157,40 +163,40 @@ export default function EntregasSection() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {filteredEntregas.map((entrega) => (
-                                        <TableRow key={entrega.id} className="bg-orange-50/50 hover:bg-orange-100/50">
-                                            <TableCell className="font-medium">{entrega.nome_entregador}</TableCell>
+                                    {filteredEncomendas.map((encomenda) => (
+                                        <TableRow key={encomenda.id} className="bg-orange-50/50 hover:bg-orange-100/50">
+                                            <TableCell className="font-medium">{encomenda.nome_entregador}</TableCell>
                                             <TableCell>
                                                 <Badge variant="secondary" className="bg-purple-200 text-purple-900 hover:bg-purple-300">
-                                                    {entrega.empresa}
+                                                    {encomenda.empresa}
                                                 </Badge>
                                             </TableCell>
-                                            <TableCell className="font-mono font-bold">{entrega.codigo}</TableCell>
+                                            <TableCell className="font-mono font-bold">{encomenda.codigo}</TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-2">
                                                     <div className="flex flex-col items-center justify-center bg-blue-100 p-1 px-2 rounded-md border border-blue-300 shadow-sm min-w-[3.5rem]">
                                                         <span className="text-[0.6rem] font-bold text-black uppercase tracking-widest">Quadra</span>
-                                                        <span className="text-lg font-black text-blue-900">{entrega.quadra}</span>
+                                                        <span className="text-lg font-black text-blue-900">{encomenda.quadra}</span>
                                                     </div>
                                                     <div className="flex flex-col items-center justify-center bg-blue-100 p-1 px-2 rounded-md border border-blue-300 shadow-sm min-w-[3.5rem]">
                                                         <span className="text-[0.6rem] font-bold text-gray-700 uppercase tracking-widest">Lote</span>
-                                                        <span className="text-lg font-black text-blue-900">{entrega.lote}</span>
+                                                        <span className="text-lg font-black text-blue-900">{encomenda.lote}</span>
                                                     </div>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
                                                 <Badge className="bg-green-600 hover:bg-green-700">
-                                                    {entrega.status}
+                                                    {encomenda.status}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-muted-foreground text-sm">
-                                                {format(new Date(entrega.criado_em), "dd/MM/yyyy HH:mm")}
+                                                {format(new Date(encomenda.criado_em), "dd/MM/yyyy HH:mm")}
                                             </TableCell>
                                             <TableCell>
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    onClick={() => setEntregaToDelete(entrega.id)}
+                                                    onClick={() => setEncomendaToDelete(encomenda.id)}
                                                     className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
                                                 >
                                                     <Trash2 className="h-4 w-4" />
@@ -205,12 +211,12 @@ export default function EntregasSection() {
                 </CardContent>
             </Card>
 
-            <AlertDialog open={!!entregaToDelete} onOpenChange={() => setEntregaToDelete(null)}>
+            <AlertDialog open={!!encomendaToDelete} onOpenChange={() => setEncomendaToDelete(null)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Excluir Entrega?</AlertDialogTitle>
+                        <AlertDialogTitle>Excluir Encomenda?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Tem certeza que deseja excluir este registro de entrega? Esta ação não pode ser desfeita.
+                            Tem certeza que deseja excluir este registro de encomenda? Esta ação não pode ser desfeita.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

@@ -23,7 +23,7 @@ import {
 import { toast } from "sonner";
 
 import damhaLogo from "@/assets/logo_damha_nova.jpg";
-import EntregasSection from "@/components/EntregasSection";
+import EncomendasSection from "@/components/EncomendasSection";
 
 interface Liberacao {
   id: string;
@@ -374,8 +374,8 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      {/* Entregas / Encomendas Section */}
-      <EntregasSection />
+      {/* Encomendas Section */}
+      <EncomendasSection />
 
       <AlertDialog open={!!liberacaoToDelete} onOpenChange={() => setLiberacaoToDelete(null)}>
         <AlertDialogContent>
