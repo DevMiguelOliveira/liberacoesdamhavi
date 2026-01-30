@@ -6,11 +6,11 @@
 -- Se o usuário já foi criado antes, ele precisa ser inserido manualmente.
 
 INSERT INTO public.admins (user_id, login, nome)
-SELECT id, 'admin', 'Administrador Global'
+SELECT id, 'portaria', 'Portaria Social'
 FROM auth.users
-WHERE email = 'admin@damhavi.com' -- O email DEVE bater exatamente com o que está no Authentication
+WHERE email = 'portaria@damhavi.com' -- O email DEVE bater exatamente com o que está no Authentication
 ON CONFLICT (user_id) DO UPDATE
-SET login = 'admin', nome = 'Administrador Global';
+SET login = 'portaria', nome = 'Portaria Social';
 
 -- 2. Verificar se a inserção funcionou
 -- O comando abaixo deve retornar pelo menos uma linha

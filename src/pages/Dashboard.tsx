@@ -72,13 +72,37 @@ export default function Dashboard() {
       .select("*")
       .eq("status", "ativo")
       .lte("data_inicio", today)
-      .gte("data_fim", today)
-      .order("criado_em", { ascending: false });
+      .gte("data_fim", today);
 
     if (error) {
       console.error("Error fetching today's liberacoes:", error);
     } else {
-      setTodayLiberacoes(data || []);
+      // Ordenar por quadra e lote de forma alfanumérica
+      const sortedData = (data || []).sort((a, b) => {
+        // Função auxiliar para converter string em número se possível
+        const parseValue = (value: string) => {
+          const num = parseInt(value, 10);
+          return isNaN(num) ? value : num;
+        };
+
+        const quadraA = parseValue(a.quadra);
+        const quadraB = parseValue(b.quadra);
+
+        // Comparar quadras
+        if (quadraA < quadraB) return -1;
+        if (quadraA > quadraB) return 1;
+
+        // Se quadras são iguais, comparar lotes
+        const loteA = parseValue(a.lote);
+        const loteB = parseValue(b.lote);
+
+        if (loteA < loteB) return -1;
+        if (loteA > loteB) return 1;
+
+        return 0;
+      });
+
+      setTodayLiberacoes(sortedData);
     }
     setIsLoading(false);
   };
@@ -242,11 +266,11 @@ export default function Dashboard() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <div className="flex flex-col items-center justify-center bg-background/60 p-1 px-2 rounded-md border shadow-sm min-w-[3.5rem]">
-                            <span className="text-[0.6rem] font-bold text-muted-foreground uppercase tracking-widest">Quadra</span>
+                            <span className="text-[0.6rem] font-bold text-primary uppercase tracking-widest">Quadra</span>
                             <span className="text-lg font-black text-foreground">{lib.quadra}</span>
                           </div>
                           <div className="flex flex-col items-center justify-center bg-background/60 p-1 px-2 rounded-md border shadow-sm min-w-[3.5rem]">
-                            <span className="text-[0.6rem] font-bold text-muted-foreground uppercase tracking-widest">Lote</span>
+                            <span className="text-[0.6rem] font-bold text-primary uppercase tracking-widest">Lote</span>
                             <span className="text-lg font-black text-foreground">{lib.lote}</span>
                           </div>
                         </div>
