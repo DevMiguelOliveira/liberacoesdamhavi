@@ -307,11 +307,11 @@ export default function Dashboard() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <div className="flex flex-col items-center justify-center bg-background/60 p-1 px-2 rounded-md border shadow-sm min-w-[3.5rem]">
-                            <span className="text-[0.6rem] font-bold text-primary uppercase tracking-widest">Quadra</span>
+                            <span className="text-[0.6rem] font-bold text-blue-700 uppercase tracking-widest">Quadra</span>
                             <span className="text-lg font-black text-foreground">{lib.quadra}</span>
                           </div>
                           <div className="flex flex-col items-center justify-center bg-background/60 p-1 px-2 rounded-md border shadow-sm min-w-[3.5rem]">
-                            <span className="text-[0.6rem] font-bold text-primary uppercase tracking-widest">Lote</span>
+                            <span className="text-[0.6rem] font-bold text-blue-700 uppercase tracking-widest">Lote</span>
                             <span className="text-lg font-black text-foreground">{lib.lote}</span>
                           </div>
                         </div>
