@@ -75,9 +75,6 @@ export default function Consultar() {
     setIsLoading(true);
     setHasSearched(true);
 
-    // First, update expired status
-    await supabase.rpc("update_expired_liberacoes");
-
     let query = supabase
       .from("liberacoes")
       .select("*")

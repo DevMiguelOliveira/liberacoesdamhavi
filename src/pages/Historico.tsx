@@ -62,9 +62,6 @@ export default function Historico() {
   const fetchLiberacoes = async () => {
     setIsLoading(true);
 
-    // First, update expired status
-    await supabase.rpc("update_expired_liberacoes");
-
     const { data, error } = await supabase
       .from("liberacoes")
       .select("*")
