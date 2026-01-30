@@ -68,6 +68,8 @@ export default function Dashboard() {
     const todayDate = new Date();
     const today = format(todayDate, "yyyy-MM-dd");
 
+    console.log("Data de hoje:", today);
+
     // Fetch active liberacoes valid for today
     const { data, error } = await supabase
       .from("liberacoes")
@@ -75,6 +77,9 @@ export default function Dashboard() {
       .eq("status", "ativo")
       .lte("data_inicio", today)
       .gte("data_fim", today);
+
+    console.log("Liberações retornadas:", data);
+    console.log("Erro:", error);
 
     if (error) {
       console.error("Error fetching today's liberacoes:", error);
@@ -104,6 +109,7 @@ export default function Dashboard() {
         return 0;
       });
 
+      console.log("Liberações ordenadas:", sortedData);
       setTodayLiberacoes(sortedData);
     }
     setIsLoading(false);
