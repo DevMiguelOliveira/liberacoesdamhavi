@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Loader2, Trash2, Package, Plus } from "lucide-react";
-import { format } from "date-fns";
+import { format, startOfDay, endOfDay } from "date-fns";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -47,15 +47,15 @@ export default function EncomendasSection() {
     const fetchEncomendas = async () => {
         setIsLoading(true);
 
-        // Pegar data de hoje no formato YYYY-MM-DD
         const today = new Date();
-        const todayStr = format(today, "yyyy-MM-dd");
+        const start = startOfDay(today).toISOString();
+        const end = endOfDay(today).toISOString();
 
         const { data, error } = await supabase
             .from("encomendas")
             .select("*")
-            .gte("criado_em", `${todayStr}T00:00:00`)
-            .lte("criado_em", `${todayStr}T23:59:59`)
+            .gte("criado_em", start)
+            .lte("criado_em", end)
             .order("criado_em", { ascending: false });
 
         if (error) {
