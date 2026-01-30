@@ -64,6 +64,9 @@ export default function Dashboard() {
   };
 
   const fetchTodayLiberacoes = async () => {
+    console.log("🔄 Iniciando fetchTodayLiberacoes...");
+    setIsLoading(true);
+
     // Get today's date in YYYY-MM-DD format using local time (Brazil/System)
     const todayDate = new Date();
     const today = format(todayDate, "yyyy-MM-dd");
@@ -128,7 +131,8 @@ export default function Dashboard() {
           schema: "public",
           table: "liberacoes",
         },
-        () => {
+        (payload) => {
+          console.log("📡 Realtime event recebido:", payload);
           fetchTodayLiberacoes();
         }
       )
