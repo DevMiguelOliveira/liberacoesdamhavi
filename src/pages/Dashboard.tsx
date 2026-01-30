@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 
 import damhaLogo from "@/assets/logo_damha_nova.jpg";
+import EntregasSection from "@/components/EntregasSection";
 
 interface Liberacao {
   id: string;
@@ -35,6 +36,17 @@ interface Liberacao {
   status: "ativo" | "expirado";
   criado_em: string;
   observacoes?: string;
+}
+
+interface Entrega {
+  id: string;
+  nome_entregador: string;
+  empresa: string;
+  codigo: string;
+  quadra: string;
+  lote: string;
+  status: string;
+  criado_em: string;
 }
 
 export default function Dashboard() {
@@ -361,6 +373,9 @@ export default function Dashboard() {
           )}
         </CardContent>
       </Card>
+
+      {/* Entregas / Encomendas Section */}
+      <EntregasSection />
 
       <AlertDialog open={!!liberacaoToDelete} onOpenChange={() => setLiberacaoToDelete(null)}>
         <AlertDialogContent>
