@@ -86,35 +86,38 @@ export default function Dashboard() {
 
     if (error) {
       console.error("Error fetching today's liberacoes:", error);
-    } else {
-      // Ordenar por quadra e lote de forma alfanumérica
-      const sortedData = (data || []).sort((a, b) => {
-        // Função auxiliar para converter string em número se possível
-        const parseValue = (value: string) => {
-          const num = parseInt(value, 10);
-          return isNaN(num) ? value : num;
-        };
-
-        const quadraA = parseValue(a.quadra);
-        const quadraB = parseValue(b.quadra);
-
-        // Comparar quadras
-        if (quadraA < quadraB) return -1;
-        if (quadraA > quadraB) return 1;
-
-        // Se quadras são iguais, comparar lotes
-        const loteA = parseValue(a.lote);
-        const loteB = parseValue(b.lote);
-
-        if (loteA < loteB) return -1;
-        if (loteA > loteB) return 1;
-
-        return 0;
-      });
-
-      console.log("Liberações ordenadas:", sortedData);
-      setTodayLiberacoes(sortedData);
+      setTodayLiberacoes([]);
+      setIsLoading(false);
+      return;
     }
+
+    // Ordenar por quadra e lote de forma alfanumérica
+    const sortedData = (data || []).sort((a, b) => {
+      // Função auxiliar para converter string em número se possível
+      const parseValue = (value: string) => {
+        const num = parseInt(value, 10);
+        return isNaN(num) ? value : num;
+      };
+
+      const quadraA = parseValue(a.quadra);
+      const quadraB = parseValue(b.quadra);
+
+      // Comparar quadras
+      if (quadraA < quadraB) return -1;
+      if (quadraA > quadraB) return 1;
+
+      // Se quadras são iguais, comparar lotes
+      const loteA = parseValue(a.lote);
+      const loteB = parseValue(b.lote);
+
+      if (loteA < loteB) return -1;
+      if (loteA > loteB) return 1;
+
+      return 0;
+    });
+
+    console.log("Liberações ordenadas:", sortedData);
+    setTodayLiberacoes(sortedData);
     setIsLoading(false);
   };
 
