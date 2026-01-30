@@ -208,10 +208,13 @@ export default function Dashboard() {
   // Filtrar liberações com base no termo de busca
   const filteredLiberacoes = todayLiberacoes.filter((lib) => {
     const searchLower = searchTerm.toLowerCase();
+    const destinoCompleto = `${lib.quadra} ${lib.lote}`.toLowerCase();
+
     return (
       lib.nome_pessoa.toLowerCase().includes(searchLower) ||
       lib.quadra.toLowerCase().includes(searchLower) ||
       lib.lote.toLowerCase().includes(searchLower) ||
+      destinoCompleto.includes(searchLower) ||
       lib.tipo_acesso.toLowerCase().includes(searchLower) ||
       (lib.observacoes?.toLowerCase().includes(searchLower) || false)
     );
@@ -278,7 +281,7 @@ export default function Dashboard() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Buscar por nome, quadra, lote, tipo ou observações..."
+              placeholder="Buscar por nome, destino (quadra/lote), tipo ou observações..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
