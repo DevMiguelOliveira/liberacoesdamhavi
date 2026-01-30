@@ -146,7 +146,8 @@ export default function EncomendasSection() {
         const searchLower = searchTerm.toLowerCase();
         return (
             encomenda.nome_entregador.toLowerCase().includes(searchLower) ||
-            encomenda.empresa.toLowerCase().includes(searchLower)
+            encomenda.empresa.toLowerCase().includes(searchLower) ||
+            encomenda.destino.toLowerCase().includes(searchLower)
         );
     });
 
@@ -165,7 +166,7 @@ export default function EncomendasSection() {
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                             type="text"
-                            placeholder="Buscar por nome do entregador ou empresa..."
+                            placeholder="Buscar por entregador, empresa ou destino..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="pl-10"

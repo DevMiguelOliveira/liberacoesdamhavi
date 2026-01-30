@@ -82,7 +82,8 @@ export default function HistoricoEncomendas() {
         const searchLower = searchTerm.toLowerCase();
         return (
             encomenda.nome_entregador.toLowerCase().includes(searchLower) ||
-            encomenda.empresa.toLowerCase().includes(searchLower)
+            encomenda.empresa.toLowerCase().includes(searchLower) ||
+            encomenda.destino.toLowerCase().includes(searchLower)
         );
     });
 
@@ -106,7 +107,7 @@ export default function HistoricoEncomendas() {
                 </div>
                 <div className="flex items-center gap-2">
                     <Input
-                        placeholder="Buscar por entregador ou empresa..."
+                        placeholder="Buscar por entregador, empresa ou destino..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full md:w-64"
