@@ -176,23 +176,31 @@ export default function EncomendasSection() {
                     </div>
 
                     {/* Formulário inline para adicionar encomenda */}
-                    <div className="mt-6 p-4 bg-muted/30 rounded-lg border">
-                        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                            <Plus className="h-4 w-4" />
-                            Registrar Nova Encomenda
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <Input
-                                placeholder="Nome do Entregador"
-                                value={nomeEntregador}
-                                onChange={(e) => setNomeEntregador(e.target.value)}
-                                className="md:col-span-2"
-                            />
 
-                            {/* Select de Empresa */}
-                            <div className="flex flex-col gap-2">
+                    <div className="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-100 shadow-sm">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-sm font-semibold flex items-center gap-2 text-slate-700">
+                                <Plus className="h-4 w-4 text-primary" />
+                                Registrar Nova Encomenda
+                            </h3>
+                            <Badge variant="outline" className="bg-white text-xs font-normal text-muted-foreground border-slate-200">
+                                Destino: {quadraFixa}
+                            </Badge>
+                        </div>
+
+                        <div className="flex flex-col md:flex-row gap-3 items-start">
+                            <div className="flex-1 w-full">
+                                <Input
+                                    placeholder="Nome do Entregador"
+                                    value={nomeEntregador}
+                                    onChange={(e) => setNomeEntregador(e.target.value)}
+                                    className="bg-white border-slate-200 focus:border-primary"
+                                />
+                            </div>
+
+                            <div className="w-full md:w-64 flex flex-col gap-2">
                                 <Select value={empresaSelecionada} onValueChange={setEmpresaSelecionada}>
-                                    <SelectTrigger>
+                                    <SelectTrigger className="bg-white border-slate-200">
                                         <SelectValue placeholder="Selecione a empresa" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -209,30 +217,15 @@ export default function EncomendasSection() {
                                         placeholder="Digite o nome da empresa"
                                         value={empresaManual}
                                         onChange={(e) => setEmpresaManual(e.target.value)}
-                                        className="mt-1"
+                                        className="bg-white border-slate-200"
                                     />
                                 )}
                             </div>
 
-
-                            <div className="flex gap-2 items-start md:col-span-2">
-                                <Input
-                                    placeholder="Quadra"
-                                    value={quadraFixa}
-                                    disabled
-                                    className="w-24 bg-muted text-muted-foreground"
-                                />
-                                <Input
-                                    placeholder="Lote"
-                                    value={loteFixo}
-                                    disabled
-                                    className="w-24 bg-muted text-muted-foreground"
-                                />
-                                <Button onClick={handleAddEncomenda} className="gap-2 flex-1 ml-4">
-                                    <Plus className="h-4 w-4" />
-                                    Registrar
-                                </Button>
-                            </div>
+                            <Button onClick={handleAddEncomenda} className="gap-2 bg-primary hover:bg-primary/90 shadow-sm w-full md:w-auto min-w-[120px]">
+                                <Plus className="h-4 w-4" />
+                                Registrar
+                            </Button>
                         </div>
                     </div>
                 </CardHeader>
