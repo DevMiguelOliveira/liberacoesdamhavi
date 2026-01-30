@@ -24,10 +24,8 @@ interface Encomenda {
     id: string;
     nome_entregador: string;
     empresa: string;
-    codigo: string;
     quadra: string;
     lote: string;
-    status: string;
     criado_em: string;
 }
 
@@ -41,8 +39,6 @@ export default function EncomendasSection() {
     const [nomeEntregador, setNomeEntregador] = useState("");
     const [empresaSelecionada, setEmpresaSelecionada] = useState("");
     const [empresaManual, setEmpresaManual] = useState("");
-    const [codigo, setCodigo] = useState("");
-    const [status, setStatus] = useState("Entregue");
 
     // Quadra e Lote fixos para condomínio
     const quadraFixa = "CON999";
@@ -94,7 +90,8 @@ export default function EncomendasSection() {
         const empresaFinal = empresaSelecionada === "outra" ? empresaManual : empresaSelecionada;
 
         // Validação básica
-        if (!nomeEntregador || !empresaFinal || !codigo) {
+        // Validação básica
+        if (!nomeEntregador || !empresaFinal) {
             toast.error("Preencha todos os campos obrigatórios");
             return;
         }
@@ -104,10 +101,8 @@ export default function EncomendasSection() {
             .insert([{
                 nome_entregador: nomeEntregador,
                 empresa: empresaFinal,
-                codigo: codigo,
                 quadra: quadraFixa,
-                lote: loteFixo,
-                status: status
+                lote: loteFixo
             }]);
 
         if (error) {
@@ -119,8 +114,6 @@ export default function EncomendasSection() {
             setNomeEntregador("");
             setEmpresaSelecionada("");
             setEmpresaManual("");
-            setCodigo("");
-            setStatus("Entregue");
             fetchEncomendas();
         }
     };
@@ -155,7 +148,6 @@ export default function EncomendasSection() {
         return (
             encomenda.nome_entregador.toLowerCase().includes(searchLower) ||
             encomenda.empresa.toLowerCase().includes(searchLower) ||
-            encomenda.codigo.toLowerCase().includes(searchLower) ||
             encomenda.quadra.toLowerCase().includes(searchLower) ||
             encomenda.lote.toLowerCase().includes(searchLower)
         );
@@ -176,7 +168,7 @@ export default function EncomendasSection() {
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                             type="text"
-                            placeholder="Buscar por entregador, empresa, código, quadra ou lote..."
+                            placeholder="Buscar por entregador, empresa, quadra ou lote..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="pl-10"
@@ -189,7 +181,7 @@ export default function EncomendasSection() {
                             <Plus className="h-4 w-4" />
                             Registrar Nova Encomenda
                         </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <Input
                                 placeholder="Nome do Entregador"
                                 value={nomeEntregador}
@@ -222,35 +214,25 @@ export default function EncomendasSection() {
                                 )}
                             </div>
 
-                            <Input
-                                placeholder="Código"
-                                value={codigo}
-                                onChange={(e) => setCodigo(e.target.value)}
-                            />
-                            <Input
-                                placeholder="Quadra"
-                                value={quadraFixa}
-                                disabled
-                                className="w-24 bg-muted text-muted-foreground"
-                            />
-                            <Input
-                                placeholder="Lote"
-                                value={loteFixo}
-                                disabled
-                                className="w-24 bg-muted text-muted-foreground"
-                            />
-                        </div>
-                        <div className="flex gap-3 mt-3">
-                            <Input
-                                placeholder="Status"
-                                value={status}
-                                onChange={(e) => setStatus(e.target.value)}
-                                className="max-w-xs"
-                            />
-                            <Button onClick={handleAddEncomenda} className="gap-2">
-                                <Plus className="h-4 w-4" />
-                                Registrar
-                            </Button>
+
+                            <div className="flex gap-2 items-start md:col-span-2">
+                                <Input
+                                    placeholder="Quadra"
+                                    value={quadraFixa}
+                                    disabled
+                                    className="w-24 bg-muted text-muted-foreground"
+                                />
+                                <Input
+                                    placeholder="Lote"
+                                    value={loteFixo}
+                                    disabled
+                                    className="w-24 bg-muted text-muted-foreground"
+                                />
+                                <Button onClick={handleAddEncomenda} className="gap-2 flex-1 ml-4">
+                                    <Plus className="h-4 w-4" />
+                                    Registrar
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </CardHeader>
@@ -274,9 +256,7 @@ export default function EncomendasSection() {
                                     <TableRow>
                                         <TableHead>Nome do Entregador</TableHead>
                                         <TableHead>Empresa</TableHead>
-                                        <TableHead>Código</TableHead>
                                         <TableHead>Destino</TableHead>
-                                        <TableHead>Status</TableHead>
                                         <TableHead>Data/Hora</TableHead>
                                         <TableHead>Remover</TableHead>
                                     </TableRow>
@@ -290,7 +270,6 @@ export default function EncomendasSection() {
                                                     {encomenda.empresa}
                                                 </Badge>
                                             </TableCell>
-                                            <TableCell className="font-mono font-bold">{encomenda.codigo}</TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-2">
                                                     <div className="flex flex-col items-center justify-center bg-blue-100 p-1 px-2 rounded-md border border-blue-300 shadow-sm min-w-[3.5rem]">
@@ -302,11 +281,6 @@ export default function EncomendasSection() {
                                                         <span className="text-lg font-black text-blue-900">{encomenda.lote}</span>
                                                     </div>
                                                 </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge className="bg-green-600 hover:bg-green-700">
-                                                    {encomenda.status}
-                                                </Badge>
                                             </TableCell>
                                             <TableCell className="text-muted-foreground text-sm">
                                                 {format(new Date(encomenda.criado_em), "dd/MM/yyyy HH:mm")}
