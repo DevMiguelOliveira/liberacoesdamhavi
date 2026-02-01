@@ -165,17 +165,17 @@ export default function Historico() {
                     >
                       <TableCell className="pl-6">
                         <div className="flex items-center gap-2">
-                          <div className="flex flex-col items-center justify-center bg-background/60 p-1 px-2 rounded-md border shadow-sm min-w-[3.5rem]">
-                            <span className="text-[0.6rem] font-bold text-muted-foreground uppercase tracking-widest">Quadra</span>
-                            <span className="text-lg font-black text-foreground">{lib.quadra}</span>
+                          <div className="flex flex-col items-center justify-center bg-blue-100 p-1 px-2 rounded-md border border-blue-300 shadow-sm min-w-[3.5rem]">
+                            <span className="text-[0.6rem] font-bold text-black uppercase tracking-widest">Quadra</span>
+                            <span className="text-lg font-black text-blue-900">{lib.quadra.toUpperCase()}</span>
                           </div>
-                          <div className="flex flex-col items-center justify-center bg-background/60 p-1 px-2 rounded-md border shadow-sm min-w-[3.5rem]">
-                            <span className="text-[0.6rem] font-bold text-muted-foreground uppercase tracking-widest">Lote</span>
-                            <span className="text-lg font-black text-foreground">{lib.lote}</span>
+                          <div className="flex flex-col items-center justify-center bg-blue-100 p-1 px-2 rounded-md border border-blue-300 shadow-sm min-w-[3.5rem]">
+                            <span className="text-[0.6rem] font-bold text-gray-700 uppercase tracking-widest">Lote</span>
+                            <span className="text-lg font-black text-blue-900">{lib.lote.toUpperCase()}</span>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="font-medium">{lib.nome_pessoa}</TableCell>
+                      <TableCell className="font-bold uppercase">{lib.nome_pessoa.toUpperCase()}</TableCell>
                       <TableCell>{formatCPF(lib.cpf)}</TableCell>
                       <TableCell className="max-w-[200px] truncate text-muted-foreground" title={lib.observacoes}>{lib.observacoes || "-"}</TableCell>
                       <TableCell>

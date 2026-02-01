@@ -117,6 +117,14 @@ export default function EncomendasSection() {
         }
     };
 
+    const handleNomeEntregadorChange = (val: string) => {
+        setNomeEntregador(val.toUpperCase());
+    };
+
+    const handleEmpresaManualChange = (val: string) => {
+        setEmpresaManual(val.toUpperCase());
+    };
+
     useEffect(() => {
         fetchEncomendas();
 
@@ -166,10 +174,10 @@ export default function EncomendasSection() {
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                             type="text"
-                            placeholder="Buscar por entregador, empresa ou destino..."
+                            placeholder="BUSCAR POR ENTREGADOR, EMPRESA OU DESTINO..."
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-10"
+                            onChange={(e) => setSearchTerm(e.target.value.toUpperCase())}
+                            className="pl-10 uppercase font-semibold"
                         />
                     </div>
 
@@ -189,33 +197,33 @@ export default function EncomendasSection() {
                         <div className="flex flex-col md:flex-row gap-3 items-start">
                             <div className="flex-1 w-full">
                                 <Input
-                                    placeholder="Nome do Entregador"
+                                    placeholder="NOME DO ENTREGADOR"
                                     value={nomeEntregador}
-                                    onChange={(e) => setNomeEntregador(e.target.value)}
-                                    className="bg-white border-slate-200 focus:border-primary"
+                                    onChange={(e) => handleNomeEntregadorChange(e.target.value)}
+                                    className="bg-white border-slate-300 focus:border-primary uppercase font-bold text-lg h-12"
                                 />
                             </div>
 
                             <div className="w-full md:w-64 flex flex-col gap-2">
                                 <Select value={empresaSelecionada} onValueChange={setEmpresaSelecionada}>
-                                    <SelectTrigger className="bg-white border-slate-200">
-                                        <SelectValue placeholder="Selecione a empresa" />
+                                    <SelectTrigger className="bg-white border-slate-300 font-bold uppercase h-12">
+                                        <SelectValue placeholder="SELECIONE A EMPRESA" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="Shopee">Shopee</SelectItem>
-                                        <SelectItem value="Mercado Livre">Mercado Livre</SelectItem>
-                                        <SelectItem value="Amazon">Amazon</SelectItem>
-                                        <SelectItem value="Magalu">Magalu</SelectItem>
-                                        <SelectItem value="Correios">Correios</SelectItem>
-                                        <SelectItem value="outra">Outra (Manual)</SelectItem>
+                                        <SelectItem value="SHOPEE">SHOPEE</SelectItem>
+                                        <SelectItem value="MERCADO LIVRE">MERCADO LIVRE</SelectItem>
+                                        <SelectItem value="AMAZON">AMAZON</SelectItem>
+                                        <SelectItem value="MAGALU">MAGALU</SelectItem>
+                                        <SelectItem value="CORREIOS">CORREIOS</SelectItem>
+                                        <SelectItem value="outra">OUTRA (MANUAL)</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 {empresaSelecionada === "outra" && (
                                     <Input
-                                        placeholder="Digite o nome da empresa"
+                                        placeholder="NOME DA EMPRESA"
                                         value={empresaManual}
-                                        onChange={(e) => setEmpresaManual(e.target.value)}
-                                        className="bg-white border-slate-200"
+                                        onChange={(e) => handleEmpresaManualChange(e.target.value)}
+                                        className="bg-white border-slate-300 uppercase font-bold h-12"
                                     />
                                 )}
                             </div>
@@ -256,14 +264,14 @@ export default function EncomendasSection() {
                                     {filteredEncomendas.map((encomenda) => (
                                         <TableRow key={encomenda.id} className="bg-orange-50/50 hover:bg-orange-100/50">
                                             <TableCell>
-                                                <Badge variant="outline" className="bg-white/50 text-muted-foreground">
-                                                    {encomenda.destino}
+                                                <Badge variant="outline" className="bg-blue-100/50 text-blue-900 border-blue-200 font-black px-3 py-1">
+                                                    {encomenda.destino.toUpperCase()}
                                                 </Badge>
                                             </TableCell>
-                                            <TableCell className="font-medium">{encomenda.nome_entregador}</TableCell>
+                                            <TableCell className="font-bold uppercase text-slate-900">{encomenda.nome_entregador.toUpperCase()}</TableCell>
                                             <TableCell>
-                                                <Badge variant="secondary" className="bg-purple-200 text-purple-900 hover:bg-purple-300">
-                                                    {encomenda.empresa}
+                                                <Badge variant="secondary" className="bg-orange-200 text-orange-900 hover:bg-orange-300 font-bold px-3 py-1 border border-orange-300 shadow-sm uppercase">
+                                                    {encomenda.empresa.toUpperCase()}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-muted-foreground text-sm">
