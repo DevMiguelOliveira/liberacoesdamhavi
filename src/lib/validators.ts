@@ -49,8 +49,7 @@ export const liberacaoSchema = z.object({
   cpf: z
     .string()
     .trim()
-    .optional()
-    .refine((val) => !val || isValidCPF(val), "CPF inválido"),
+    .optional(),
   tipo_acesso: z.enum(["visitante", "prestador"], {
     required_error: "Selecione o tipo de acesso",
   }),

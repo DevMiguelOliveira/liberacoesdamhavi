@@ -61,7 +61,6 @@ export default function NovaLiberacao() {
 
     const { error } = await supabase.from("liberacoes").insert({
       nome_pessoa: data.nome_pessoa.trim(),
-      cpf: data.cpf.replace(/\D/g, ""),
       tipo_acesso: data.tipo_acesso,
       quadra: data.quadra.trim().toUpperCase(),
       lote: data.lote.trim().toUpperCase(),
@@ -115,45 +114,21 @@ export default function NovaLiberacao() {
         </CardHeader>
         <CardContent className="pt-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Nome e CPF */}
-            <div className="grid gap-6 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="nome_pessoa" className="flex items-center gap-2 text-primary uppercase text-xs font-bold tracking-wider">
-                  <User className="h-3.5 w-3.5" />
-                  Nome Completo *
-                </Label>
-                <Input
-                  id="nome_pessoa"
-                  placeholder="João da Silva"
-                  {...register("nome_pessoa")}
-                  className="bg-background"
-                />
-                {errors.nome_pessoa && (
-                  <p className="text-sm text-destructive">{errors.nome_pessoa.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="cpf" className="flex items-center gap-2 text-primary uppercase text-xs font-bold tracking-wider">
-                  <FileText className="h-3.5 w-3.5" />
-                  CPF (opcional)
-                </Label>
-                <Input
-                  id="cpf"
-                  placeholder="000.000.000-00"
-                  maxLength={14}
-                  {...register("cpf", {
-                    onChange: (e) => {
-                      const formatted = formatCPF(e.target.value);
-                      e.target.value = formatted;
-                    },
-                  })}
-                  className="bg-background"
-                />
-                {errors.cpf && (
-                  <p className="text-sm text-destructive">{errors.cpf.message}</p>
-                )}
-              </div>
+            {/* Nome */}
+            <div className="space-y-2">
+              <Label htmlFor="nome_pessoa" className="flex items-center gap-2 text-primary uppercase text-xs font-bold tracking-wider">
+                <User className="h-3.5 w-3.5" />
+                Nome Completo *
+              </Label>
+              <Input
+                id="nome_pessoa"
+                placeholder="João da Silva"
+                {...register("nome_pessoa")}
+                className="bg-background"
+              />
+              {errors.nome_pessoa && (
+                <p className="text-sm text-destructive">{errors.nome_pessoa.message}</p>
+              )}
             </div>
 
             {/* Tipo de Acesso */}
