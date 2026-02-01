@@ -79,6 +79,15 @@ export default function Historico() {
   };
 
   useEffect(() => {
+    const updateStatuses = async () => {
+      try {
+        await supabase.rpc("update_expired_liberacoes");
+      } catch (err) {
+        console.error("Erro ao atualizar status expirados:", err);
+      }
+    };
+
+    updateStatuses();
     fetchLiberacoes();
   }, []);
 
@@ -190,10 +199,10 @@ export default function Historico() {
                       </TableCell>
                       <TableCell>
                         <Badge
-                          variant={lib.status === "ativo" ? "default" : "secondary"}
-                          className={lib.status === "ativo" ? "bg-success" : ""}
+                          variant={lib.status === "ativo" && new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0)) ? "default" : "secondary"}
+                          className={lib.status === "ativo" && new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0)) ? "bg-success" : ""}
                         >
-                          {lib.status === "ativo" ? "Ativo" : "Expirado"}
+                          {lib.status === "ativo" && new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0)) ? "Ativo" : "Expirado"}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm">

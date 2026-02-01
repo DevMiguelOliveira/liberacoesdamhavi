@@ -75,6 +75,12 @@ export default function Consultar() {
     setIsLoading(true);
     setHasSearched(true);
 
+    try {
+      await supabase.rpc("update_expired_liberacoes");
+    } catch (err) {
+      console.error("Erro ao atualizar status expirados:", err);
+    }
+
     let query = supabase
       .from("liberacoes")
       .select("*")
@@ -389,10 +395,10 @@ export default function Consultar() {
                       </TableCell>
                       <TableCell>
                         <Badge
-                          variant={lib.status === "ativo" ? "default" : "secondary"}
-                          className={lib.status === "ativo" ? "bg-success" : ""}
+                          variant={lib.status === "ativo" && new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0)) ? "default" : "secondary"}
+                          className={lib.status === "ativo" && new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0)) ? "bg-success" : ""}
                         >
-                          {lib.status === "ativo" ? "Ativo" : "Expirado"}
+                          {lib.status === "ativo" && new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0)) ? "Ativo" : "Expirado"}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm">

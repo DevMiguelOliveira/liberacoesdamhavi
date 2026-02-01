@@ -134,6 +134,16 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
+    // Update expired releases in the database
+    const updateStatuses = async () => {
+      try {
+        await supabase.rpc("update_expired_liberacoes");
+      } catch (err) {
+        console.error("Erro ao atualizar status expirados:", err);
+      }
+    };
+
+    updateStatuses();
     fetchTodayLiberacoes();
 
     // Realtime subscription
@@ -358,8 +368,10 @@ export default function Dashboard() {
                         Até {format(new Date(lib.data_fim + "T00:00:00"), "dd/MM", { locale: ptBR })}
                       </TableCell>
                       <TableCell>
-                        <Badge className="bg-success hover:bg-success/80">
-                          Ativo
+                        <Badge
+                          className={new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0)) ? "bg-success" : "bg-destructive"}
+                        >
+                          {new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0)) ? "Ativo" : "Expirado"}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm">
