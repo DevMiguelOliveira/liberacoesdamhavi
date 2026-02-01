@@ -39,6 +39,7 @@ export default function NovaLiberacao() {
     },
   });
 
+  const tipoAcesso = watch("tipo_acesso");
   const dataInicio = watch("data_inicio");
   const diasLiberados = watch("dias_liberados");
 
@@ -103,29 +104,51 @@ export default function NovaLiberacao() {
         </div>
       </div>
 
-      <Card className="max-w-2xl mx-auto shadow-lg border-primary/20">
-        <CardHeader className="bg-muted/50 border-b">
+      <Card className={cn(
+        "max-w-2xl mx-auto shadow-xl border-t-8 transition-all duration-500",
+        tipoAcesso === "visitante" ? "border-t-accent shadow-accent/10" :
+          tipoAcesso === "prestador" ? "border-t-warning shadow-warning/10" :
+            "border-t-primary shadow-primary/10"
+      )}>
+        <CardHeader className="bg-muted/30 border-b">
           <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-primary" />
+            <FileText className={cn(
+              "h-5 w-5 transition-colors",
+              tipoAcesso === "visitante" ? "text-accent" :
+                tipoAcesso === "prestador" ? "text-warning" :
+                  "text-primary"
+            )} />
             Dados da Liberação
           </CardTitle>
           <CardDescription>
-            Preencha os dados do Visitante ou Prestador e o período de acesso:
+            {tipoAcesso === "visitante" ? "Preencha os dados do visitante para acesso social." :
+              tipoAcesso === "prestador" ? "Preencha os dados do prestador para acesso de serviço." :
+                "Preencha os dados para registrar a nova liberação:"}
           </CardDescription>
         </CardHeader>
-        <CardContent className="pt-6">
+        <CardContent className="pt-8 px-6 pb-8">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Nome */}
-            <div className="space-y-2">
-              <Label htmlFor="nome_pessoa" className="flex items-center gap-2 text-primary uppercase text-xs font-bold tracking-wider">
-                <User className="h-3.5 w-3.5" />
+            <div className={cn(
+              "p-4 rounded-xl border transition-all space-y-2",
+              tipoAcesso === "visitante" ? "bg-accent/5 border-accent/20" :
+                tipoAcesso === "prestador" ? "bg-warning/5 border-warning/20" :
+                  "bg-secondary/20 border-secondary"
+            )}>
+              <Label htmlFor="nome_pessoa" className={cn(
+                "flex items-center gap-2 uppercase text-xs font-bold tracking-wider transition-colors",
+                tipoAcesso === "visitante" ? "text-accent" :
+                  tipoAcesso === "prestador" ? "text-warning" :
+                    "text-primary"
+              )}>
+                <User className="h-4 w-4" />
                 Nome Completo *
               </Label>
               <Input
                 id="nome_pessoa"
                 placeholder="EX: JOÃO DA SILVA"
                 {...register("nome_pessoa")}
-                className="bg-background uppercase font-semibold"
+                className="bg-background uppercase font-bold text-lg h-12 border-2 focus-visible:ring-offset-2"
                 autoFocus
               />
               {errors.nome_pessoa && (
@@ -148,27 +171,37 @@ export default function NovaLiberacao() {
                       type="button"
                       onClick={() => field.onChange("visitante")}
                       className={cn(
-                        "flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all gap-2",
+                        "flex flex-col items-center justify-center p-6 rounded-xl border-2 transition-all gap-3 group relative overflow-hidden",
                         field.value === "visitante"
-                          ? "border-primary bg-primary/10 text-primary shadow-md"
-                          : "border-muted bg-background hover:border-primary/50 text-muted-foreground"
+                          ? "border-accent bg-accent text-accent-foreground shadow-lg scale-105"
+                          : "border-muted bg-background hover:border-accent/50 text-muted-foreground"
                       )}
                     >
-                      <User className={cn("h-6 w-6", field.value === "visitante" ? "animate-bounce" : "")} />
-                      <span className="font-bold uppercase text-xs">Visitante</span>
+                      <User className={cn("h-8 w-8 transition-transform group-hover:scale-110", field.value === "visitante" ? "animate-bounce" : "")} />
+                      <span className="font-bold uppercase text-sm tracking-tighter">Visitante</span>
+                      {field.value === "visitante" && (
+                        <div className="absolute top-1 right-1">
+                          <div className="bg-white/20 p-1 rounded-full"><Save className="h-3 w-3" /></div>
+                        </div>
+                      )}
                     </button>
                     <button
                       type="button"
                       onClick={() => field.onChange("prestador")}
                       className={cn(
-                        "flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all gap-2",
+                        "flex flex-col items-center justify-center p-6 rounded-xl border-2 transition-all gap-3 group relative overflow-hidden",
                         field.value === "prestador"
-                          ? "border-primary bg-primary/10 text-primary shadow-md"
-                          : "border-muted bg-background hover:border-primary/50 text-muted-foreground"
+                          ? "border-warning bg-warning text-warning-foreground shadow-lg scale-105"
+                          : "border-muted bg-background hover:border-warning/50 text-muted-foreground"
                       )}
                     >
-                      <Clock className={cn("h-6 w-6", field.value === "prestador" ? "animate-pulse" : "")} />
-                      <span className="font-bold uppercase text-xs">Prestador</span>
+                      <Clock className={cn("h-8 w-8 transition-transform group-hover:scale-110", field.value === "prestador" ? "animate-pulse" : "")} />
+                      <span className="font-bold uppercase text-sm tracking-tighter">Prestador</span>
+                      {field.value === "prestador" && (
+                        <div className="absolute top-1 right-1">
+                          <div className="bg-black/10 p-1 rounded-full"><Save className="h-3 w-3" /></div>
+                        </div>
+                      )}
                     </button>
                   </div>
                 )}
@@ -179,8 +212,18 @@ export default function NovaLiberacao() {
             </div>
 
             {/* Quadra e Lote */}
-            <div className="bg-secondary/30 p-4 rounded-lg border border-secondary">
-              <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-primary">
+            <div className={cn(
+              "p-4 rounded-xl border transition-all duration-500",
+              tipoAcesso === "visitante" ? "bg-accent/5 border-accent/20" :
+                tipoAcesso === "prestador" ? "bg-warning/5 border-warning/20" :
+                  "bg-secondary/30 border-secondary"
+            )}>
+              <div className={cn(
+                "mb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-widest",
+                tipoAcesso === "visitante" ? "text-accent" :
+                  tipoAcesso === "prestador" ? "text-warning" :
+                    "text-primary"
+              )}>
                 <MapPin className="h-4 w-4" />
                 Destino do Acesso
               </div>
@@ -281,12 +324,16 @@ export default function NovaLiberacao() {
                     <Button
                       key={d}
                       type="button"
-                      variant="secondary"
+                      variant="outline"
                       size="sm"
                       onClick={() => setValue("dias_liberados", d)}
                       className={cn(
-                        "h-8 px-3 text-xs font-bold transition-all",
-                        diasLiberados === d ? "bg-primary text-primary-foreground scale-110 shadow-sm" : "hover:bg-primary/20"
+                        "h-8 px-3 text-xs font-bold transition-all border-2",
+                        diasLiberados === d
+                          ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-accent-foreground scale-110 shadow-md" :
+                            tipoAcesso === "prestador" ? "bg-warning border-warning text-warning-foreground scale-110 shadow-md" :
+                              "bg-primary border-primary text-primary-foreground scale-110")
+                          : "hover:bg-muted"
                       )}
                     >
                       {d === 1 ? "HOJE" : `${d} DIAS`}
@@ -324,11 +371,20 @@ export default function NovaLiberacao() {
                 <X className="h-4 w-4" />
                 Cancelar
               </Button>
-              <Button type="submit" disabled={isLoading} className="gap-2 flex-1 bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg transition-all">
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className={cn(
+                  "gap-2 flex-1 shadow-md hover:shadow-lg transition-all h-12 text-base font-bold uppercase tracking-wider",
+                  tipoAcesso === "visitante" ? "bg-accent hover:bg-accent/90" :
+                    tipoAcesso === "prestador" ? "bg-warning hover:bg-warning/90 text-warning-foreground" :
+                      "bg-primary hover:bg-primary/90"
+                )}
+              >
                 {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
-                  <Save className="h-4 w-4" />
+                  <Save className="h-5 w-5" />
                 )}
                 Salvar Liberação
               </Button>
