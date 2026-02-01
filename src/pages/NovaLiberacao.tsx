@@ -29,6 +29,7 @@ export default function NovaLiberacao() {
     handleSubmit,
     control,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<LiberacaoFormData>({
     resolver: zodResolver(liberacaoSchema),
@@ -60,7 +61,7 @@ export default function NovaLiberacao() {
     const status = dataFimCalculada >= hoje ? "ativo" : "expirado";
 
     const { error } = await supabase.from("liberacoes").insert({
-      nome_pessoa: data.nome_pessoa.trim(),
+      nome_pessoa: data.nome_pessoa.trim().toUpperCase(),
       tipo_acesso: data.tipo_acesso,
       quadra: data.quadra.trim().toUpperCase(),
       lote: data.lote.trim().toUpperCase(),
@@ -122,9 +123,10 @@ export default function NovaLiberacao() {
               </Label>
               <Input
                 id="nome_pessoa"
-                placeholder="João da Silva"
+                placeholder="EX: JOÃO DA SILVA"
                 {...register("nome_pessoa")}
-                className="bg-background"
+                className="bg-background uppercase font-semibold"
+                autoFocus
               />
               {errors.nome_pessoa && (
                 <p className="text-sm text-destructive">{errors.nome_pessoa.message}</p>
@@ -132,7 +134,7 @@ export default function NovaLiberacao() {
             </div>
 
             {/* Tipo de Acesso */}
-            <div className="space-y-2">
+            <div className="space-y-3">
               <Label className="flex items-center gap-2 text-primary uppercase text-xs font-bold tracking-wider">
                 <User className="h-3.5 w-3.5" />
                 Tipo de Acesso *
@@ -141,15 +143,34 @@ export default function NovaLiberacao() {
                 name="tipo_acesso"
                 control={control}
                 render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger className="bg-background">
-                      <SelectValue placeholder="Selecione o tipo" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="visitante">Visitante</SelectItem>
-                      <SelectItem value="prestador">Prestador de Serviço</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      type="button"
+                      onClick={() => field.onChange("visitante")}
+                      className={cn(
+                        "flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all gap-2",
+                        field.value === "visitante"
+                          ? "border-primary bg-primary/10 text-primary shadow-md"
+                          : "border-muted bg-background hover:border-primary/50 text-muted-foreground"
+                      )}
+                    >
+                      <User className={cn("h-6 w-6", field.value === "visitante" ? "animate-bounce" : "")} />
+                      <span className="font-bold uppercase text-xs">Visitante</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => field.onChange("prestador")}
+                      className={cn(
+                        "flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all gap-2",
+                        field.value === "prestador"
+                          ? "border-primary bg-primary/10 text-primary shadow-md"
+                          : "border-muted bg-background hover:border-primary/50 text-muted-foreground"
+                      )}
+                    >
+                      <Clock className={cn("h-6 w-6", field.value === "prestador" ? "animate-pulse" : "")} />
+                      <span className="font-bold uppercase text-xs">Prestador</span>
+                    </button>
+                  </div>
                 )}
               />
               {errors.tipo_acesso && (
@@ -170,9 +191,9 @@ export default function NovaLiberacao() {
                   </Label>
                   <Input
                     id="quadra"
-                    placeholder="Ex: A"
+                    placeholder="EX: A"
                     {...register("quadra")}
-                    className="bg-background font-medium text-lg"
+                    className="bg-background font-black text-xl uppercase text-center"
                   />
                   {errors.quadra && (
                     <p className="text-sm text-destructive">{errors.quadra.message}</p>
@@ -185,9 +206,9 @@ export default function NovaLiberacao() {
                   </Label>
                   <Input
                     id="lote"
-                    placeholder="Ex: 15"
+                    placeholder="EX: 15"
                     {...register("lote")}
-                    className="bg-background font-medium text-lg"
+                    className="bg-background font-black text-xl uppercase text-center"
                   />
                   {errors.lote && (
                     <p className="text-sm text-destructive">{errors.lote.message}</p>
@@ -241,7 +262,7 @@ export default function NovaLiberacao() {
                 )}
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Label htmlFor="dias_liberados" className="flex items-center gap-2 text-primary uppercase text-xs font-bold tracking-wider">
                   <Clock className="h-3.5 w-3.5" />
                   Dias Liberados *
@@ -249,11 +270,29 @@ export default function NovaLiberacao() {
                 <Input
                   id="dias_liberados"
                   type="number"
+                  inputMode="numeric"
                   min={1}
                   max={365}
                   {...register("dias_liberados", { valueAsNumber: true })}
-                  className="bg-background"
+                  className="bg-background font-bold text-lg"
                 />
+                <div className="flex flex-wrap gap-2">
+                  {[1, 3, 7, 15, 30].map((d) => (
+                    <Button
+                      key={d}
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => setValue("dias_liberados", d)}
+                      className={cn(
+                        "h-8 px-3 text-xs font-bold transition-all",
+                        diasLiberados === d ? "bg-primary text-primary-foreground scale-110 shadow-sm" : "hover:bg-primary/20"
+                      )}
+                    >
+                      {d === 1 ? "HOJE" : `${d} DIAS`}
+                    </Button>
+                  ))}
+                </div>
                 {errors.dias_liberados && (
                   <p className="text-sm text-destructive">{errors.dias_liberados.message}</p>
                 )}
@@ -268,8 +307,8 @@ export default function NovaLiberacao() {
               </Label>
               <Textarea
                 id="observacoes"
-                placeholder="Ex: Deixar a entrega na garagem, etc..."
-                className="bg-background min-h-[100px]"
+                placeholder="EX: DEIXAR A ENTREGA NA GARAGEM, ETC..."
+                className="bg-background min-h-[100px] uppercase text-xs"
                 {...register("observacoes")}
               />
             </div>
