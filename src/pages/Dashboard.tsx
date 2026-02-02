@@ -172,31 +172,31 @@ export default function Dashboard() {
   const menuItems = [
     {
       title: "Nova Liberação",
-      description: "Registrar liberação de visitante ou prestador",
+      description: "Novo visitante/prestador",
       icon: Plus,
       path: "/nova-liberacao",
-      variant: "default" as const,
+      theme: "primary",
     },
     {
-      title: "Consultar Liberações",
-      description: "Buscar liberações ativas ou expiradas.",
+      title: "Consultar",
+      description: "Buscar liberações",
       icon: Search,
       path: "/consultar",
-      variant: "outline" as const,
+      theme: "accent",
     },
     {
       title: "Histórico",
-      description: "Ver todas as liberações registradas",
+      description: "Ver todos registros",
       icon: History,
       path: "/historico",
-      variant: "outline" as const,
+      theme: "secondary",
     },
     {
-      title: "Histórico de Encomendas",
-      description: "Ver todas as encomendas registradas",
+      title: "Encomendas",
+      description: "Histórico de entregas",
       icon: Package,
       path: "/historico-encomendas",
-      variant: "outline" as const,
+      theme: "warning",
     },
   ];
 
@@ -251,52 +251,49 @@ export default function Dashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {menuItems.map((item) => {
           const isPrimary = item.path === "/nova-liberacao";
+          const themes = {
+            primary: "bg-gradient-to-br from-primary to-success/80 text-white shadow-primary/20 hover:shadow-primary/40",
+            accent: "bg-gradient-to-br from-accent to-blue-600 text-white shadow-accent/20 hover:shadow-accent/40",
+            secondary: "bg-gradient-to-br from-slate-600 to-slate-800 text-white shadow-slate-200 hover:shadow-slate-300",
+            warning: "bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-orange-100 hover:shadow-orange-200"
+          };
+
           return (
             <Card
               key={item.path}
               className={cn(
-                "group cursor-pointer transition-all duration-300 relative overflow-hidden",
-                isPrimary
-                  ? "sm:col-span-1 md:col-span-2 lg:col-span-1 bg-gradient-to-br from-primary via-primary/90 to-success border-none shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-2 ring-4 ring-primary/10"
-                  : "hover:shadow-card-hover hover:-translate-y-1 border-primary/10"
+                "group cursor-pointer transition-all duration-300 relative overflow-hidden h-32 flex flex-col justify-center border-none",
+                themes[item.theme as keyof typeof themes],
+                "hover:-translate-y-1.5 shadow-lg"
               )}
               onClick={() => navigate(item.path)}
             >
-              {isPrimary && (
-                <div className="absolute top-0 right-0 p-8 -mr-4 -mt-4 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors" />
-              )}
-              <CardHeader className="pb-3 relative z-10">
-                <div className="flex items-center justify-between">
-                  <div className={cn(
-                    "rounded-2xl p-3 transition-transform duration-500 group-hover:scale-110 shadow-md",
-                    isPrimary
-                      ? "bg-white text-primary"
-                      : "bg-secondary text-secondary-foreground"
-                  )}>
-                    <item.icon className={cn(
-                      "h-6 w-6",
-                      isPrimary && "animate-pulse"
-                    )} />
-                  </div>
-                  {isPrimary && (
-                    <Badge className="bg-white/20 text-white border-none font-black text-[10px] animate-bounce">PRINCIPAL</Badge>
-                  )}
+              <div className="absolute -right-2 -bottom-2 opacity-10 group-hover:scale-110 transition-transform duration-500">
+                <item.icon size={80} />
+              </div>
+
+              <CardHeader className="p-3 pb-1 relative z-10 flex flex-row items-center gap-3">
+                <div className={cn(
+                  "rounded-xl p-2.5 shadow-inner transition-transform duration-500 group-hover:scale-110",
+                  isPrimary ? "bg-white/20 text-white" : "bg-white/10 text-white"
+                )}>
+                  <item.icon className={cn(
+                    "h-5 w-5",
+                    isPrimary && "animate-pulse"
+                  )} />
                 </div>
+                {isPrimary && (
+                  <Badge className="bg-white/20 text-white border-none font-black text-[9px] h-4">PRINCIPAL</Badge>
+                )}
               </CardHeader>
-              <CardContent className="relative z-10 pb-4">
-                <CardTitle className={cn(
-                  "text-xl mb-1 font-black tracking-tight transition-colors",
-                  isPrimary ? "text-white" : "group-hover:text-primary"
-                )}>
-                  {item.title.toUpperCase()}
+              <CardContent className="p-3 pt-0 relative z-10">
+                <CardTitle className="text-sm font-black tracking-tight uppercase mb-0.5">
+                  {item.title}
                 </CardTitle>
-                <CardDescription className={cn(
-                  "text-sm font-medium",
-                  isPrimary ? "text-white/80" : ""
-                )}>
+                <CardDescription className="text-[10px] text-white/80 font-medium leading-tight">
                   {item.description}
                 </CardDescription>
               </CardContent>
