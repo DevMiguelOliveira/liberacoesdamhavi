@@ -271,13 +271,13 @@ export default function Dashboard() {
               <CardHeader className="pb-3 relative z-10">
                 <div className="flex items-center justify-between">
                   <div className={cn(
-                    "rounded-2xl p-4 transition-transform duration-500 group-hover:scale-110 shadow-lg",
+                    "rounded-2xl p-3 transition-transform duration-500 group-hover:scale-110 shadow-md",
                     isPrimary
                       ? "bg-white text-primary"
                       : "bg-secondary text-secondary-foreground"
                   )}>
                     <item.icon className={cn(
-                      "h-8 w-8",
+                      "h-6 w-6",
                       isPrimary && "animate-pulse"
                     )} />
                   </div>
@@ -286,9 +286,9 @@ export default function Dashboard() {
                   )}
                 </div>
               </CardHeader>
-              <CardContent className="relative z-10">
+              <CardContent className="relative z-10 pb-4">
                 <CardTitle className={cn(
-                  "text-2xl mb-2 font-black tracking-tight transition-colors",
+                  "text-xl mb-1 font-black tracking-tight transition-colors",
                   isPrimary ? "text-white" : "group-hover:text-primary"
                 )}>
                   {item.title.toUpperCase()}
