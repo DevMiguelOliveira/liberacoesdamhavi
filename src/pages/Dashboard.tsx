@@ -172,7 +172,7 @@ export default function Dashboard() {
   const menuItems = [
     {
       title: "Nova Liberação",
-      description: "Novo visitante/prestador",
+      description: "VISITANTE/PRESTADOR",
       icon: Plus,
       path: "/nova-liberacao",
       theme: "primary",
@@ -186,14 +186,14 @@ export default function Dashboard() {
     },
     {
       title: "Histórico",
-      description: "Ver todos registros",
+      description: "Ver todos os registros",
       icon: History,
       path: "/historico",
       theme: "secondary",
     },
     {
       title: "Encomendas",
-      description: "Histórico de entregas",
+      description: "Histórico de entregas (Encomendas)",
       icon: Package,
       path: "/historico-encomendas",
       theme: "warning",
