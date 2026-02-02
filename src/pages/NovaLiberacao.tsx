@@ -105,7 +105,7 @@ export default function NovaLiberacao() {
       </div>
 
       <Card className={cn(
-        "max-w-2xl mx-auto shadow-xl border-t-8 transition-all duration-500",
+        "max-w-xl mx-auto shadow-xl border-t-8 transition-all duration-500",
         tipoAcesso === "visitante" ? "border-t-accent shadow-accent/10" :
           tipoAcesso === "prestador" ? "border-t-warning shadow-warning/10" :
             "border-t-primary shadow-primary/10"
@@ -126,11 +126,11 @@ export default function NovaLiberacao() {
                 "Preencha os dados para registrar a nova liberação:"}
           </CardDescription>
         </CardHeader>
-        <CardContent className="pt-8 px-6 pb-8">
+        <CardContent className="pt-6 px-4 pb-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Nome */}
             <div className={cn(
-              "p-4 rounded-xl border transition-all space-y-2",
+              "p-3 rounded-xl border transition-all space-y-2",
               tipoAcesso === "visitante" ? "bg-accent/5 border-accent/20" :
                 tipoAcesso === "prestador" ? "bg-warning/5 border-warning/20" :
                   "bg-secondary/20 border-secondary"
@@ -171,13 +171,13 @@ export default function NovaLiberacao() {
                       type="button"
                       onClick={() => field.onChange("visitante")}
                       className={cn(
-                        "flex flex-col items-center justify-center p-6 rounded-xl border-2 transition-all gap-3 group relative overflow-hidden",
+                        "flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all gap-2 group relative overflow-hidden",
                         field.value === "visitante"
                           ? "border-accent bg-accent text-accent-foreground shadow-lg scale-105"
                           : "border-muted bg-background hover:border-accent/50 text-muted-foreground"
                       )}
                     >
-                      <User className={cn("h-8 w-8 transition-transform group-hover:scale-110", field.value === "visitante" ? "animate-bounce" : "")} />
+                      <User className={cn("h-6 w-6 transition-transform group-hover:scale-110", field.value === "visitante" ? "animate-bounce" : "")} />
                       <span className="font-bold uppercase text-sm tracking-tighter">Visitante</span>
                       {field.value === "visitante" && (
                         <div className="absolute top-1 right-1">
@@ -189,13 +189,13 @@ export default function NovaLiberacao() {
                       type="button"
                       onClick={() => field.onChange("prestador")}
                       className={cn(
-                        "flex flex-col items-center justify-center p-6 rounded-xl border-2 transition-all gap-3 group relative overflow-hidden",
+                        "flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all gap-2 group relative overflow-hidden",
                         field.value === "prestador"
                           ? "border-warning bg-warning text-warning-foreground shadow-lg scale-105"
                           : "border-muted bg-background hover:border-warning/50 text-muted-foreground"
                       )}
                     >
-                      <Clock className={cn("h-8 w-8 transition-transform group-hover:scale-110", field.value === "prestador" ? "animate-pulse" : "")} />
+                      <Clock className={cn("h-6 w-6 transition-transform group-hover:scale-110", field.value === "prestador" ? "animate-pulse" : "")} />
                       <span className="font-bold uppercase text-sm tracking-tighter">Prestador</span>
                       {field.value === "prestador" && (
                         <div className="absolute top-1 right-1">
@@ -213,7 +213,7 @@ export default function NovaLiberacao() {
 
             {/* Quadra e Lote */}
             <div className={cn(
-              "p-4 rounded-xl border transition-all duration-500",
+              "p-3 rounded-xl border transition-all duration-500",
               tipoAcesso === "visitante" ? "bg-accent/5 border-accent/20" :
                 tipoAcesso === "prestador" ? "bg-warning/5 border-warning/20" :
                   "bg-secondary/30 border-secondary"
