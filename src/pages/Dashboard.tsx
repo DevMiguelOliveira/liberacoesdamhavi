@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -288,13 +289,13 @@ export default function Dashboard() {
             Visitantes e prestadores com acesso permitido para hoje
           </CardDescription>
           <div className="relative mt-4">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Buscar por nome, destino (quadra/lote), tipo ou observações..."
+              placeholder="BUSCAR POR NOME, DESTINO (QUADRA/LOTE), TIPO OU OBSERVAÇÕES..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              onChange={(e) => setSearchTerm(e.target.value.toUpperCase())}
+              className="pl-12 h-12 bg-background border-2 font-semibold uppercase tracking-tight shadow-inner"
             />
           </div>
         </CardHeader>
@@ -314,19 +315,19 @@ export default function Dashboard() {
           ) : (
             <div className="overflow-x-auto">
               <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Destino</TableHead>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Observações</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Validade</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Horário do Registro</TableHead>
-                    <TableHead>Remover Liberação</TableHead>
+                <TableHeader className="bg-muted/50 border-b">
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Destino</TableHead>
+                    <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Nome</TableHead>
+                    <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Observações</TableHead>
+                    <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Tipo</TableHead>
+                    <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Validade</TableHead>
+                    <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Status</TableHead>
+                    <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Registro</TableHead>
+                    <TableHead className="text-right pr-6 font-black text-xs uppercase tracking-widest text-primary">Ação</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody className="divide-y divide-muted/30">
                   {filteredLiberacoes.map((lib) => (
                     <TableRow
                       key={lib.id}
@@ -338,53 +339,77 @@ export default function Dashboard() {
                     >
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <div className="flex flex-col items-center justify-center bg-blue-100 p-1 px-2 rounded-md border border-blue-300 shadow-sm min-w-[3.5rem]">
-                            <span className="text-[0.6rem] font-bold text-black uppercase tracking-widest">Quadra</span>
-                            <span className="text-lg font-black text-blue-900">{lib.quadra}</span>
+                          <div className={cn(
+                            "flex flex-col items-center justify-center p-1.5 px-3 rounded-xl border-2 shadow-sm min-w-[3.5rem] transition-colors",
+                            lib.tipo_acesso === "visitante" ? "bg-accent/10 border-accent/30" : "bg-warning/10 border-warning/30"
+                          )}>
+                            <span className={cn(
+                              "text-[0.6rem] font-black uppercase tracking-widest opacity-70",
+                              lib.tipo_acesso === "visitante" ? "text-accent" : "text-warning-foreground"
+                            )}>Quadra</span>
+                            <span className={cn(
+                              "text-xl font-black",
+                              lib.tipo_acesso === "visitante" ? "text-accent" : "text-warning-foreground"
+                            )}>{lib.quadra.toUpperCase()}</span>
                           </div>
-                          <div className="flex flex-col items-center justify-center bg-blue-100 p-1 px-2 rounded-md border border-blue-300 shadow-sm min-w-[3.5rem]">
-                            <span className="text-[0.6rem] font-bold text-gray-700 uppercase tracking-widest">Lote</span>
-                            <span className="text-lg font-black text-blue-900">{lib.lote}</span>
+                          <div className={cn(
+                            "flex flex-col items-center justify-center p-1.5 px-3 rounded-xl border-2 shadow-sm min-w-[3.5rem] transition-colors",
+                            lib.tipo_acesso === "visitante" ? "bg-accent/10 border-accent/30" : "bg-warning/10 border-warning/30"
+                          )}>
+                            <span className={cn(
+                              "text-[0.6rem] font-black uppercase tracking-widest opacity-70",
+                              lib.tipo_acesso === "visitante" ? "text-accent" : "text-warning-foreground"
+                            )}>Lote</span>
+                            <span className={cn(
+                              "text-xl font-black",
+                              lib.tipo_acesso === "visitante" ? "text-accent" : "text-warning-foreground"
+                            )}>{lib.lote.toUpperCase()}</span>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="font-medium">{lib.nome_pessoa}</TableCell>
-                      <TableCell className="max-w-[200px] truncate" title={lib.observacoes}>
+                      <TableCell className="font-black uppercase tracking-tight text-slate-900 text-base">{lib.nome_pessoa.toUpperCase()}</TableCell>
+                      <TableCell className="max-w-[200px] truncate text-slate-500 font-semibold text-xs uppercase" title={lib.observacoes}>
                         {lib.observacoes || "-"}
                       </TableCell>
                       <TableCell>
                         <Badge
                           variant="secondary"
-                          className={
+                          className={cn(
+                            "font-black uppercase tracking-tighter px-3 py-1 border-2 shadow-sm",
                             lib.tipo_acesso === "visitante"
-                              ? "bg-sky-200 text-sky-900 hover:bg-sky-300 border-sky-300"
-                              : "bg-yellow-200 text-yellow-900 hover:bg-yellow-300 border-yellow-300"
-                          }
+                              ? "bg-accent text-accent-foreground border-accent-foreground/10 hover:bg-accent/90"
+                              : "bg-warning text-warning-foreground border-warning-foreground/10 hover:bg-warning/90"
+                          )}
                         >
                           {lib.tipo_acesso === "visitante" ? "Visitante" : "Prestador"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
+                      <TableCell className="font-bold text-slate-600">
                         Até {format(new Date(lib.data_fim + "T00:00:00"), "dd/MM", { locale: ptBR })}
                       </TableCell>
                       <TableCell>
                         <Badge
-                          className={new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0)) ? "bg-success" : "bg-destructive"}
+                          className={cn(
+                            "font-black uppercase px-3 py-1 border shadow-sm",
+                            new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0))
+                              ? "bg-success text-success-foreground hover:bg-success/90"
+                              : "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          )}
                         >
                           {new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0)) ? "Ativo" : "Expirado"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-muted-foreground text-sm">
+                      <TableCell className="text-slate-500 font-bold text-sm">
                         {format(new Date(lib.criado_em), "HH:mm")}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-right pr-6">
                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => setLiberacaoToDelete(lib.id)}
-                          className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                          className="h-10 w-10 text-destructive hover:text-destructive-foreground hover:bg-destructive shadow-sm hover:shadow-destructive/40 transition-all rounded-full"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-5 w-5" />
                         </Button>
                       </TableCell>
                     </TableRow>
