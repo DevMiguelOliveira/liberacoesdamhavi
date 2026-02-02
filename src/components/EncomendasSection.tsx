@@ -165,16 +165,16 @@ export default function EncomendasSection() {
                 <CardHeader>
                     <CardTitle className="text-xl flex items-center gap-2">
                         <Package className="h-5 w-5 text-primary" />
-                        ENCOMENDAS HOJE
+                        ENTRADA DE ENCOMENDAS
                     </CardTitle>
                     <CardDescription>
-                        Registro de encomendas recebidas
+                        Registro de entregadores que acessaram o condomínio.
                     </CardDescription>
                     <div className="relative mt-4">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                             type="text"
-                            placeholder="BUSCAR POR ENTREGADOR, EMPRESA OU DESTINO..."
+                            placeholder="BUSCAR POR NOME DO ENTREGADOR OU EMPRESA..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value.toUpperCase())}
                             className="pl-10 uppercase font-semibold"
@@ -187,7 +187,7 @@ export default function EncomendasSection() {
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-sm font-semibold flex items-center gap-2 text-slate-700">
                                 <Plus className="h-4 w-4 text-primary" />
-                                Registrar Nova Encomenda
+                                Registrar Entrada
                             </h3>
                             <Badge variant="outline" className="bg-white text-xs font-normal text-muted-foreground border-slate-200">
                                 Destino: {destinoFixo}
@@ -242,11 +242,11 @@ export default function EncomendasSection() {
                         </div>
                     ) : encomendas.length === 0 ? (
                         <p className="text-center text-muted-foreground py-6">
-                            Nenhuma encomenda registrada hoje.
+                            Nenhuma entrada registrada hoje.
                         </p>
                     ) : filteredEncomendas.length === 0 ? (
                         <p className="text-center text-muted-foreground py-6">
-                            Nenhuma encomenda encontrada com o termo "{searchTerm}".
+                            Nenhuma entrada encontrada com o termo "{searchTerm}".
                         </p>
                     ) : (
                         <div className="overflow-x-auto">
@@ -299,9 +299,9 @@ export default function EncomendasSection() {
             <AlertDialog open={!!encomendaToDelete} onOpenChange={() => setEncomendaToDelete(null)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Excluir Encomenda?</AlertDialogTitle>
+                        <AlertDialogTitle>Excluir Registro?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Tem certeza que deseja excluir este registro de encomenda? Esta ação não pode ser desfeita.
+                            Tem certeza que deseja excluir este registro de entrada? Esta ação não pode ser desfeita.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
