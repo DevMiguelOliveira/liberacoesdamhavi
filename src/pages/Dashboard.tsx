@@ -251,31 +251,58 @@ export default function Dashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {menuItems.map((item) => (
-          <Card
-            key={item.path}
-            className="group cursor-pointer transition-all hover:shadow-card-hover hover:-translate-y-1"
-            onClick={() => navigate(item.path)}
-          >
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div className={`rounded-lg p-3 ${item.variant === "default"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-secondary-foreground"
-                  }`}>
-                  <item.icon className="h-6 w-6" />
+      <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        {menuItems.map((item) => {
+          const isPrimary = item.path === "/nova-liberacao";
+          return (
+            <Card
+              key={item.path}
+              className={cn(
+                "group cursor-pointer transition-all duration-300 relative overflow-hidden",
+                isPrimary
+                  ? "sm:col-span-1 md:col-span-2 lg:col-span-1 bg-gradient-to-br from-primary via-primary/90 to-success border-none shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-2 ring-4 ring-primary/10"
+                  : "hover:shadow-card-hover hover:-translate-y-1 border-primary/10"
+              )}
+              onClick={() => navigate(item.path)}
+            >
+              {isPrimary && (
+                <div className="absolute top-0 right-0 p-8 -mr-4 -mt-4 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors" />
+              )}
+              <CardHeader className="pb-3 relative z-10">
+                <div className="flex items-center justify-between">
+                  <div className={cn(
+                    "rounded-2xl p-4 transition-transform duration-500 group-hover:scale-110 shadow-lg",
+                    isPrimary
+                      ? "bg-white text-primary"
+                      : "bg-secondary text-secondary-foreground"
+                  )}>
+                    <item.icon className={cn(
+                      "h-8 w-8",
+                      isPrimary && "animate-pulse"
+                    )} />
+                  </div>
+                  {isPrimary && (
+                    <Badge className="bg-white/20 text-white border-none font-black text-[10px] animate-bounce">PRINCIPAL</Badge>
+                  )}
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <CardTitle className="text-xl mb-2 group-hover:text-primary transition-colors">
-                {item.title}
-              </CardTitle>
-              <CardDescription>{item.description}</CardDescription>
-            </CardContent>
-          </Card>
-        ))}
+              </CardHeader>
+              <CardContent className="relative z-10">
+                <CardTitle className={cn(
+                  "text-2xl mb-2 font-black tracking-tight transition-colors",
+                  isPrimary ? "text-white" : "group-hover:text-primary"
+                )}>
+                  {item.title.toUpperCase()}
+                </CardTitle>
+                <CardDescription className={cn(
+                  "text-sm font-medium",
+                  isPrimary ? "text-white/80" : ""
+                )}>
+                  {item.description}
+                </CardDescription>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       {/* Today's Active Liberacoes */}
