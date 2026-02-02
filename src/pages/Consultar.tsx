@@ -65,7 +65,6 @@ export default function Consultar() {
 
   // Filters
   const [nome, setNome] = useState("");
-  const [cpf, setCpf] = useState("");
   const [quadra, setQuadra] = useState("");
   const [lote, setLote] = useState("");
   const [status, setStatus] = useState<string>("all");
@@ -87,10 +86,7 @@ export default function Consultar() {
       .order("criado_em", { ascending: false });
 
     if (nome.trim()) {
-      query = query.ilike("nome_pessoa", `%${nome.trim()}%`);
-    }
-    if (cpf.trim()) {
-      query = query.ilike("cpf", `%${cpf.replace(/\D/g, "")}%`);
+      query = query.ilike("nome_pessoa", `%${nome.trim().toUpperCase()}%`);
     }
     if (quadra.trim()) {
       query = query.ilike("quadra", `%${quadra.trim().toUpperCase()}%`);
@@ -120,7 +116,6 @@ export default function Consultar() {
 
   const clearFilters = () => {
     setNome("");
-    setCpf("");
     setQuadra("");
     setLote("");
     setStatus("all");
@@ -219,20 +214,6 @@ export default function Consultar() {
                 value={nome}
                 onChange={(e) => setNome(e.target.value.toUpperCase())}
                 className="uppercase font-semibold"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="cpf" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                <FileText className="h-3 w-3" />
-                CPF (opcional)
-              </Label>
-              <Input
-                id="cpf"
-                placeholder="000.000.000-00"
-                value={cpf}
-                onChange={(e) => setCpf(formatCPF(e.target.value))}
-                maxLength={14}
               />
             </div>
 
@@ -343,7 +324,6 @@ export default function Consultar() {
                   <TableRow>
                     <TableHead>Quadra/Lote</TableHead>
                     <TableHead>Nome</TableHead>
-                    <TableHead>CPF</TableHead>
                     <TableHead>Obs</TableHead>
                     <TableHead>Tipo</TableHead>
                     <TableHead>Início</TableHead>
@@ -376,7 +356,6 @@ export default function Consultar() {
                         </div>
                       </TableCell>
                       <TableCell className="font-bold uppercase">{lib.nome_pessoa.toUpperCase()}</TableCell>
-                      <TableCell>{formatCPF(lib.cpf)}</TableCell>
                       <TableCell className="max-w-[200px] truncate text-muted-foreground" title={lib.observacoes}>{lib.observacoes || "-"}</TableCell>
                       <TableCell>
                         <Badge

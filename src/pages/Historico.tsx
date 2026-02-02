@@ -144,7 +144,6 @@ export default function Historico() {
                   <TableRow>
                     <TableHead className="pl-6">Quadra/Lote</TableHead>
                     <TableHead>Nome</TableHead>
-                    <TableHead>CPF</TableHead>
                     <TableHead>Obs</TableHead>
                     <TableHead>Tipo</TableHead>
                     <TableHead>Período</TableHead>
@@ -176,7 +175,6 @@ export default function Historico() {
                         </div>
                       </TableCell>
                       <TableCell className="font-bold uppercase">{lib.nome_pessoa.toUpperCase()}</TableCell>
-                      <TableCell>{formatCPF(lib.cpf)}</TableCell>
                       <TableCell className="max-w-[200px] truncate text-muted-foreground" title={lib.observacoes}>{lib.observacoes || "-"}</TableCell>
                       <TableCell>
                         <Badge
