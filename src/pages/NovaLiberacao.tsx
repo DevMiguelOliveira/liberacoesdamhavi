@@ -332,7 +332,7 @@ export default function NovaLiberacao() {
                   <span className="text-[10px] font-bold uppercase text-muted-foreground">Observações</span>
                   <Input
                     id="observacoes"
-                    placeholder="Ex: Deixar na garagem, portão lateral..."
+                    placeholder="Ex: Deixar na garagem..."
                     className="bg-background h-10 text-sm border-2"
                     {...register("observacoes")}
                   />
