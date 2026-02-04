@@ -289,27 +289,38 @@ export default function NovaLiberacao() {
 
                 {/* Dias */}
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase text-muted-foreground">Duração</span>
-                  <div className="flex gap-1 flex-wrap">
-                    {[1, 3, 7, 15, 30].map((d) => (
-                      <Button
-                        key={d}
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setValue("dias_liberados", d)}
-                        className={cn(
-                          "h-10 flex-1 min-w-[40px] text-xs font-black transition-all border-2",
-                          diasLiberados === d
-                            ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-accent-foreground shadow-md" :
-                              tipoAcesso === "prestador" ? "bg-warning border-warning text-warning-foreground shadow-md" :
-                                "bg-primary border-primary text-primary-foreground shadow-md")
-                            : "hover:bg-muted"
-                        )}
-                      >
-                        {d === 1 ? "HOJE" : `${d}D`}
-                      </Button>
-                    ))}
+                  <span className="text-[10px] font-bold uppercase text-muted-foreground">Duração (dias)</span>
+                  <div className="flex gap-1 items-center">
+                    <Input
+                      id="dias_liberados"
+                      type="number"
+                      inputMode="numeric"
+                      min={1}
+                      max={365}
+                      {...register("dias_liberados", { valueAsNumber: true })}
+                      className="bg-background font-black text-center h-10 w-16 text-sm border-2"
+                    />
+                    <div className="flex gap-1 flex-1">
+                      {[1, 3, 7, 15, 30].map((d) => (
+                        <Button
+                          key={d}
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setValue("dias_liberados", d)}
+                          className={cn(
+                            "h-10 flex-1 min-w-[32px] text-[10px] font-black transition-all border-2",
+                            diasLiberados === d
+                              ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-accent-foreground shadow-md" :
+                                tipoAcesso === "prestador" ? "bg-warning border-warning text-warning-foreground shadow-md" :
+                                  "bg-primary border-primary text-primary-foreground shadow-md")
+                              : "hover:bg-muted"
+                          )}
+                        >
+                          {d === 1 ? "HOJE" : `${d}D`}
+                        </Button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -318,7 +329,7 @@ export default function NovaLiberacao() {
                   <span className="text-[10px] font-bold uppercase text-muted-foreground">Observações</span>
                   <Input
                     id="observacoes"
-                    placeholder="Ex: portão lateral..."
+                    placeholder="Ex: Deixar na garagem..."
                     className="bg-background h-10 text-sm border-2"
                     {...register("observacoes")}
                   />
