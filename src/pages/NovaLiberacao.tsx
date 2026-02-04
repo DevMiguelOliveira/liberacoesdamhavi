@@ -252,84 +252,87 @@ export default function NovaLiberacao() {
                 Período de Acesso
               </Label>
 
-              <div className="grid gap-3 sm:grid-cols-3">
-                {/* Data Inicial */}
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase text-muted-foreground">Data Início</span>
-                  <Controller
-                    name="data_inicio"
-                    control={control}
-                    render={({ field }) => (
-                      <Popover>
-                        <PopoverTrigger asChild>
+              <div className="space-y-3">
+                {/* Linha 1: Data e Duração */}
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {/* Data Inicial */}
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase text-muted-foreground">Data Início</span>
+                    <Controller
+                      name="data_inicio"
+                      control={control}
+                      render={({ field }) => (
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "w-full justify-start text-left font-semibold bg-background h-10 text-sm border-2",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {field.value ? format(field.value, "dd/MM/yyyy", { locale: ptBR }) : "Selecione"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              locale={ptBR}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      )}
+                    />
+                  </div>
+
+                  {/* Dias */}
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase text-muted-foreground">Duração (dias)</span>
+                    <div className="flex gap-2 items-center">
+                      <Input
+                        id="dias_liberados"
+                        type="number"
+                        inputMode="numeric"
+                        min={1}
+                        max={365}
+                        {...register("dias_liberados", { valueAsNumber: true })}
+                        className="bg-background font-black text-center h-10 w-14 text-sm border-2 flex-shrink-0"
+                      />
+                      <div className="flex gap-1">
+                        {[1, 7, 15, 30].map((d) => (
                           <Button
+                            key={d}
+                            type="button"
                             variant="outline"
+                            size="sm"
+                            onClick={() => setValue("dias_liberados", d)}
                             className={cn(
-                              "w-full justify-start text-left font-semibold bg-background h-10 text-sm border-2",
-                              !field.value && "text-muted-foreground"
+                              "h-10 px-3 text-xs font-black transition-all border-2",
+                              diasLiberados === d
+                                ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-accent-foreground shadow-md" :
+                                  tipoAcesso === "prestador" ? "bg-warning border-warning text-warning-foreground shadow-md" :
+                                    "bg-primary border-primary text-primary-foreground shadow-md")
+                                : "hover:bg-muted"
                             )}
                           >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {field.value ? format(field.value, "dd/MM/yyyy", { locale: ptBR }) : "Selecione"}
+                            {d === 1 ? "HOJE" : `${d}D`}
                           </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            locale={ptBR}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    )}
-                  />
-                </div>
-
-                {/* Dias */}
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase text-muted-foreground">Duração (dias)</span>
-                  <div className="flex gap-1 items-center">
-                    <Input
-                      id="dias_liberados"
-                      type="number"
-                      inputMode="numeric"
-                      min={1}
-                      max={365}
-                      {...register("dias_liberados", { valueAsNumber: true })}
-                      className="bg-background font-black text-center h-10 w-16 text-sm border-2"
-                    />
-                    <div className="flex gap-1 flex-1">
-                      {[1, 3, 7, 15, 30].map((d) => (
-                        <Button
-                          key={d}
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setValue("dias_liberados", d)}
-                          className={cn(
-                            "h-10 flex-1 min-w-[32px] text-[10px] font-black transition-all border-2",
-                            diasLiberados === d
-                              ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-accent-foreground shadow-md" :
-                                tipoAcesso === "prestador" ? "bg-warning border-warning text-warning-foreground shadow-md" :
-                                  "bg-primary border-primary text-primary-foreground shadow-md")
-                              : "hover:bg-muted"
-                          )}
-                        >
-                          {d === 1 ? "HOJE" : `${d}D`}
-                        </Button>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Observações */}
+                {/* Linha 2: Observações */}
                 <div className="space-y-1">
                   <span className="text-[10px] font-bold uppercase text-muted-foreground">Observações</span>
                   <Input
                     id="observacoes"
-                    placeholder="Ex: Deixar na garagem..."
+                    placeholder="Ex: Deixar na garagem, portão lateral..."
                     className="bg-background h-10 text-sm border-2"
                     {...register("observacoes")}
                   />
