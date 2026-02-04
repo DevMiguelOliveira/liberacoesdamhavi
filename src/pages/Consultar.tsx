@@ -329,7 +329,7 @@ export default function Consultar() {
                     <TableHead>Início</TableHead>
                     <TableHead>Fim</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Horário</TableHead>
+                    <TableHead>Registro</TableHead>
                     <TableHead>Remover Liberação</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -384,7 +384,7 @@ export default function Consultar() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm">
-                        {format(new Date(lib.criado_em), "HH:mm")}
+                        {format(new Date(lib.criado_em), "dd/MM/yy HH:mm")}
                       </TableCell>
                       <TableCell>
                         <Button

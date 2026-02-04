@@ -424,7 +424,7 @@ export default function Dashboard() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-slate-500 font-bold text-sm">
-                        {format(new Date(lib.criado_em), "HH:mm")}
+                        {format(new Date(lib.criado_em), "dd/MM/yy HH:mm")}
                       </TableCell>
                       <TableCell className="text-right pr-6">
                         <Button
