@@ -105,7 +105,7 @@ export default function NovaLiberacao() {
       </div>
 
       <Card className={cn(
-        "max-w-xl mx-auto shadow-xl border-t-8 transition-all duration-500",
+        "max-w-2xl mx-auto shadow-xl border-t-8 transition-all duration-500",
         tipoAcesso === "visitante" ? "border-t-accent shadow-accent/10" :
           tipoAcesso === "prestador" ? "border-t-warning shadow-warning/10" :
             "border-t-primary shadow-primary/10"
