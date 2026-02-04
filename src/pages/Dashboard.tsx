@@ -424,7 +424,9 @@ export default function Dashboard() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-slate-500 font-bold text-sm">
-                        {format(new Date(lib.criado_em), "dd/MM/yy HH:mm")}
+                        <span>{format(new Date(lib.criado_em), "dd/MM/yy")}</span>
+                        <span className="mx-1 text-slate-300">•</span>
+                        <span>{format(new Date(lib.criado_em), "HH:mm")}</span>
                       </TableCell>
                       <TableCell className="text-right pr-6">
                         <Button
