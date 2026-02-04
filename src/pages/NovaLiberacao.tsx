@@ -127,30 +127,71 @@ export default function NovaLiberacao() {
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-4 px-4 pb-4">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-            {/* Nome e Tipo de Acesso em grid */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* SEÇÃO 1: Tipo de Acesso - Em destaque */}
+            <Controller
+              name="tipo_acesso"
+              control={control}
+              render={({ field }) => (
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => field.onChange("visitante")}
+                    className={cn(
+                      "flex flex-col items-center justify-center py-3 px-4 rounded-xl border-2 transition-all gap-1 group relative",
+                      field.value === "visitante"
+                        ? "border-accent bg-gradient-to-br from-accent to-accent/80 text-accent-foreground shadow-lg scale-[1.02]"
+                        : "border-muted bg-background hover:border-accent/50 text-muted-foreground hover:bg-accent/5"
+                    )}
+                  >
+                    <User className={cn("h-6 w-6", field.value === "visitante" ? "animate-bounce" : "")} />
+                    <span className="font-black uppercase text-sm tracking-tight">Visitante</span>
+                    <span className="text-[10px] opacity-70">Acesso Social</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => field.onChange("prestador")}
+                    className={cn(
+                      "flex flex-col items-center justify-center py-3 px-4 rounded-xl border-2 transition-all gap-1 group relative",
+                      field.value === "prestador"
+                        ? "border-warning bg-gradient-to-br from-warning to-warning/80 text-warning-foreground shadow-lg scale-[1.02]"
+                        : "border-muted bg-background hover:border-warning/50 text-muted-foreground hover:bg-warning/5"
+                    )}
+                  >
+                    <Clock className={cn("h-6 w-6", field.value === "prestador" ? "animate-pulse" : "")} />
+                    <span className="font-black uppercase text-sm tracking-tight">Prestador</span>
+                    <span className="text-[10px] opacity-70">Acesso Serviço</span>
+                  </button>
+                </div>
+              )}
+            />
+            {errors.tipo_acesso && (
+              <p className="text-xs text-destructive text-center">{errors.tipo_acesso.message}</p>
+            )}
+
+            {/* SEÇÃO 2: Nome e Destino lado a lado */}
             <div className="grid gap-3 sm:grid-cols-2">
               {/* Nome */}
               <div className={cn(
-                "p-2 rounded-lg border transition-all space-y-1",
-                tipoAcesso === "visitante" ? "bg-accent/5 border-accent/20" :
-                  tipoAcesso === "prestador" ? "bg-warning/5 border-warning/20" :
+                "p-3 rounded-xl border-2 transition-all space-y-2",
+                tipoAcesso === "visitante" ? "bg-accent/5 border-accent/30" :
+                  tipoAcesso === "prestador" ? "bg-warning/5 border-warning/30" :
                     "bg-secondary/20 border-secondary"
               )}>
                 <Label htmlFor="nome_pessoa" className={cn(
-                  "flex items-center gap-1.5 uppercase text-[10px] font-bold tracking-wider transition-colors",
+                  "flex items-center gap-2 uppercase text-xs font-black tracking-wider transition-colors",
                   tipoAcesso === "visitante" ? "text-accent" :
                     tipoAcesso === "prestador" ? "text-warning" :
                       "text-primary"
                 )}>
-                  <User className="h-3 w-3" />
-                  Nome Completo *
+                  <User className="h-4 w-4" />
+                  Nome Completo
                 </Label>
                 <Input
                   id="nome_pessoa"
                   placeholder="EX: JOÃO DA SILVA"
                   {...register("nome_pessoa")}
-                  className="bg-background uppercase font-bold text-sm h-9 border focus-visible:ring-offset-1"
+                  className="bg-background uppercase font-bold text-base h-10 border-2 focus-visible:ring-offset-1"
                   autoFocus
                 />
                 {errors.nome_pessoa && (
@@ -158,199 +199,135 @@ export default function NovaLiberacao() {
                 )}
               </div>
 
-              {/* Tipo de Acesso */}
-              <div className="space-y-1">
-                <Label className="flex items-center gap-1.5 text-primary uppercase text-[10px] font-bold tracking-wider">
-                  <User className="h-3 w-3" />
-                  Tipo de Acesso *
+              {/* Destino (Quadra/Lote) */}
+              <div className={cn(
+                "p-3 rounded-xl border-2 transition-all space-y-2",
+                tipoAcesso === "visitante" ? "bg-accent/5 border-accent/30" :
+                  tipoAcesso === "prestador" ? "bg-warning/5 border-warning/30" :
+                    "bg-secondary/20 border-secondary"
+              )}>
+                <Label className={cn(
+                  "flex items-center gap-2 uppercase text-xs font-black tracking-wider transition-colors",
+                  tipoAcesso === "visitante" ? "text-accent" :
+                    tipoAcesso === "prestador" ? "text-warning" :
+                      "text-primary"
+                )}>
+                  <MapPin className="h-4 w-4" />
+                  Destino (Quadra/Lote)
                 </Label>
-                <Controller
-                  name="tipo_acesso"
-                  control={control}
-                  render={({ field }) => (
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        type="button"
-                        onClick={() => field.onChange("visitante")}
-                        className={cn(
-                          "flex items-center justify-center p-2 rounded-lg border-2 transition-all gap-2 group",
-                          field.value === "visitante"
-                            ? "border-accent bg-accent text-accent-foreground shadow-md"
-                            : "border-muted bg-background hover:border-accent/50 text-muted-foreground"
-                        )}
-                      >
-                        <User className={cn("h-4 w-4", field.value === "visitante" ? "animate-bounce" : "")} />
-                        <span className="font-bold uppercase text-xs">Visitante</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => field.onChange("prestador")}
-                        className={cn(
-                          "flex items-center justify-center p-2 rounded-lg border-2 transition-all gap-2 group",
-                          field.value === "prestador"
-                            ? "border-warning bg-warning text-warning-foreground shadow-md"
-                            : "border-muted bg-background hover:border-warning/50 text-muted-foreground"
-                        )}
-                      >
-                        <Clock className={cn("h-4 w-4", field.value === "prestador" ? "animate-pulse" : "")} />
-                        <span className="font-bold uppercase text-xs">Prestador</span>
-                      </button>
-                    </div>
-                  )}
-                />
-                {errors.tipo_acesso && (
-                  <p className="text-xs text-destructive">{errors.tipo_acesso.message}</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <Input
+                    id="quadra"
+                    placeholder="QUADRA"
+                    {...register("quadra")}
+                    className="bg-background font-black text-xl uppercase text-center h-10 border-2"
+                  />
+                  <Input
+                    id="lote"
+                    placeholder="LOTE"
+                    {...register("lote")}
+                    className="bg-background font-black text-xl uppercase text-center h-10 border-2"
+                  />
+                </div>
+                {(errors.quadra || errors.lote) && (
+                  <p className="text-xs text-destructive">{errors.quadra?.message || errors.lote?.message}</p>
                 )}
               </div>
             </div>
 
-            {/* Quadra e Lote */}
+            {/* SEÇÃO 3: Período e Observações */}
             <div className={cn(
-              "p-2 rounded-lg border transition-all duration-500",
-              tipoAcesso === "visitante" ? "bg-accent/5 border-accent/20" :
-                tipoAcesso === "prestador" ? "bg-warning/5 border-warning/20" :
-                  "bg-secondary/30 border-secondary"
+              "p-3 rounded-xl border-2 transition-all",
+              tipoAcesso === "visitante" ? "bg-accent/5 border-accent/30" :
+                tipoAcesso === "prestador" ? "bg-warning/5 border-warning/30" :
+                  "bg-secondary/20 border-secondary"
             )}>
-              <div className={cn(
-                "mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest",
+              <Label className={cn(
+                "flex items-center gap-2 uppercase text-xs font-black tracking-wider mb-3 transition-colors",
                 tipoAcesso === "visitante" ? "text-accent" :
                   tipoAcesso === "prestador" ? "text-warning" :
                     "text-primary"
               )}>
-                <MapPin className="h-3 w-3" />
-                Destino do Acesso
-              </div>
-              <div className="grid gap-3 grid-cols-2">
+                <CalendarIconLucide className="h-4 w-4" />
+                Período de Acesso
+              </Label>
+
+              <div className="grid gap-3 sm:grid-cols-3">
+                {/* Data Inicial */}
                 <div className="space-y-1">
-                  <Label htmlFor="quadra" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    Quadra *
-                  </Label>
-                  <Input
-                    id="quadra"
-                    placeholder="EX: A"
-                    {...register("quadra")}
-                    className="bg-background font-black text-lg uppercase text-center h-9"
+                  <span className="text-[10px] font-bold uppercase text-muted-foreground">Data Início</span>
+                  <Controller
+                    name="data_inicio"
+                    control={control}
+                    render={({ field }) => (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-semibold bg-background h-10 text-sm border-2",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? format(field.value, "dd/MM/yyyy", { locale: ptBR }) : "Selecione"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            locale={ptBR}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    )}
                   />
-                  {errors.quadra && (
-                    <p className="text-xs text-destructive">{errors.quadra.message}</p>
-                  )}
                 </div>
 
+                {/* Dias */}
                 <div className="space-y-1">
-                  <Label htmlFor="lote" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    Lote *
-                  </Label>
+                  <span className="text-[10px] font-bold uppercase text-muted-foreground">Duração</span>
+                  <div className="flex gap-1 flex-wrap">
+                    {[1, 3, 7, 15, 30].map((d) => (
+                      <Button
+                        key={d}
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setValue("dias_liberados", d)}
+                        className={cn(
+                          "h-10 flex-1 min-w-[40px] text-xs font-black transition-all border-2",
+                          diasLiberados === d
+                            ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-accent-foreground shadow-md" :
+                              tipoAcesso === "prestador" ? "bg-warning border-warning text-warning-foreground shadow-md" :
+                                "bg-primary border-primary text-primary-foreground shadow-md")
+                            : "hover:bg-muted"
+                        )}
+                      >
+                        {d === 1 ? "HOJE" : `${d}D`}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Observações */}
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold uppercase text-muted-foreground">Observações</span>
                   <Input
-                    id="lote"
-                    placeholder="EX: 15"
-                    {...register("lote")}
-                    className="bg-background font-black text-lg uppercase text-center h-9"
+                    id="observacoes"
+                    placeholder="Ex: portão lateral..."
+                    className="bg-background h-10 text-sm border-2"
+                    {...register("observacoes")}
                   />
-                  {errors.lote && (
-                    <p className="text-xs text-destructive">{errors.lote.message}</p>
-                  )}
                 </div>
               </div>
-            </div>
 
-            {/* Data, Dias e Observações */}
-            <div className="grid gap-3 sm:grid-cols-3">
-              <div className="space-y-1">
-                <Label className="flex items-center gap-1.5 text-primary uppercase text-[10px] font-bold tracking-wider">
-                  <CalendarIconLucide className="h-3 w-3" />
-                  Data Inicial *
-                </Label>
-                <Controller
-                  name="data_inicio"
-                  control={control}
-                  render={({ field }) => (
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal bg-background h-9 text-sm",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-1.5 h-3.5 w-3.5" />
-                          {field.value ? (
-                            format(field.value, "dd/MM/yyyy", { locale: ptBR })
-                          ) : (
-                            "Selecione"
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          locale={ptBR}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  )}
-                />
-                {errors.data_inicio && (
-                  <p className="text-xs text-destructive">{errors.data_inicio.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="dias_liberados" className="flex items-center gap-1.5 text-primary uppercase text-[10px] font-bold tracking-wider">
-                  <Clock className="h-3 w-3" />
-                  Dias Liberados *
-                </Label>
-                <Input
-                  id="dias_liberados"
-                  type="number"
-                  inputMode="numeric"
-                  min={1}
-                  max={365}
-                  {...register("dias_liberados", { valueAsNumber: true })}
-                  className="bg-background font-bold text-sm h-9"
-                />
-                <div className="flex flex-wrap gap-1">
-                  {[1, 3, 7, 15, 30].map((d) => (
-                    <Button
-                      key={d}
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setValue("dias_liberados", d)}
-                      className={cn(
-                        "h-6 px-2 text-[10px] font-bold transition-all border",
-                        diasLiberados === d
-                          ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-accent-foreground shadow-sm" :
-                            tipoAcesso === "prestador" ? "bg-warning border-warning text-warning-foreground shadow-sm" :
-                              "bg-primary border-primary text-primary-foreground")
-                          : "hover:bg-muted"
-                      )}
-                    >
-                      {d === 1 ? "HOJE" : `${d}D`}
-                    </Button>
-                  ))}
-                </div>
-                {errors.dias_liberados && (
-                  <p className="text-xs text-destructive">{errors.dias_liberados.message}</p>
-                )}
-              </div>
-
-              {/* Observações */}
-              <div className="space-y-1">
-                <Label htmlFor="observacoes" className="flex items-center gap-1.5 text-primary uppercase text-[10px] font-bold tracking-wider">
-                  <FileText className="h-3 w-3" />
-                  Observações
-                </Label>
-                <Textarea
-                  id="observacoes"
-                  placeholder="EX: GARAGEM..."
-                  className="bg-background min-h-[68px] h-[68px] uppercase text-xs resize-none"
-                  {...register("observacoes")}
-                />
-              </div>
+              {(errors.data_inicio || errors.dias_liberados) && (
+                <p className="text-xs text-destructive mt-2">{errors.data_inicio?.message || errors.dias_liberados?.message}</p>
+              )}
             </div>
 
             {/* Actions */}
