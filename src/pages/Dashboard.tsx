@@ -307,7 +307,7 @@ export default function Dashboard() {
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-2">
             <Users className="h-5 w-5 text-primary" />
-            GIOVANY É GAY E GOSTA DE REBOLAR A RABA
+            LIBERAÇÕES ATIVAS HOJE
           </CardTitle>
           <CardDescription>
             Visitantes e prestadores com acesso permitido para hoje
