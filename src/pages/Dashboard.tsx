@@ -501,7 +501,7 @@ export default function Dashboard() {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <MessageCircle className="h-4 w-4" />
-                    <span>GIOVANY ÉGAY</span>
+                    <span>GIOVANY É GAY</span>
                   </div>
                 </div>
               </div>
