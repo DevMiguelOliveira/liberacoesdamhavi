@@ -75,6 +75,43 @@ export default function HistoricoEncomendas() {
 
     useEffect(() => {
         fetchEncomendas();
+
+        // Realtime subscription com logs detalhados
+        const channel = supabase
+            .channel("historico-encomendas-realtime")
+            .on(
+                "postgres_changes",
+                {
+                    event: "*",
+                    schema: "public",
+                    table: "encomendas",
+                },
+                (payload) => {
+                    console.log("📡 [Histórico Encomendas] Realtime event recebido:", payload.eventType, payload);
+                    fetchEncomendas();
+                }
+            )
+            .subscribe((status, err) => {
+                console.log("📡 [Histórico Encomendas] Status da subscription:", status);
+                if (err) {
+                    console.error("📡 [Histórico Encomendas] Erro na subscription:", err);
+                }
+                if (status === "SUBSCRIBED") {
+                    console.log("✅ [Histórico Encomendas] Realtime conectado com sucesso!");
+                }
+            });
+
+        // Fallback: Polling a cada 30 segundos
+        const pollingInterval = setInterval(() => {
+            console.log("🔄 [Histórico Encomendas] Polling de fallback executando...");
+            fetchEncomendas();
+        }, 30000);
+
+        return () => {
+            console.log("🔌 [Histórico Encomendas] Removendo subscription e polling...");
+            supabase.removeChannel(channel);
+            clearInterval(pollingInterval);
+        };
     }, []);
 
     // Filtrar encomendas

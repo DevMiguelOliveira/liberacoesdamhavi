@@ -128,9 +128,9 @@ export default function EncomendasSection() {
     useEffect(() => {
         fetchEncomendas();
 
-        // Realtime subscription
+        // Realtime subscription com logs detalhados
         const channel = supabase
-            .channel("encomendas-changes")
+            .channel("encomendas-realtime-channel")
             .on(
                 "postgres_changes",
                 {
@@ -138,14 +138,38 @@ export default function EncomendasSection() {
                     schema: "public",
                     table: "encomendas",
                 },
-                () => {
+                (payload) => {
+                    console.log("📡 [Encomendas] Realtime event recebido:", payload.eventType, payload);
                     fetchEncomendas();
                 }
             )
-            .subscribe();
+            .subscribe((status, err) => {
+                console.log("📡 [Encomendas] Status da subscription:", status);
+                if (err) {
+                    console.error("📡 [Encomendas] Erro na subscription:", err);
+                }
+                if (status === "SUBSCRIBED") {
+                    console.log("✅ [Encomendas] Realtime conectado com sucesso!");
+                }
+                if (status === "CHANNEL_ERROR") {
+                    console.error("❌ [Encomendas] Erro no canal - usando fallback de polling");
+                }
+                if (status === "TIMED_OUT") {
+                    console.warn("⏰ [Encomendas] Timeout na conexão realtime");
+                }
+            });
+
+        // Fallback: Polling a cada 30 segundos para garantir sincronização
+        // Isso garante que mesmo se o realtime falhar, os dados serão atualizados
+        const pollingInterval = setInterval(() => {
+            console.log("🔄 [Encomendas] Polling de fallback executando...");
+            fetchEncomendas();
+        }, 30000); // 30 segundos
 
         return () => {
+            console.log("🔌 [Encomendas] Removendo subscription e polling...");
             supabase.removeChannel(channel);
+            clearInterval(pollingInterval);
         };
     }, []);
 

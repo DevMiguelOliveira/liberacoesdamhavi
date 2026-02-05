@@ -89,6 +89,43 @@ export default function Historico() {
 
     updateStatuses();
     fetchLiberacoes();
+
+    // Realtime subscription com logs detalhados
+    const channel = supabase
+      .channel("historico-realtime-channel")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "liberacoes",
+        },
+        (payload) => {
+          console.log("📡 [Histórico] Realtime event recebido:", payload.eventType, payload);
+          fetchLiberacoes();
+        }
+      )
+      .subscribe((status, err) => {
+        console.log("📡 [Histórico] Status da subscription:", status);
+        if (err) {
+          console.error("📡 [Histórico] Erro na subscription:", err);
+        }
+        if (status === "SUBSCRIBED") {
+          console.log("✅ [Histórico] Realtime conectado com sucesso!");
+        }
+      });
+
+    // Fallback: Polling a cada 30 segundos
+    const pollingInterval = setInterval(() => {
+      console.log("🔄 [Histórico] Polling de fallback executando...");
+      fetchLiberacoes();
+    }, 30000);
+
+    return () => {
+      console.log("🔌 [Histórico] Removendo subscription e polling...");
+      supabase.removeChannel(channel);
+      clearInterval(pollingInterval);
+    };
   }, []);
 
   return (

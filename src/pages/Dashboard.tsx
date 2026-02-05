@@ -147,9 +147,9 @@ export default function Dashboard() {
     updateStatuses();
     fetchTodayLiberacoes();
 
-    // Realtime subscription
+    // Realtime subscription com logs detalhados
     const channel = supabase
-      .channel("schema-db-changes")
+      .channel("liberacoes-realtime-channel")
       .on(
         "postgres_changes",
         {
@@ -158,14 +158,37 @@ export default function Dashboard() {
           table: "liberacoes",
         },
         (payload) => {
-          console.log("📡 Realtime event recebido:", payload);
+          console.log("📡 [Liberações] Realtime event recebido:", payload.eventType, payload);
           fetchTodayLiberacoes();
         }
       )
-      .subscribe();
+      .subscribe((status, err) => {
+        console.log("📡 [Liberações] Status da subscription:", status);
+        if (err) {
+          console.error("📡 [Liberações] Erro na subscription:", err);
+        }
+        if (status === "SUBSCRIBED") {
+          console.log("✅ [Liberações] Realtime conectado com sucesso!");
+        }
+        if (status === "CHANNEL_ERROR") {
+          console.error("❌ [Liberações] Erro no canal - usando fallback de polling");
+        }
+        if (status === "TIMED_OUT") {
+          console.warn("⏰ [Liberações] Timeout na conexão realtime");
+        }
+      });
+
+    // Fallback: Polling a cada 30 segundos para garantir sincronização
+    // Isso garante que mesmo se o realtime falhar, os dados serão atualizados
+    const pollingInterval = setInterval(() => {
+      console.log("🔄 [Liberações] Polling de fallback executando...");
+      fetchTodayLiberacoes();
+    }, 30000); // 30 segundos
 
     return () => {
+      console.log("🔌 [Liberações] Removendo subscription e polling...");
       supabase.removeChannel(channel);
+      clearInterval(pollingInterval);
     };
   }, []);
 
@@ -369,11 +392,11 @@ export default function Dashboard() {
                           )}>
                             <span className={cn(
                               "text-[0.6rem] font-black uppercase tracking-widest opacity-70",
-                              lib.tipo_acesso === "visitante" ? "text-accent" : "text-warning-foreground"
+                              lib.tipo_acesso === "visitante" ? "text-black" : "text-warning-foreground"
                             )}>Quadra</span>
                             <span className={cn(
                               "text-xl font-black",
-                              lib.tipo_acesso === "visitante" ? "text-accent" : "text-warning-foreground"
+                              lib.tipo_acesso === "visitante" ? "text-black" : "text-warning-foreground"
                             )}>{lib.quadra.toUpperCase()}</span>
                           </div>
                           <div className={cn(
@@ -382,11 +405,11 @@ export default function Dashboard() {
                           )}>
                             <span className={cn(
                               "text-[0.6rem] font-black uppercase tracking-widest opacity-70",
-                              lib.tipo_acesso === "visitante" ? "text-accent" : "text-warning-foreground"
+                              lib.tipo_acesso === "visitante" ? "text-black" : "text-warning-foreground"
                             )}>Lote</span>
                             <span className={cn(
                               "text-xl font-black",
-                              lib.tipo_acesso === "visitante" ? "text-accent" : "text-warning-foreground"
+                              lib.tipo_acesso === "visitante" ? "text-black" : "text-warning-foreground"
                             )}>{lib.lote.toUpperCase()}</span>
                           </div>
                         </div>
