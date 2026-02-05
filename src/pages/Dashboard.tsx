@@ -551,6 +551,18 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Botão flutuante para ir até Encomendas */}
+      <Button
+        onClick={() => {
+          document.getElementById('encomendas-section')?.scrollIntoView({ behavior: 'smooth' });
+        }}
+        className="fixed bottom-6 right-6 h-12 w-12 rounded-full shadow-lg bg-orange-500 hover:bg-orange-600 text-white z-50 transition-all hover:scale-110"
+        size="icon"
+        title="Ir para Encomendas"
+      >
+        <Package className="h-5 w-5" />
+      </Button>
     </div>
   );
 }
