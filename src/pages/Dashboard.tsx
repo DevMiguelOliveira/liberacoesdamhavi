@@ -414,7 +414,7 @@ export default function Dashboard() {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="uppercase tracking-tight text-slate-900 text-base">{lib.nome_pessoa.toUpperCase()}</TableCell>
+                      <TableCell className="font-bold uppercase text-slate-900">{lib.nome_pessoa.toUpperCase()}</TableCell>
                       <TableCell className="max-w-[200px] truncate text-slate-500 font-semibold text-xs uppercase" title={lib.observacoes}>
                         {lib.observacoes || "-"}
                       </TableCell>
