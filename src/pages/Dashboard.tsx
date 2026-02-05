@@ -371,7 +371,7 @@ export default function Dashboard() {
                     <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Validade</TableHead>
                     <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Status</TableHead>
                     <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Registro</TableHead>
-                    <TableHead className="text-right pr-6 font-black text-xs uppercase tracking-widest text-primary">Ação</TableHead>
+                    <TableHead className="text-right pr-6 font-black text-xs uppercase tracking-widest text-primary">Remover</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody className="divide-y divide-muted/30">
@@ -431,7 +431,7 @@ export default function Dashboard() {
                           {lib.tipo_acesso === "visitante" ? "Visitante" : "Prestador"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="font-bold text-slate-600">
+                      <TableCell className="font-black text-slate-700">
                         Até {format(new Date(lib.data_fim + "T00:00:00"), "dd/MM", { locale: ptBR })}
                       </TableCell>
                       <TableCell>
@@ -524,7 +524,7 @@ export default function Dashboard() {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <MessageCircle className="h-4 w-4" />
-                    <span>(14) 99106-0771</span>
+                    <span>Whatsapp: (14) 99106-0771</span>
                   </div>
                 </div>
               </div>
