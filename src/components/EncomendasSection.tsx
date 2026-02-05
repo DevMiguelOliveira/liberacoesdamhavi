@@ -239,6 +239,9 @@ export default function EncomendasSection() {
                                         <SelectItem value="AMAZON">AMAZON</SelectItem>
                                         <SelectItem value="MAGALU">MAGALU</SelectItem>
                                         <SelectItem value="CORREIOS">CORREIOS</SelectItem>
+                                        <SelectItem value="JADLOG">JADLOG</SelectItem>
+                                        <SelectItem value="TOTAL EXPRESS">TOTAL EXPRESS</SelectItem>
+                                        <SelectItem value="AZUL CARGO">AZUL CARGO</SelectItem>
                                         <SelectItem value="outra">OUTRA (MANUAL)</SelectItem>
                                     </SelectContent>
                                 </Select>
