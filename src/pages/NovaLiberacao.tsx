@@ -252,8 +252,8 @@ export default function NovaLiberacao() {
                 Período de Acesso
               </Label>
 
-              <div className="space-y-3">
-                {/* Linha 1: Data e Duração */}
+              <div className="space-y-4">
+                {/* Linha 1: Data Início e visualização da data fim */}
                 <div className="grid gap-3 sm:grid-cols-2">
                   {/* Data Inicial */}
                   <div className="space-y-1">
@@ -267,11 +267,11 @@ export default function NovaLiberacao() {
                             <Button
                               variant="outline"
                               className={cn(
-                                "w-full justify-start text-left font-semibold bg-background h-10 text-sm border-2",
+                                "w-full justify-start text-left font-bold bg-background h-12 text-base border-2",
                                 !field.value && "text-muted-foreground"
                               )}
                             >
-                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              <CalendarIcon className="mr-2 h-5 w-5" />
                               {field.value ? format(field.value, "dd/MM/yyyy", { locale: ptBR }) : "Selecione"}
                             </Button>
                           </PopoverTrigger>
@@ -289,10 +289,57 @@ export default function NovaLiberacao() {
                     />
                   </div>
 
-                  {/* Dias */}
+                  {/* Data Fim (calculada) */}
                   <div className="space-y-1">
-                    <span className="text-[10px] font-bold uppercase text-muted-foreground">Duração (dias)</span>
-                    <div className="flex gap-2 items-center">
+                    <span className="text-[10px] font-bold uppercase text-muted-foreground">Data Fim (calculada)</span>
+                    <div className={cn(
+                      "h-12 flex items-center justify-center rounded-lg border-2 font-black text-base",
+                      tipoAcesso === "visitante" ? "bg-accent/20 border-accent/50 text-accent" :
+                        tipoAcesso === "prestador" ? "bg-warning/20 border-warning/50 text-warning-foreground" :
+                          "bg-primary/10 border-primary/30 text-primary"
+                    )}>
+                      {dataFim ? format(dataFim, "dd/MM/yyyy", { locale: ptBR }) : "---"}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Linha 2: Duração em dias */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase text-muted-foreground">Duração da Liberação</span>
+                    <span className="text-xs font-semibold text-muted-foreground">
+                      {diasLiberados} {diasLiberados === 1 ? "dia" : "dias"}
+                    </span>
+                  </div>
+
+                  {/* Input manual + Atalhos rápidos */}
+                  <div className="flex flex-col gap-2">
+                    {/* Atalhos rápidos - Linha 1 */}
+                    <div className="grid grid-cols-4 sm:grid-cols-7 gap-1">
+                      {[1, 2, 3, 5, 7, 15, 30].map((d) => (
+                        <Button
+                          key={d}
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setValue("dias_liberados", d)}
+                          className={cn(
+                            "h-10 text-xs font-black transition-all border-2",
+                            diasLiberados === d
+                              ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-accent-foreground shadow-md scale-105" :
+                                tipoAcesso === "prestador" ? "bg-warning border-warning text-warning-foreground shadow-md scale-105" :
+                                  "bg-primary border-primary text-primary-foreground shadow-md scale-105")
+                              : "hover:bg-muted"
+                          )}
+                        >
+                          {d === 1 ? "HOJE" : d === 7 ? "1SEM" : d === 15 ? "15D" : d === 30 ? "1MÊS" : `${d}D`}
+                        </Button>
+                      ))}
+                    </div>
+
+                    {/* Input manual para dias personalizados */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground">Ou digite:</span>
                       <Input
                         id="dias_liberados"
                         type="number"
@@ -300,39 +347,19 @@ export default function NovaLiberacao() {
                         min={1}
                         max={365}
                         {...register("dias_liberados", { valueAsNumber: true })}
-                        className="bg-background font-black text-center h-10 w-14 text-sm border-2 flex-shrink-0"
+                        className="bg-background font-black text-center h-10 w-20 text-base border-2"
                       />
-                      <div className="flex gap-1">
-                        {[1, 7, 15, 30].map((d) => (
-                          <Button
-                            key={d}
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setValue("dias_liberados", d)}
-                            className={cn(
-                              "h-10 px-3 text-xs font-black transition-all border-2",
-                              diasLiberados === d
-                                ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-accent-foreground shadow-md" :
-                                  tipoAcesso === "prestador" ? "bg-warning border-warning text-warning-foreground shadow-md" :
-                                    "bg-primary border-primary text-primary-foreground shadow-md")
-                                : "hover:bg-muted"
-                            )}
-                          >
-                            {d === 1 ? "HOJE" : `${d}D`}
-                          </Button>
-                        ))}
-                      </div>
+                      <span className="text-xs text-muted-foreground">dias</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Linha 2: Observações */}
+                {/* Linha 3: Observações */}
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase text-muted-foreground">Observações</span>
+                  <span className="text-[10px] font-bold uppercase text-muted-foreground">Observações (opcional)</span>
                   <Input
                     id="observacoes"
-                    placeholder="Ex: Deixar na garagem..."
+                    placeholder="Ex: Placa do veículo, empresa, motivo..."
                     className="bg-background h-10 text-sm border-2"
                     {...register("observacoes")}
                   />
