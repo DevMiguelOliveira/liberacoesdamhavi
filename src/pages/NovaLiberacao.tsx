@@ -126,41 +126,41 @@ export default function NovaLiberacao() {
                 "Preencha os dados para registrar a nova liberação:"}
           </CardDescription>
         </CardHeader>
-        <CardContent className="pt-4 px-4 pb-4">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* SEÇÃO 1: Tipo de Acesso - Em destaque */}
+        <CardContent className="p-3">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+            {/* SEÇÃO 1: Tipo de Acesso - Compacto */}
             <Controller
               name="tipo_acesso"
               control={control}
               render={({ field }) => (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={() => field.onChange("visitante")}
                     className={cn(
-                      "flex flex-col items-center justify-center py-3 px-4 rounded-xl border-2 transition-all gap-1 group relative",
+                      "flex flex-col items-center justify-center py-2 px-2 rounded-xl border-2 transition-all gap-0.5 group relative",
                       field.value === "visitante"
-                        ? "border-accent bg-gradient-to-br from-accent to-accent/80 text-black shadow-lg scale-[1.02]"
+                        ? "border-accent bg-gradient-to-br from-accent to-accent/80 text-black shadow-sm scale-[1.01]"
                         : "border-muted bg-background hover:border-accent/50 text-muted-foreground hover:bg-accent/5"
                     )}
                   >
-                    <User className={cn("h-6 w-6", field.value === "visitante" ? "animate-bounce" : "")} />
-                    <span className="font-black uppercase text-sm tracking-tight">Visitante</span>
-                    <span className="text-[10px] opacity-70">Acesso Social</span>
+                    <User className={cn("h-5 w-5", field.value === "visitante" ? "animate-bounce" : "")} />
+                    <span className="font-black uppercase text-xs tracking-tight">Visitante</span>
+                    <span className="text-[9px] opacity-70">Acesso Social</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => field.onChange("prestador")}
                     className={cn(
-                      "flex flex-col items-center justify-center py-3 px-4 rounded-xl border-2 transition-all gap-1 group relative",
+                      "flex flex-col items-center justify-center py-2 px-2 rounded-xl border-2 transition-all gap-0.5 group relative",
                       field.value === "prestador"
-                        ? "border-warning bg-gradient-to-br from-warning to-warning/80 text-black shadow-lg scale-[1.02]"
+                        ? "border-warning bg-gradient-to-br from-warning to-warning/80 text-black shadow-sm scale-[1.01]"
                         : "border-muted bg-background hover:border-warning/50 text-muted-foreground hover:bg-warning/5"
                     )}
                   >
-                    <Clock className={cn("h-6 w-6", field.value === "prestador" ? "animate-pulse" : "")} />
-                    <span className="font-black uppercase text-sm tracking-tight">Prestador</span>
-                    <span className="text-[10px] opacity-70">Acesso Serviço</span>
+                    <Clock className={cn("h-5 w-5", field.value === "prestador" ? "animate-pulse" : "")} />
+                    <span className="font-black uppercase text-xs tracking-tight">Prestador</span>
+                    <span className="text-[9px] opacity-70">Acesso Serviço</span>
                   </button>
                 </div>
               )}
@@ -169,92 +169,92 @@ export default function NovaLiberacao() {
               <p className="text-xs text-destructive text-center">{errors.tipo_acesso.message}</p>
             )}
 
-            {/* SEÇÃO 2: Nome e Destino lado a lado */}
-            <div className="grid gap-3 sm:grid-cols-2">
-              {/* Nome */}
+            {/* SEÇÃO 2: Destino e Nome Invertidos e Compactos */}
+            <div className="grid gap-2 sm:grid-cols-2">
+              {/* Destino (Quadra/Lote) - Agora Primeiro */}
               <div className={cn(
-                "p-3 rounded-xl border-2 transition-all space-y-2",
-                tipoAcesso === "visitante" ? "bg-accent/5 border-accent/30" :
-                  tipoAcesso === "prestador" ? "bg-warning/5 border-warning/30" :
-                    "bg-secondary/20 border-secondary"
-              )}>
-                <Label htmlFor="nome_pessoa" className={cn(
-                  "flex items-center gap-2 uppercase text-xs font-black tracking-wider transition-colors",
-                  tipoAcesso === "visitante" ? "text-accent" :
-                    tipoAcesso === "prestador" ? "text-warning" :
-                      "text-primary"
-                )}>
-                  <User className="h-4 w-4" />
-                  Nome Completo
-                </Label>
-                <Input
-                  id="nome_pessoa"
-                  placeholder="EX: JOÃO DA SILVA"
-                  {...register("nome_pessoa")}
-                  className="bg-background uppercase font-bold text-base h-10 border-2 focus-visible:ring-offset-1"
-                  autoFocus
-                />
-                {errors.nome_pessoa && (
-                  <p className="text-xs text-destructive">{errors.nome_pessoa.message}</p>
-                )}
-              </div>
-
-              {/* Destino (Quadra/Lote) */}
-              <div className={cn(
-                "p-3 rounded-xl border-2 transition-all space-y-2",
+                "p-2 rounded-xl border-2 transition-all space-y-1",
                 tipoAcesso === "visitante" ? "bg-accent/5 border-accent/30" :
                   tipoAcesso === "prestador" ? "bg-warning/5 border-warning/30" :
                     "bg-secondary/20 border-secondary"
               )}>
                 <Label className={cn(
-                  "flex items-center gap-2 uppercase text-xs font-black tracking-wider transition-colors",
+                  "flex items-center gap-2 uppercase text-[10px] font-black tracking-wider transition-colors",
                   tipoAcesso === "visitante" ? "text-accent" :
                     tipoAcesso === "prestador" ? "text-warning" :
                       "text-primary"
                 )}>
-                  <MapPin className="h-4 w-4" />
-                  Destino (Quadra/Lote)
+                  <MapPin className="h-3 w-3" />
+                  Destino
                 </Label>
                 <div className="grid grid-cols-2 gap-2">
                   <Input
                     id="quadra"
                     placeholder="QUADRA"
                     {...register("quadra")}
-                    className="bg-background font-black text-xl uppercase text-center h-10 border-2"
+                    className="bg-background font-black text-lg uppercase text-center h-8 border-2"
                   />
                   <Input
                     id="lote"
                     placeholder="LOTE"
                     {...register("lote")}
-                    className="bg-background font-black text-xl uppercase text-center h-10 border-2"
+                    className="bg-background font-black text-lg uppercase text-center h-8 border-2"
                   />
                 </div>
                 {(errors.quadra || errors.lote) && (
-                  <p className="text-xs text-destructive">{errors.quadra?.message || errors.lote?.message}</p>
+                  <p className="text-[10px] text-destructive leading-tight">{errors.quadra?.message || errors.lote?.message}</p>
                 )}
               </div>
-            </div>
 
-            {/* SEÇÃO 3: Período de Acesso */}
-            <div className={cn(
-              "p-4 rounded-xl border-2 transition-all",
-              tipoAcesso === "visitante" ? "bg-accent/5 border-accent/30" :
-                tipoAcesso === "prestador" ? "bg-warning/5 border-warning/30" :
-                  "bg-secondary/20 border-secondary"
-            )}>
-              <div className="flex items-center justify-between mb-4">
-                <Label className={cn(
-                  "flex items-center gap-2 uppercase text-xs font-black tracking-wider transition-colors",
+              {/* Nome - Agora Segundo */}
+              <div className={cn(
+                "p-2 rounded-xl border-2 transition-all space-y-1",
+                tipoAcesso === "visitante" ? "bg-accent/5 border-accent/30" :
+                  tipoAcesso === "prestador" ? "bg-warning/5 border-warning/30" :
+                    "bg-secondary/20 border-secondary"
+              )}>
+                <Label htmlFor="nome_pessoa" className={cn(
+                  "flex items-center gap-2 uppercase text-[10px] font-black tracking-wider transition-colors",
                   tipoAcesso === "visitante" ? "text-accent" :
                     tipoAcesso === "prestador" ? "text-warning" :
                       "text-primary"
                 )}>
-                  <CalendarIconLucide className="h-4 w-4" />
-                  Período de Acesso
+                  <User className="h-3 w-3" />
+                  Nome Completo
+                </Label>
+                <Input
+                  id="nome_pessoa"
+                  placeholder="EX: JOÃO DA SILVA"
+                  {...register("nome_pessoa")}
+                  className="bg-background uppercase font-bold text-sm h-8 border-2 focus-visible:ring-offset-1"
+                  autoFocus
+                />
+                {errors.nome_pessoa && (
+                  <p className="text-[10px] text-destructive leading-tight">{errors.nome_pessoa.message}</p>
+                )}
+              </div>
+            </div>
+
+            {/* SEÇÃO 3: Período de Acesso - Compacto */}
+            <div className={cn(
+              "p-2 rounded-xl border-2 transition-all",
+              tipoAcesso === "visitante" ? "bg-accent/5 border-accent/30" :
+                tipoAcesso === "prestador" ? "bg-warning/5 border-warning/30" :
+                  "bg-secondary/20 border-secondary"
+            )}>
+              <div className="flex items-center justify-between mb-2">
+                <Label className={cn(
+                  "flex items-center gap-2 uppercase text-[10px] font-black tracking-wider transition-colors",
+                  tipoAcesso === "visitante" ? "text-accent" :
+                    tipoAcesso === "prestador" ? "text-warning" :
+                      "text-primary"
+                )}>
+                  <CalendarIconLucide className="h-3 w-3" />
+                  Período
                 </Label>
                 {diasLiberados > 0 && (
                   <span className={cn(
-                    "text-xs font-bold px-2 py-1 rounded-full",
+                    "text-[10px] font-bold px-2 py-0.5 rounded-full",
                     tipoAcesso === "visitante" ? "bg-accent/20 text-accent" :
                       tipoAcesso === "prestador" ? "bg-warning/20 text-warning" :
                         "bg-primary/20 text-primary"
@@ -264,8 +264,8 @@ export default function NovaLiberacao() {
                 )}
               </div>
 
-              {/* Calendário elegante com seleção de range */}
-              <div className="bg-slate-900 rounded-xl p-4 shadow-lg w-fit mx-auto">
+              {/* Calendário elegante com seleção de range - Compacto */}
+              <div className="bg-slate-900 rounded-lg p-2 shadow-lg w-fit mx-auto scale-95 origin-top">
                 <Calendar
                   mode="range"
                   selected={{
@@ -290,20 +290,20 @@ export default function NovaLiberacao() {
                   locale={ptBR}
                   className="!bg-transparent"
                   classNames={{
-                    months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-                    month: "space-y-4",
+                    months: "flex flex-col sm:flex-row space-y-2 sm:space-x-2 sm:space-y-0",
+                    month: "space-y-2",
                     caption: "flex justify-center pt-1 relative items-center text-slate-100",
-                    caption_label: "text-base font-bold text-slate-100",
+                    caption_label: "text-sm font-bold text-slate-100",
                     nav: "space-x-1 flex items-center",
-                    nav_button: "h-8 w-8 bg-transparent p-0 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors",
+                    nav_button: "h-6 w-6 bg-transparent p-0 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors",
                     nav_button_previous: "absolute left-1",
                     nav_button_next: "absolute right-1",
                     table: "w-full border-collapse",
                     head_row: "flex justify-between",
-                    head_cell: "text-slate-500 rounded-md w-10 font-medium text-xs uppercase",
+                    head_cell: "text-slate-500 rounded-md w-8 font-medium text-[10px] uppercase",
                     row: "flex w-full mt-1 justify-between",
-                    cell: "h-10 w-10 text-center text-sm p-0 relative rounded-full",
-                    day: "h-10 w-10 p-0 font-medium text-slate-300 hover:bg-slate-700 hover:text-white rounded-full transition-all aria-selected:opacity-100",
+                    cell: "h-8 w-8 text-center text-xs p-0 relative rounded-full",
+                    day: "h-8 w-8 p-0 font-medium text-slate-300 hover:bg-slate-700 hover:text-white rounded-full transition-all aria-selected:opacity-100",
                     day_range_start: "day-range-start !bg-primary !text-white rounded-full",
                     day_range_end: "day-range-end !bg-primary !text-white rounded-full",
                     day_selected: "!bg-primary !text-white hover:!bg-primary hover:!text-white focus:!bg-primary focus:!text-white font-bold",
@@ -316,8 +316,8 @@ export default function NovaLiberacao() {
                 />
               </div>
 
-              {/* Atalhos rápidos */}
-              <div className="flex items-center justify-center gap-3 mt-4">
+              {/* Atalhos rápidos - Compacto */}
+              <div className="flex items-center justify-center gap-2 mt-2">
                 <Button
                   type="button"
                   variant="outline"
@@ -328,15 +328,15 @@ export default function NovaLiberacao() {
                     setValue("dias_liberados", 1);
                   }}
                   className={cn(
-                    "h-10 px-6 text-sm font-bold transition-all border-2 rounded-full",
+                    "h-8 px-4 text-xs font-bold transition-all border-2 rounded-full",
                     diasLiberados === 1 && dataInicio?.toDateString() === new Date().toDateString()
-                      ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-black shadow-lg" :
-                        tipoAcesso === "prestador" ? "bg-warning border-warning text-black shadow-lg" :
-                          "bg-primary border-primary text-white shadow-lg")
+                      ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-black shadow-sm" :
+                        tipoAcesso === "prestador" ? "bg-warning border-warning text-black shadow-sm" :
+                          "bg-primary border-primary text-white shadow-sm")
                       : "hover:bg-muted border-slate-300"
                   )}
                 >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  <CalendarIcon className="mr-1.5 h-3 w-3" />
                   Só Hoje
                 </Button>
                 <Button
@@ -347,7 +347,7 @@ export default function NovaLiberacao() {
                     setValue("data_inicio", new Date());
                     setValue("dias_liberados", 7);
                   }}
-                  className="h-10 px-4 text-sm font-medium text-muted-foreground hover:text-foreground"
+                  className="h-8 px-3 text-xs font-medium text-muted-foreground hover:text-foreground"
                 >
                   1 Semana
                 </Button>
@@ -359,56 +359,56 @@ export default function NovaLiberacao() {
                     setValue("data_inicio", new Date());
                     setValue("dias_liberados", 30);
                   }}
-                  className="h-10 px-4 text-sm font-medium text-muted-foreground hover:text-foreground"
+                  className="h-8 px-3 text-xs font-medium text-muted-foreground hover:text-foreground"
                 >
                   1 Mês
                 </Button>
               </div>
 
-              {/* Resumo visual elegante */}
+              {/* Resumo visual elegante - Compacto */}
               {dataInicio && dataFim && (
                 <div className={cn(
-                  "mt-4 p-4 rounded-xl text-center border-2",
+                  "mt-2 p-2 rounded-lg text-center border",
                   tipoAcesso === "visitante" ? "bg-accent/10 border-accent/30" :
                     tipoAcesso === "prestador" ? "bg-warning/10 border-warning/30" :
                       "bg-primary/5 border-primary/20"
                 )}>
-                  <div className="flex items-center justify-center gap-4">
+                  <div className="flex items-center justify-center gap-3">
                     <div className="text-center">
-                      <span className="text-[10px] uppercase text-muted-foreground block">Início</span>
-                      <span className="font-black text-lg">{format(dataInicio, "dd/MM", { locale: ptBR })}</span>
+                      <span className="text-[9px] uppercase text-muted-foreground block">Início</span>
+                      <span className="font-black text-sm">{format(dataInicio, "dd/MM", { locale: ptBR })}</span>
                     </div>
-                    <div className="text-muted-foreground">→</div>
+                    <div className="text-muted-foreground text-xs">→</div>
                     <div className="text-center">
-                      <span className="text-[10px] uppercase text-muted-foreground block">Fim</span>
-                      <span className="font-black text-lg">{format(dataFim, "dd/MM", { locale: ptBR })}</span>
+                      <span className="text-[9px] uppercase text-muted-foreground block">Fim</span>
+                      <span className="font-black text-sm">{format(dataFim, "dd/MM", { locale: ptBR })}</span>
                     </div>
                     <div className={cn(
-                      "ml-2 px-3 py-1 rounded-full text-sm font-bold",
+                      "ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold",
                       tipoAcesso === "visitante" ? "bg-accent text-black" :
                         tipoAcesso === "prestador" ? "bg-warning text-black" :
                           "bg-primary text-white"
                     )}>
-                      {diasLiberados} {diasLiberados === 1 ? "dia" : "dias"}
+                      {diasLiberados}d
                     </div>
                   </div>
                 </div>
               )}
 
               {(errors.data_inicio || errors.dias_liberados) && (
-                <p className="text-xs text-destructive mt-2">{errors.data_inicio?.message || errors.dias_liberados?.message}</p>
+                <p className="text-[10px] text-destructive mt-1">{errors.data_inicio?.message || errors.dias_liberados?.message}</p>
               )}
             </div>
 
-            {/* SEÇÃO 4: Observações */}
+            {/* SEÇÃO 4: Observações - Compacto */}
             <div className={cn(
-              "p-3 rounded-xl border-2 transition-all",
+              "p-2 rounded-xl border-2 transition-all",
               tipoAcesso === "visitante" ? "bg-accent/5 border-accent/30" :
                 tipoAcesso === "prestador" ? "bg-warning/5 border-warning/30" :
                   "bg-secondary/20 border-secondary"
             )}>
               <Label className={cn(
-                "flex items-center gap-2 uppercase text-xs font-black tracking-wider mb-2 transition-colors",
+                "flex items-center gap-2 uppercase text-[10px] font-black tracking-wider mb-1 transition-colors",
                 tipoAcesso === "visitante" ? "text-accent" :
                   tipoAcesso === "prestador" ? "text-warning" :
                     "text-primary"
@@ -418,18 +418,19 @@ export default function NovaLiberacao() {
               <Input
                 id="observacoes"
                 placeholder="Ex: Deixar na garagem, etc..."
-                className="bg-background h-10 text-sm border-2"
+                className="bg-background h-8 text-xs border-2"
                 {...register("observacoes")}
               />
             </div>
 
-            {/* Actions */}
-            <div className="flex gap-3 pt-3 border-t mt-3">
+            {/* Actions - Compacto */}
+            <div className="flex gap-2 pt-2 border-t mt-2">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => navigate("/")}
-                className="gap-2 w-1/3 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 transition-colors"
+                className="gap-2 w-1/3 h-10 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 transition-colors"
+                size="sm"
               >
                 <X className="h-4 w-4" />
                 Cancelar
@@ -437,17 +438,18 @@ export default function NovaLiberacao() {
               <Button
                 type="submit"
                 disabled={isLoading}
+                size="sm"
                 className={cn(
-                  "gap-2 flex-1 shadow-md hover:shadow-lg transition-all h-12 text-base font-bold uppercase tracking-wider",
+                  "gap-2 flex-1 shadow-md hover:shadow-lg transition-all h-10 text-sm font-bold uppercase tracking-wider",
                   tipoAcesso === "visitante" ? "bg-accent hover:bg-accent/90" :
                     tipoAcesso === "prestador" ? "bg-warning hover:bg-warning/90 text-warning-foreground" :
                       "bg-primary hover:bg-primary/90"
                 )}
               >
                 {isLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  <Save className="h-5 w-5" />
+                  <Save className="h-4 w-4" />
                 )}
                 Salvar Liberação
               </Button>
