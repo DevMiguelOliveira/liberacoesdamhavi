@@ -242,104 +242,156 @@ export default function NovaLiberacao() {
                 tipoAcesso === "prestador" ? "bg-warning/5 border-warning/30" :
                   "bg-secondary/20 border-secondary"
             )}>
-              <Label className={cn(
-                "flex items-center gap-2 uppercase text-xs font-black tracking-wider mb-4 transition-colors",
-                tipoAcesso === "visitante" ? "text-accent" :
-                  tipoAcesso === "prestador" ? "text-warning" :
-                    "text-primary"
-              )}>
-                <CalendarIconLucide className="h-4 w-4" />
-                Período de Acesso
-              </Label>
-
-              {/* Calendário único com seleção de intervalo */}
-              <div className="flex flex-col items-center">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-center text-center font-bold h-14 text-base border-2 mb-3",
-                        tipoAcesso === "visitante" ? "bg-accent/10 border-accent/40 hover:bg-accent/20" :
-                          tipoAcesso === "prestador" ? "bg-warning/10 border-warning/40 hover:bg-warning/20" :
-                            "bg-primary/5 border-primary/30 hover:bg-primary/10"
-                      )}
-                    >
-                      <CalendarIcon className="mr-3 h-5 w-5" />
-                      {dataInicio && dataFim ? (
-                        <span>
-                          <span className="font-black">{format(dataInicio, "dd/MM", { locale: ptBR })}</span>
-                          <span className="mx-2 text-muted-foreground">até</span>
-                          <span className="font-black">{format(dataFim, "dd/MM/yyyy", { locale: ptBR })}</span>
-                        </span>
-                      ) : (
-                        <span className="text-muted-foreground">Selecione o período</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="center">
-                    <Calendar
-                      mode="range"
-                      selected={{
-                        from: dataInicio || undefined,
-                        to: dataFim || undefined
-                      }}
-                      onSelect={(range) => {
-                        if (range?.from) {
-                          setValue("data_inicio", range.from);
-                          if (range.to) {
-                            const diffTime = range.to.getTime() - range.from.getTime();
-                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                            setValue("dias_liberados", diffDays);
-                          } else {
-                            setValue("dias_liberados", 1);
-                          }
-                        }
-                      }}
-                      numberOfMonths={1}
-                      locale={ptBR}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-
-                {/* Atalho rápido */}
-                <div className="flex items-center gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setValue("data_inicio", new Date());
-                      setValue("dias_liberados", 1);
-                    }}
-                    className={cn(
-                      "h-9 px-4 text-xs font-bold transition-all border-2",
-                      diasLiberados === 1
-                        ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-accent-foreground shadow-md" :
-                          tipoAcesso === "prestador" ? "bg-warning border-warning text-warning-foreground shadow-md" :
-                            "bg-primary border-primary text-primary-foreground shadow-md")
-                        : "hover:bg-muted"
-                    )}
-                  >
-                    Só Hoje
-                  </Button>
-                  <span className="text-xs text-muted-foreground">ou clique acima para selecionar o período</span>
-                </div>
+              <div className="flex items-center justify-between mb-4">
+                <Label className={cn(
+                  "flex items-center gap-2 uppercase text-xs font-black tracking-wider transition-colors",
+                  tipoAcesso === "visitante" ? "text-accent" :
+                    tipoAcesso === "prestador" ? "text-warning" :
+                      "text-primary"
+                )}>
+                  <CalendarIconLucide className="h-4 w-4" />
+                  Período de Acesso
+                </Label>
+                {diasLiberados > 0 && (
+                  <span className={cn(
+                    "text-xs font-bold px-2 py-1 rounded-full",
+                    tipoAcesso === "visitante" ? "bg-accent/20 text-accent" :
+                      tipoAcesso === "prestador" ? "bg-warning/20 text-warning" :
+                        "bg-primary/20 text-primary"
+                  )}>
+                    {diasLiberados} {diasLiberados === 1 ? "dia" : "dias"}
+                  </span>
+                )}
               </div>
 
-              {/* Resumo visual */}
+              {/* Calendário elegante com seleção de range */}
+              <div className="bg-slate-900 rounded-xl p-4 shadow-lg">
+                <Calendar
+                  mode="range"
+                  selected={{
+                    from: dataInicio || undefined,
+                    to: dataFim || undefined
+                  }}
+                  onSelect={(range) => {
+                    if (range?.from) {
+                      setValue("data_inicio", range.from);
+                      if (range.to) {
+                        const diffTime = range.to.getTime() - range.from.getTime();
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                        setValue("dias_liberados", diffDays);
+                      } else {
+                        setValue("dias_liberados", 1);
+                      }
+                    } else {
+                      setValue("dias_liberados", 1);
+                    }
+                  }}
+                  numberOfMonths={1}
+                  locale={ptBR}
+                  className="!bg-transparent"
+                  classNames={{
+                    months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+                    month: "space-y-4",
+                    caption: "flex justify-center pt-1 relative items-center text-slate-100",
+                    caption_label: "text-base font-bold text-slate-100",
+                    nav: "space-x-1 flex items-center",
+                    nav_button: "h-8 w-8 bg-transparent p-0 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors",
+                    nav_button_previous: "absolute left-1",
+                    nav_button_next: "absolute right-1",
+                    table: "w-full border-collapse",
+                    head_row: "flex justify-between",
+                    head_cell: "text-slate-500 rounded-md w-10 font-medium text-xs uppercase",
+                    row: "flex w-full mt-1 justify-between",
+                    cell: "h-10 w-10 text-center text-sm p-0 relative rounded-full",
+                    day: "h-10 w-10 p-0 font-medium text-slate-300 hover:bg-slate-700 hover:text-white rounded-full transition-all aria-selected:opacity-100",
+                    day_range_start: "day-range-start !bg-primary !text-white rounded-full",
+                    day_range_end: "day-range-end !bg-primary !text-white rounded-full",
+                    day_selected: "!bg-primary !text-white hover:!bg-primary hover:!text-white focus:!bg-primary focus:!text-white font-bold",
+                    day_today: "bg-slate-700 text-white font-bold",
+                    day_outside: "text-slate-600 opacity-50",
+                    day_disabled: "text-slate-700 opacity-30",
+                    day_range_middle: "!bg-primary/30 !text-white rounded-none",
+                    day_hidden: "invisible",
+                  }}
+                />
+              </div>
+
+              {/* Atalhos rápidos */}
+              <div className="flex items-center justify-center gap-3 mt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const hoje = new Date();
+                    setValue("data_inicio", hoje);
+                    setValue("dias_liberados", 1);
+                  }}
+                  className={cn(
+                    "h-10 px-6 text-sm font-bold transition-all border-2 rounded-full",
+                    diasLiberados === 1 && dataInicio?.toDateString() === new Date().toDateString()
+                      ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-black shadow-lg" :
+                        tipoAcesso === "prestador" ? "bg-warning border-warning text-black shadow-lg" :
+                          "bg-primary border-primary text-white shadow-lg")
+                      : "hover:bg-muted border-slate-300"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  Só Hoje
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setValue("data_inicio", new Date());
+                    setValue("dias_liberados", 7);
+                  }}
+                  className="h-10 px-4 text-sm font-medium text-muted-foreground hover:text-foreground"
+                >
+                  1 Semana
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setValue("data_inicio", new Date());
+                    setValue("dias_liberados", 30);
+                  }}
+                  className="h-10 px-4 text-sm font-medium text-muted-foreground hover:text-foreground"
+                >
+                  1 Mês
+                </Button>
+              </div>
+
+              {/* Resumo visual elegante */}
               {dataInicio && dataFim && (
                 <div className={cn(
-                  "mt-4 p-3 rounded-lg text-center",
-                  tipoAcesso === "visitante" ? "bg-accent/10" :
-                    tipoAcesso === "prestador" ? "bg-warning/10" :
-                      "bg-primary/5"
+                  "mt-4 p-4 rounded-xl text-center border-2",
+                  tipoAcesso === "visitante" ? "bg-accent/10 border-accent/30" :
+                    tipoAcesso === "prestador" ? "bg-warning/10 border-warning/30" :
+                      "bg-primary/5 border-primary/20"
                 )}>
-                  <span className="text-sm">
-                    <span className="text-muted-foreground">Liberado por </span>
-                    <span className="font-black">{diasLiberados} {diasLiberados === 1 ? "dia" : "dias"}</span>
-                  </span>
+                  <div className="flex items-center justify-center gap-4">
+                    <div className="text-center">
+                      <span className="text-[10px] uppercase text-muted-foreground block">Início</span>
+                      <span className="font-black text-lg">{format(dataInicio, "dd/MM", { locale: ptBR })}</span>
+                    </div>
+                    <div className="text-muted-foreground">→</div>
+                    <div className="text-center">
+                      <span className="text-[10px] uppercase text-muted-foreground block">Fim</span>
+                      <span className="font-black text-lg">{format(dataFim, "dd/MM", { locale: ptBR })}</span>
+                    </div>
+                    <div className={cn(
+                      "ml-2 px-3 py-1 rounded-full text-sm font-bold",
+                      tipoAcesso === "visitante" ? "bg-accent text-black" :
+                        tipoAcesso === "prestador" ? "bg-warning text-black" :
+                          "bg-primary text-white"
+                    )}>
+                      {diasLiberados} {diasLiberados === 1 ? "dia" : "dias"}
+                    </div>
+                  </div>
                 </div>
               )}
 
