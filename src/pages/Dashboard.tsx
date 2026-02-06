@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, History, Users, Phone, MessageCircle, Loader2, Trash2, Monitor, Package, Pencil } from "lucide-react";
+import { Plus, Search, History, Users, Phone, MessageCircle, Loader2, Trash2, Monitor, Package, Pencil, ArrowUp, ArrowDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -670,11 +670,11 @@ export default function Dashboard() {
         onClick={() => {
           document.getElementById('liberacoes-ativas')?.scrollIntoView({ behavior: 'smooth' });
         }}
-        className="fixed bottom-20 right-6 h-12 w-12 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 text-white z-50 transition-all hover:scale-110"
-        size="icon"
+        className="fixed bottom-20 right-6 h-12 w-auto px-4 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 text-white z-50 transition-all hover:scale-105 flex items-center gap-2"
         title="Ir para Liberações Ativas"
       >
         <Users className="h-5 w-5" />
+        <ArrowUp className="h-4 w-4" />
       </Button>
 
       {/* Botão flutuante para ir até Encomendas */}
@@ -682,11 +682,11 @@ export default function Dashboard() {
         onClick={() => {
           document.getElementById('encomendas-section')?.scrollIntoView({ behavior: 'smooth' });
         }}
-        className="fixed bottom-6 right-6 h-12 w-12 rounded-full shadow-lg bg-orange-500 hover:bg-orange-600 text-white z-50 transition-all hover:scale-110"
-        size="icon"
+        className="fixed bottom-6 right-6 h-12 w-auto px-4 rounded-full shadow-lg bg-orange-500 hover:bg-orange-600 text-white z-50 transition-all hover:scale-105 flex items-center gap-2"
         title="Ir para Encomendas"
       >
         <Package className="h-5 w-5" />
+        <ArrowDown className="h-4 w-4" />
       </Button>
     </div>
   );
