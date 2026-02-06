@@ -265,7 +265,7 @@ export default function NovaLiberacao() {
               </div>
 
               {/* Calendário elegante com seleção de range */}
-              <div className="bg-slate-900 rounded-xl p-4 shadow-lg">
+              <div className="bg-slate-900 rounded-xl p-4 shadow-lg w-fit mx-auto">
                 <Calendar
                   mode="range"
                   selected={{
