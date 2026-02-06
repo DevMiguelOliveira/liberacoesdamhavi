@@ -263,7 +263,6 @@ export default function EncomendasSection() {
                                     <SelectContent>
                                         <SelectItem value="SEMAE">SEMAE</SelectItem>
                                         <SelectItem value="MERCADINHO KW">MERCADINHO KW</SelectItem>
-                                        <SelectItem value="ADMINISTRAÇÃO">ADMINISTRAÇÃO</SelectItem>
                                         <SelectItem value="SHOPEE">SHOPEE</SelectItem>
                                         <SelectItem value="MERCADO LIVRE">MERCADO LIVRE</SelectItem>
                                         <SelectItem value="AMAZON">AMAZON</SelectItem>
