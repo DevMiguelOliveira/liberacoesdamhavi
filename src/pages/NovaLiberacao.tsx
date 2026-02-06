@@ -265,7 +265,7 @@ export default function NovaLiberacao() {
               </div>
 
               {/* Calendário elegante com seleção de range - Compacto */}
-              <div className="bg-slate-900 rounded-lg p-2 shadow-lg w-fit mx-auto scale-95 origin-top">
+              <div className="bg-slate-900 rounded-lg p-3 shadow-lg w-fit mx-auto origin-top">
                 <Calendar
                   mode="range"
                   selected={{
@@ -295,15 +295,15 @@ export default function NovaLiberacao() {
                     caption: "flex justify-center pt-1 relative items-center text-slate-100",
                     caption_label: "text-sm font-bold text-slate-100",
                     nav: "space-x-1 flex items-center",
-                    nav_button: "h-6 w-6 bg-transparent p-0 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors",
+                    nav_button: "h-7 w-7 bg-transparent p-0 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors",
                     nav_button_previous: "absolute left-1",
                     nav_button_next: "absolute right-1",
                     table: "w-full border-collapse",
                     head_row: "flex justify-between",
-                    head_cell: "text-slate-500 rounded-md w-8 font-medium text-[10px] uppercase",
+                    head_cell: "text-slate-500 rounded-md w-9 font-medium text-[11px] uppercase",
                     row: "flex w-full mt-1 justify-between",
-                    cell: "h-8 w-8 text-center text-xs p-0 relative rounded-full",
-                    day: "h-8 w-8 p-0 font-medium text-slate-300 hover:bg-slate-700 hover:text-white rounded-full transition-all aria-selected:opacity-100",
+                    cell: "h-9 w-9 text-center text-sm p-0 relative rounded-full",
+                    day: "h-9 w-9 p-0 font-medium text-slate-300 hover:bg-slate-700 hover:text-white rounded-full transition-all aria-selected:opacity-100",
                     day_range_start: "day-range-start !bg-primary !text-white rounded-full",
                     day_range_end: "day-range-end !bg-primary !text-white rounded-full",
                     day_selected: "!bg-primary !text-white hover:!bg-primary hover:!text-white focus:!bg-primary focus:!text-white font-bold",
@@ -368,7 +368,7 @@ export default function NovaLiberacao() {
               {/* Resumo visual elegante - Compacto */}
               {dataInicio && dataFim && (
                 <div className={cn(
-                  "mt-2 p-2 rounded-lg text-center border",
+                  "mt-2 p-1 rounded-lg text-center border",
                   tipoAcesso === "visitante" ? "bg-accent/10 border-accent/30" :
                     tipoAcesso === "prestador" ? "bg-warning/10 border-warning/30" :
                       "bg-primary/5 border-primary/20"
@@ -376,15 +376,15 @@ export default function NovaLiberacao() {
                   <div className="flex items-center justify-center gap-3">
                     <div className="text-center">
                       <span className="text-[9px] uppercase text-muted-foreground block">Início</span>
-                      <span className="font-black text-sm">{format(dataInicio, "dd/MM", { locale: ptBR })}</span>
+                      <span className="font-black text-xs">{format(dataInicio, "dd/MM", { locale: ptBR })}</span>
                     </div>
-                    <div className="text-muted-foreground text-xs">→</div>
+                    <div className="text-muted-foreground text-[10px]">→</div>
                     <div className="text-center">
                       <span className="text-[9px] uppercase text-muted-foreground block">Fim</span>
-                      <span className="font-black text-sm">{format(dataFim, "dd/MM", { locale: ptBR })}</span>
+                      <span className="font-black text-xs">{format(dataFim, "dd/MM", { locale: ptBR })}</span>
                     </div>
                     <div className={cn(
-                      "ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold",
+                      "ml-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold",
                       tipoAcesso === "visitante" ? "bg-accent text-black" :
                         tipoAcesso === "prestador" ? "bg-warning text-black" :
                           "bg-primary text-white"
