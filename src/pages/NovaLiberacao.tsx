@@ -140,7 +140,7 @@ export default function NovaLiberacao() {
                     className={cn(
                       "flex flex-col items-center justify-center py-3 px-4 rounded-xl border-2 transition-all gap-1 group relative",
                       field.value === "visitante"
-                        ? "border-accent bg-gradient-to-br from-accent to-accent/80 text-accent-foreground shadow-lg scale-[1.02]"
+                        ? "border-accent bg-gradient-to-br from-accent to-accent/80 text-black shadow-lg scale-[1.02]"
                         : "border-muted bg-background hover:border-accent/50 text-muted-foreground hover:bg-accent/5"
                     )}
                   >
@@ -154,7 +154,7 @@ export default function NovaLiberacao() {
                     className={cn(
                       "flex flex-col items-center justify-center py-3 px-4 rounded-xl border-2 transition-all gap-1 group relative",
                       field.value === "prestador"
-                        ? "border-warning bg-gradient-to-br from-warning to-warning/80 text-warning-foreground shadow-lg scale-[1.02]"
+                        ? "border-warning bg-gradient-to-br from-warning to-warning/80 text-black shadow-lg scale-[1.02]"
                         : "border-muted bg-background hover:border-warning/50 text-muted-foreground hover:bg-warning/5"
                     )}
                   >
@@ -365,7 +365,7 @@ export default function NovaLiberacao() {
               </Label>
               <Input
                 id="observacoes"
-                placeholder="Ex: Placa ABC-1234, empresa X..."
+                placeholder="Ex: Deixar na garagem, etc..."
                 className="bg-background h-10 text-sm border-2"
                 {...register("observacoes")}
               />
