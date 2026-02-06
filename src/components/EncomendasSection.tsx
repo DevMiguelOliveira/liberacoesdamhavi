@@ -216,16 +216,16 @@ export default function EncomendasSection() {
                 <CardHeader>
                     <CardTitle className="text-xl flex items-center gap-2">
                         <Package className="h-5 w-5 text-primary" />
-                        ENTRADA DE ENCOMENDAS
+                        ENTRADA DE ENCOMENDAS E PRESTADORES PARA O CONDOMÍNIO
                     </CardTitle>
                     <CardDescription>
-                        Registro de entregadores que acessaram o condomínio.
+                        Registro de Entregadores e Prestadores que acessaram o condomínio.
                     </CardDescription>
                     <div className="relative mt-4">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                             type="text"
-                            placeholder="BUSCAR POR NOME DO ENTREGADOR OU EMPRESA..."
+                            placeholder="BUSCAR POR NOME OU EMPRESA..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value.toUpperCase())}
                             className="pl-10 uppercase font-semibold"
@@ -248,7 +248,7 @@ export default function EncomendasSection() {
                         <div className="flex flex-col md:flex-row gap-3 items-start">
                             <div className="flex-1 w-full">
                                 <Input
-                                    placeholder="NOME DO ENTREGADOR"
+                                    placeholder="NOME DO ENTREGADOR OU PRESTADOR"
                                     value={nomeEntregador}
                                     onChange={(e) => handleNomeEntregadorChange(e.target.value)}
                                     className="bg-white border-slate-300 focus:border-primary uppercase font-bold text-lg h-12"
@@ -261,6 +261,9 @@ export default function EncomendasSection() {
                                         <SelectValue placeholder="SELECIONE A EMPRESA" />
                                     </SelectTrigger>
                                     <SelectContent>
+                                        <SelectItem value="SEMAE">SEMAE</SelectItem>
+                                        <SelectItem value="MERCADINHO KW">MERCADINHO KW</SelectItem>
+                                        <SelectItem value="ADMINISTRAÇÃO">ADMINISTRAÇÃO</SelectItem>
                                         <SelectItem value="SHOPEE">SHOPEE</SelectItem>
                                         <SelectItem value="MERCADO LIVRE">MERCADO LIVRE</SelectItem>
                                         <SelectItem value="AMAZON">AMAZON</SelectItem>
