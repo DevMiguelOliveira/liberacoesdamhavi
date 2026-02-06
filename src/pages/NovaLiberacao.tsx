@@ -235,7 +235,87 @@ export default function NovaLiberacao() {
               </div>
             </div>
 
-            {/* SEÇÃO 3: Período e Observações */}
+            {/* SEÇÃO 3: Período de Acesso */}
+            <div className={cn(
+              "p-4 rounded-xl border-2 transition-all",
+              tipoAcesso === "visitante" ? "bg-accent/5 border-accent/30" :
+                tipoAcesso === "prestador" ? "bg-warning/5 border-warning/30" :
+                  "bg-secondary/20 border-secondary"
+            )}>
+              <Label className={cn(
+                "flex items-center gap-2 uppercase text-xs font-black tracking-wider mb-4 transition-colors",
+                tipoAcesso === "visitante" ? "text-accent" :
+                  tipoAcesso === "prestador" ? "text-warning" :
+                    "text-primary"
+              )}>
+                <CalendarIconLucide className="h-4 w-4" />
+                Por quanto tempo?
+              </Label>
+
+              {/* Atalhos rápidos - Botões grandes e claros */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+                {[
+                  { dias: 1, label: "Só Hoje", sublabel: "1 dia" },
+                  { dias: 7, label: "1 Semana", sublabel: "7 dias" },
+                  { dias: 15, label: "15 Dias", sublabel: "quinzena" },
+                  { dias: 30, label: "1 Mês", sublabel: "30 dias" },
+                ].map((item) => (
+                  <Button
+                    key={item.dias}
+                    type="button"
+                    variant="outline"
+                    onClick={() => setValue("dias_liberados", item.dias)}
+                    className={cn(
+                      "h-16 flex flex-col items-center justify-center gap-0.5 transition-all border-2",
+                      diasLiberados === item.dias
+                        ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-accent-foreground shadow-lg scale-[1.02]" :
+                          tipoAcesso === "prestador" ? "bg-warning border-warning text-warning-foreground shadow-lg scale-[1.02]" :
+                            "bg-primary border-primary text-primary-foreground shadow-lg scale-[1.02]")
+                        : "hover:bg-muted hover:scale-[1.01]"
+                    )}
+                  >
+                    <span className="font-black text-sm">{item.label}</span>
+                    <span className="text-[10px] opacity-70">{item.sublabel}</span>
+                  </Button>
+                ))}
+              </div>
+
+              {/* Opção personalizada */}
+              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border">
+                <span className="text-sm text-muted-foreground">Outro período:</span>
+                <Input
+                  id="dias_liberados"
+                  type="number"
+                  inputMode="numeric"
+                  min={1}
+                  max={365}
+                  {...register("dias_liberados", { valueAsNumber: true })}
+                  className="font-black text-center h-10 w-20 text-lg border-2"
+                />
+                <span className="text-sm text-muted-foreground">dias</span>
+              </div>
+
+              {/* Resumo visual do período */}
+              {dataInicio && dataFim && (
+                <div className={cn(
+                  "mt-4 p-3 rounded-lg text-center",
+                  tipoAcesso === "visitante" ? "bg-accent/10" :
+                    tipoAcesso === "prestador" ? "bg-warning/10" :
+                      "bg-primary/5"
+                )}>
+                  <span className="text-sm text-muted-foreground">Liberado de </span>
+                  <span className="font-black">{format(dataInicio, "dd/MM", { locale: ptBR })}</span>
+                  <span className="text-sm text-muted-foreground"> até </span>
+                  <span className="font-black">{format(dataFim, "dd/MM/yyyy", { locale: ptBR })}</span>
+                </div>
+              )}
+
+              {(errors.data_inicio || errors.dias_liberados) && (
+                <p className="text-xs text-destructive mt-2">{errors.data_inicio?.message || errors.dias_liberados?.message}</p>
+              )}
+            </div>
+
+            {/* SEÇÃO 4: Observações */}
             <div className={cn(
               "p-3 rounded-xl border-2 transition-all",
               tipoAcesso === "visitante" ? "bg-accent/5 border-accent/30" :
@@ -243,132 +323,19 @@ export default function NovaLiberacao() {
                   "bg-secondary/20 border-secondary"
             )}>
               <Label className={cn(
-                "flex items-center gap-2 uppercase text-xs font-black tracking-wider mb-3 transition-colors",
+                "flex items-center gap-2 uppercase text-xs font-black tracking-wider mb-2 transition-colors",
                 tipoAcesso === "visitante" ? "text-accent" :
                   tipoAcesso === "prestador" ? "text-warning" :
                     "text-primary"
               )}>
-                <CalendarIconLucide className="h-4 w-4" />
-                Período de Acesso
+                Observações (opcional)
               </Label>
-
-              <div className="space-y-4">
-                {/* Linha 1: Data Início e visualização da data fim */}
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {/* Data Inicial */}
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-bold uppercase text-muted-foreground">Data Início</span>
-                    <Controller
-                      name="data_inicio"
-                      control={control}
-                      render={({ field }) => (
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "w-full justify-start text-left font-bold bg-background h-12 text-base border-2",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              <CalendarIcon className="mr-2 h-5 w-5" />
-                              {field.value ? format(field.value, "dd/MM/yyyy", { locale: ptBR }) : "Selecione"}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              locale={ptBR}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      )}
-                    />
-                  </div>
-
-                  {/* Data Fim (calculada) */}
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-bold uppercase text-muted-foreground">Data Fim (calculada)</span>
-                    <div className={cn(
-                      "h-12 flex items-center justify-center rounded-lg border-2 font-black text-base",
-                      tipoAcesso === "visitante" ? "bg-accent/20 border-accent/50 text-accent" :
-                        tipoAcesso === "prestador" ? "bg-warning/20 border-warning/50 text-warning-foreground" :
-                          "bg-primary/10 border-primary/30 text-primary"
-                    )}>
-                      {dataFim ? format(dataFim, "dd/MM/yyyy", { locale: ptBR }) : "---"}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Linha 2: Duração em dias */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase text-muted-foreground">Duração da Liberação</span>
-                    <span className="text-xs font-semibold text-muted-foreground">
-                      {diasLiberados} {diasLiberados === 1 ? "dia" : "dias"}
-                    </span>
-                  </div>
-
-                  {/* Input manual + Atalhos rápidos */}
-                  <div className="flex flex-col gap-2">
-                    {/* Atalhos rápidos - Linha 1 */}
-                    <div className="grid grid-cols-4 sm:grid-cols-7 gap-1">
-                      {[1, 2, 3, 5, 7, 15, 30].map((d) => (
-                        <Button
-                          key={d}
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setValue("dias_liberados", d)}
-                          className={cn(
-                            "h-10 text-xs font-black transition-all border-2",
-                            diasLiberados === d
-                              ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-accent-foreground shadow-md scale-105" :
-                                tipoAcesso === "prestador" ? "bg-warning border-warning text-warning-foreground shadow-md scale-105" :
-                                  "bg-primary border-primary text-primary-foreground shadow-md scale-105")
-                              : "hover:bg-muted"
-                          )}
-                        >
-                          {d === 1 ? "HOJE" : d === 7 ? "1SEM" : d === 15 ? "15D" : d === 30 ? "1MÊS" : `${d}D`}
-                        </Button>
-                      ))}
-                    </div>
-
-                    {/* Input manual para dias personalizados */}
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground">Ou digite:</span>
-                      <Input
-                        id="dias_liberados"
-                        type="number"
-                        inputMode="numeric"
-                        min={1}
-                        max={365}
-                        {...register("dias_liberados", { valueAsNumber: true })}
-                        className="bg-background font-black text-center h-10 w-20 text-base border-2"
-                      />
-                      <span className="text-xs text-muted-foreground">dias</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Linha 3: Observações */}
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase text-muted-foreground">Observações (opcional)</span>
-                  <Input
-                    id="observacoes"
-                    placeholder="Ex: Placa do veículo, empresa, motivo..."
-                    className="bg-background h-10 text-sm border-2"
-                    {...register("observacoes")}
-                  />
-                </div>
-              </div>
-
-              {(errors.data_inicio || errors.dias_liberados) && (
-                <p className="text-xs text-destructive mt-2">{errors.data_inicio?.message || errors.dias_liberados?.message}</p>
-              )}
+              <Input
+                id="observacoes"
+                placeholder="Ex: Placa ABC-1234, empresa X..."
+                className="bg-background h-10 text-sm border-2"
+                {...register("observacoes")}
+              />
             </div>
 
             {/* Actions */}
