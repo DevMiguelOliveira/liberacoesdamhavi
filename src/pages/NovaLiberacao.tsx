@@ -192,12 +192,30 @@ export default function NovaLiberacao() {
                     id="quadra"
                     placeholder="QUADRA"
                     {...register("quadra")}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^a-zA-Z]/g, "").toUpperCase();
+                      e.target.value = val;
+                      setValue("quadra", val, { shouldValidate: true });
+                    }}
                     className="bg-background font-black text-lg uppercase text-center h-8 border-2"
                   />
                   <Input
                     id="lote"
                     placeholder="LOTE"
                     {...register("lote")}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9]/g, "");
+                      e.target.value = val;
+                      setValue("lote", val, { shouldValidate: true });
+                    }}
+                    onBlur={(e) => {
+                      let val = e.target.value;
+                      if (val.length > 0 && parseInt(val) < 10) {
+                        val = val.padStart(2, "0");
+                        e.target.value = val;
+                        setValue("lote", val, { shouldValidate: true });
+                      }
+                    }}
                     className="bg-background font-black text-lg uppercase text-center h-8 border-2"
                   />
                 </div>
