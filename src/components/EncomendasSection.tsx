@@ -6,7 +6,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Loader2, Trash2, Package, Plus } from "lucide-react";
+import { Search, Loader2, Trash2, Package, Plus, Pencil } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { format, startOfDay, endOfDay } from "date-fns";
 import {
     AlertDialog,
@@ -33,6 +35,7 @@ export default function EncomendasSection() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [encomendaToDelete, setEncomendaToDelete] = useState<string | null>(null);
+    const [editingEncomenda, setEditingEncomenda] = useState<Encomenda | null>(null);
 
     // Estados do formulário
     const [nomeEntregador, setNomeEntregador] = useState("");
@@ -84,6 +87,30 @@ export default function EncomendasSection() {
             fetchEncomendas();
         }
         setEncomendaToDelete(null);
+        setEncomendaToDelete(null);
+    };
+
+    const handleUpdateEncomenda = async () => {
+        if (!editingEncomenda) return;
+
+        try {
+            const { error } = await supabase
+                .from("encomendas")
+                .update({
+                    nome_entregador: editingEncomenda.nome_entregador,
+                    empresa: editingEncomenda.empresa,
+                })
+                .eq("id", editingEncomenda.id);
+
+            if (error) throw error;
+
+            toast.success("Encomenda atualizada com sucesso");
+            setEditingEncomenda(null);
+            fetchEncomendas();
+        } catch (error) {
+            console.error("Erro ao atualizar encomenda:", error);
+            toast.error("Erro ao atualizar encomenda");
+        }
     };
 
     const handleAddEncomenda = async () => {
@@ -284,7 +311,7 @@ export default function EncomendasSection() {
                                         <TableHead>Nome do Entregador</TableHead>
                                         <TableHead>Empresa</TableHead>
                                         <TableHead>Data/Hora</TableHead>
-                                        <TableHead>Remover</TableHead>
+                                        <TableHead>Ações</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -305,14 +332,24 @@ export default function EncomendasSection() {
                                                 {format(new Date(encomenda.criado_em), "dd/MM/yyyy HH:mm")}
                                             </TableCell>
                                             <TableCell>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={() => setEncomendaToDelete(encomenda.id)}
-                                                    className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
+                                                <div className="flex items-center gap-2">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => setEditingEncomenda(encomenda)}
+                                                        className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50"
+                                                    >
+                                                        <Pencil className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => setEncomendaToDelete(encomenda.id)}
+                                                        className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -339,6 +376,71 @@ export default function EncomendasSection() {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+
+            <Dialog open={!!editingEncomenda} onOpenChange={(open) => !open && setEditingEncomenda(null)}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Editar Encomenda</DialogTitle>
+                        <DialogDescription>
+                            Faça as alterações necessárias e clique em Salvar.
+                        </DialogDescription>
+                    </DialogHeader>
+                    {editingEncomenda && (
+                        <div className="grid gap-4 py-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="nome_entregador" className="font-bold">Nome do Entregador</Label>
+                                <Input
+                                    id="nome_entregador"
+                                    value={editingEncomenda.nome_entregador}
+                                    onChange={(e) => setEditingEncomenda({ ...editingEncomenda, nome_entregador: e.target.value.toUpperCase() })}
+                                    className="uppercase"
+                                />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="empresa" className="font-bold">Empresa</Label>
+                                <Select
+                                    value={["SHOPEE", "MERCADO LIVRE", "AMAZON", "MAGALU", "CORREIOS", "JADLOG", "TOTAL EXPRESS", "AZUL CARGO"].includes(editingEncomenda.empresa) ? editingEncomenda.empresa : "outra"}
+                                    onValueChange={(val) => {
+                                        if (val !== "outra") {
+                                            setEditingEncomenda({ ...editingEncomenda, empresa: val });
+                                        } else {
+                                            // Se escolher manual, mantém o valor atual ou limpa se for um dos predefinidos
+                                            if (["SHOPEE", "MERCADO LIVRE", "AMAZON", "MAGALU", "CORREIOS", "JADLOG", "TOTAL EXPRESS", "AZUL CARGO"].includes(editingEncomenda.empresa)) {
+                                                setEditingEncomenda({ ...editingEncomenda, empresa: "" });
+                                            }
+                                        }
+                                    }}
+                                >
+                                    <SelectTrigger className="uppercase">
+                                        <SelectValue placeholder="SELECIONE A EMPRESA" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="SHOPEE">SHOPEE</SelectItem>
+                                        <SelectItem value="MERCADO LIVRE">MERCADO LIVRE</SelectItem>
+                                        <SelectItem value="AMAZON">AMAZON</SelectItem>
+                                        <SelectItem value="MAGALU">MAGALU</SelectItem>
+                                        <SelectItem value="CORREIOS">CORREIOS</SelectItem>
+                                        <SelectItem value="JADLOG">JADLOG</SelectItem>
+                                        <SelectItem value="TOTAL EXPRESS">TOTAL EXPRESS</SelectItem>
+                                        <SelectItem value="AZUL CARGO">AZUL CARGO</SelectItem>
+                                        <SelectItem value="outra">OUTRA (MANUAL)</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <Input
+                                    className="uppercase mt-1"
+                                    value={editingEncomenda.empresa}
+                                    onChange={(e) => setEditingEncomenda({ ...editingEncomenda, empresa: e.target.value.toUpperCase() })}
+                                    placeholder="DIGITE O NOME DA EMPRESA"
+                                />
+                            </div>
+                        </div>
+                    )}
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setEditingEncomenda(null)}>Cancelar</Button>
+                        <Button onClick={handleUpdateEncomenda}>Salvar Alterações</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }

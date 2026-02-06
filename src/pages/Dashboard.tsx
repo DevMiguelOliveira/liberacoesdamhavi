@@ -4,8 +4,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, History, Users, Phone, MessageCircle, Loader2, Trash2, Monitor, Package } from "lucide-react";
+import { Plus, Search, History, Users, Phone, MessageCircle, Loader2, Trash2, Monitor, Package, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -56,6 +59,7 @@ export default function Dashboard() {
   const [todayLiberacoes, setTodayLiberacoes] = useState<Liberacao[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [liberacaoToDelete, setLiberacaoToDelete] = useState<string | null>(null);
+  const [editingLiberacao, setEditingLiberacao] = useState<Liberacao | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleDelete = async () => {
@@ -74,6 +78,33 @@ export default function Dashboard() {
       fetchTodayLiberacoes();
     }
     setLiberacaoToDelete(null);
+    setLiberacaoToDelete(null);
+  };
+
+  const handleUpdateLiberacao = async () => {
+    if (!editingLiberacao) return;
+
+    try {
+      const { error } = await supabase
+        .from("liberacoes")
+        .update({
+          nome_pessoa: editingLiberacao.nome_pessoa,
+          tipo_acesso: editingLiberacao.tipo_acesso,
+          quadra: editingLiberacao.quadra,
+          lote: editingLiberacao.lote,
+          observacoes: editingLiberacao.observacoes,
+        })
+        .eq("id", editingLiberacao.id);
+
+      if (error) throw error;
+
+      toast.success("Liberação atualizada com sucesso");
+      setEditingLiberacao(null);
+      fetchTodayLiberacoes();
+    } catch (error) {
+      console.error("Erro ao atualizar liberação:", error);
+      toast.error("Erro ao atualizar liberação");
+    }
   };
 
   const fetchTodayLiberacoes = async () => {
@@ -371,7 +402,7 @@ export default function Dashboard() {
                     <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Validade</TableHead>
                     <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Status</TableHead>
                     <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Registro</TableHead>
-                    <TableHead className="text-right pr-6 font-black text-xs uppercase tracking-widest text-primary">Remover</TableHead>
+                    <TableHead className="text-right pr-6 font-black text-xs uppercase tracking-widest text-primary">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody className="divide-y divide-muted/30">
@@ -452,14 +483,24 @@ export default function Dashboard() {
                         <span>{format(new Date(lib.criado_em), "HH:mm")}</span>
                       </TableCell>
                       <TableCell className="text-right pr-6">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setLiberacaoToDelete(lib.id)}
-                          className="h-10 w-10 text-destructive hover:text-destructive-foreground hover:bg-destructive shadow-sm hover:shadow-destructive/40 transition-all rounded-full"
-                        >
-                          <Trash2 className="h-5 w-5" />
-                        </Button>
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setEditingLiberacao(lib)}
+                            className="h-10 w-10 text-blue-500 hover:text-blue-600 hover:bg-blue-50 shadow-sm hover:shadow-blue-100 transition-all rounded-full"
+                          >
+                            <Pencil className="h-5 w-5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setLiberacaoToDelete(lib.id)}
+                            className="h-10 w-10 text-destructive hover:text-destructive-foreground hover:bg-destructive shadow-sm hover:shadow-destructive/40 transition-all rounded-full"
+                          >
+                            <Trash2 className="h-5 w-5" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -489,6 +530,78 @@ export default function Dashboard() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={!!editingLiberacao} onOpenChange={(open) => !open && setEditingLiberacao(null)}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Editar Liberação</DialogTitle>
+            <DialogDescription>
+              Faça as alterações necessárias e clique em Salvar.
+            </DialogDescription>
+          </DialogHeader>
+          {editingLiberacao && (
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="nome" className="font-bold">Nome Completo</Label>
+                <Input
+                  id="nome"
+                  value={editingLiberacao.nome_pessoa}
+                  onChange={(e) => setEditingLiberacao({ ...editingLiberacao, nome_pessoa: e.target.value.toUpperCase() })}
+                  className="uppercase"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="quadra" className="font-bold">Quadra</Label>
+                  <Input
+                    id="quadra"
+                    value={editingLiberacao.quadra}
+                    onChange={(e) => setEditingLiberacao({ ...editingLiberacao, quadra: e.target.value.toUpperCase() })}
+                    className="uppercase"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="lote" className="font-bold">Lote</Label>
+                  <Input
+                    id="lote"
+                    value={editingLiberacao.lote}
+                    onChange={(e) => setEditingLiberacao({ ...editingLiberacao, lote: e.target.value.toUpperCase() })}
+                    className="uppercase"
+                  />
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="tipo" className="font-bold">Tipo de Acesso</Label>
+                <Select
+                  value={editingLiberacao.tipo_acesso}
+                  onValueChange={(value: "visitante" | "prestador") => setEditingLiberacao({ ...editingLiberacao, tipo_acesso: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="visitante">VISITANTE</SelectItem>
+                    <SelectItem value="prestador">PRESTADOR DE SERVIÇO</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="obs" className="font-bold">Observações</Label>
+                <Input
+                  id="obs"
+                  value={editingLiberacao.observacoes || ""}
+                  onChange={(e) => setEditingLiberacao({ ...editingLiberacao, observacoes: e.target.value.toUpperCase() })}
+                  className="uppercase"
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingLiberacao(null)}>Cancelar</Button>
+            <Button onClick={handleUpdateLiberacao}>Salvar Alterações</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Info & Contacts Section */}
       <div className="grid gap-4 md:grid-cols-3">
