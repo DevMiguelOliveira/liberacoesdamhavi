@@ -345,7 +345,7 @@ export default function NovaLiberacao() {
                   size="sm"
                   onClick={() => {
                     setValue("data_inicio", new Date());
-                    setValue("dias_liberados", 7);
+                    setValue("dias_liberados", 8);
                   }}
                   className="h-8 px-3 text-xs font-medium text-muted-foreground hover:text-foreground"
                 >
@@ -357,7 +357,7 @@ export default function NovaLiberacao() {
                   size="sm"
                   onClick={() => {
                     setValue("data_inicio", new Date());
-                    setValue("dias_liberados", 30);
+                    setValue("dias_liberados", 31);
                   }}
                   className="h-8 px-3 text-xs font-medium text-muted-foreground hover:text-foreground"
                 >
