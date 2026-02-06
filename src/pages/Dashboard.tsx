@@ -326,7 +326,7 @@ export default function Dashboard() {
       </div>
 
       {/* Today's Active Liberacoes */}
-      <Card>
+      <Card id="liberacoes-ativas">
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-2">
             <Users className="h-5 w-5 text-primary" />
@@ -551,6 +551,18 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Botão flutuante para ir até Liberações Ativas */}
+      <Button
+        onClick={() => {
+          document.getElementById('liberacoes-ativas')?.scrollIntoView({ behavior: 'smooth' });
+        }}
+        className="fixed bottom-20 right-6 h-12 w-12 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 text-white z-50 transition-all hover:scale-110"
+        size="icon"
+        title="Ir para Liberações Ativas"
+      >
+        <Users className="h-5 w-5" />
+      </Button>
 
       {/* Botão flutuante para ir até Encomendas */}
       <Button
