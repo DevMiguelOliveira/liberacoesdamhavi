@@ -335,35 +335,25 @@ export default function NovaLiberacao() {
                 </div>
               </div>
 
-              {/* Atalhos rápidos */}
-              <div className="space-y-2">
-                <span className="text-xs text-muted-foreground">Atalhos rápidos:</span>
-                <div className="grid grid-cols-4 gap-2">
-                  {[
-                    { dias: 1, label: "Só Hoje" },
-                    { dias: 7, label: "1 Semana" },
-                    { dias: 15, label: "15 Dias" },
-                    { dias: 30, label: "1 Mês" },
-                  ].map((item) => (
-                    <Button
-                      key={item.dias}
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setValue("dias_liberados", item.dias)}
-                      className={cn(
-                        "h-10 text-xs font-bold transition-all border-2",
-                        diasLiberados === item.dias
-                          ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-accent-foreground shadow-md" :
-                            tipoAcesso === "prestador" ? "bg-warning border-warning text-warning-foreground shadow-md" :
-                              "bg-primary border-primary text-primary-foreground shadow-md")
-                          : "hover:bg-muted"
-                      )}
-                    >
-                      {item.label}
-                    </Button>
-                  ))}
-                </div>
+              {/* Atalho rápido */}
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setValue("dias_liberados", 1)}
+                  className={cn(
+                    "h-10 px-4 text-xs font-bold transition-all border-2",
+                    diasLiberados === 1
+                      ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-accent-foreground shadow-md" :
+                        tipoAcesso === "prestador" ? "bg-warning border-warning text-warning-foreground shadow-md" :
+                          "bg-primary border-primary text-primary-foreground shadow-md")
+                      : "hover:bg-muted"
+                  )}
+                >
+                  Só Hoje
+                </Button>
+                <span className="text-xs text-muted-foreground">ou selecione as datas acima</span>
               </div>
 
               {/* Resumo visual */}
