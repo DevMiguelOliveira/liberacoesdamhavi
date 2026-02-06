@@ -249,53 +249,124 @@ export default function NovaLiberacao() {
                     "text-primary"
               )}>
                 <CalendarIconLucide className="h-4 w-4" />
-                Por quanto tempo?
+                Período de Acesso
               </Label>
 
-              {/* Atalhos rápidos - Botões grandes e claros */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
-                {[
-                  { dias: 1, label: "Só Hoje", sublabel: "1 dia" },
-                  { dias: 7, label: "1 Semana", sublabel: "7 dias" },
-                  { dias: 15, label: "15 Dias", sublabel: "quinzena" },
-                  { dias: 30, label: "1 Mês", sublabel: "30 dias" },
-                ].map((item) => (
-                  <Button
-                    key={item.dias}
-                    type="button"
-                    variant="outline"
-                    onClick={() => setValue("dias_liberados", item.dias)}
-                    className={cn(
-                      "h-16 flex flex-col items-center justify-center gap-0.5 transition-all border-2",
-                      diasLiberados === item.dias
-                        ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-accent-foreground shadow-lg scale-[1.02]" :
-                          tipoAcesso === "prestador" ? "bg-warning border-warning text-warning-foreground shadow-lg scale-[1.02]" :
-                            "bg-primary border-primary text-primary-foreground shadow-lg scale-[1.02]")
-                        : "hover:bg-muted hover:scale-[1.01]"
+              {/* Calendários: Data Início e Data Fim */}
+              <div className="grid gap-4 sm:grid-cols-2 mb-4">
+                {/* Data Inicial */}
+                <div className="space-y-2">
+                  <span className="text-xs font-bold uppercase text-muted-foreground">Data Início</span>
+                  <Controller
+                    name="data_inicio"
+                    control={control}
+                    render={({ field }) => (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-bold bg-background h-12 text-base border-2",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-5 w-5" />
+                            {field.value ? format(field.value, "dd/MM/yyyy", { locale: ptBR }) : "Selecione"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={(date) => {
+                              field.onChange(date);
+                              // Se a data fim for menor que a nova data início, ajusta
+                              if (date && dataFim && date > dataFim) {
+                                setValue("dias_liberados", 1);
+                              }
+                            }}
+                            locale={ptBR}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
                     )}
-                  >
-                    <span className="font-black text-sm">{item.label}</span>
-                    <span className="text-[10px] opacity-70">{item.sublabel}</span>
-                  </Button>
-                ))}
+                  />
+                </div>
+
+                {/* Data Fim */}
+                <div className="space-y-2">
+                  <span className="text-xs font-bold uppercase text-muted-foreground">Data Fim</span>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-bold h-12 text-base border-2",
+                          tipoAcesso === "visitante" ? "bg-accent/20 border-accent/50 text-accent hover:bg-accent/30" :
+                            tipoAcesso === "prestador" ? "bg-warning/20 border-warning/50 text-warning-foreground hover:bg-warning/30" :
+                              "bg-primary/10 border-primary/30 text-primary hover:bg-primary/20"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-5 w-5" />
+                        {dataFim ? format(dataFim, "dd/MM/yyyy", { locale: ptBR }) : "Selecione"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={dataFim || undefined}
+                        onSelect={(date) => {
+                          if (date && dataInicio) {
+                            // Calcula a diferença em dias
+                            const diffTime = date.getTime() - dataInicio.getTime();
+                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                            if (diffDays >= 1) {
+                              setValue("dias_liberados", diffDays);
+                            }
+                          }
+                        }}
+                        disabled={(date) => dataInicio ? date < dataInicio : false}
+                        locale={ptBR}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </div>
 
-              {/* Opção personalizada */}
-              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border">
-                <span className="text-sm text-muted-foreground">Outro período:</span>
-                <Input
-                  id="dias_liberados"
-                  type="number"
-                  inputMode="numeric"
-                  min={1}
-                  max={365}
-                  {...register("dias_liberados", { valueAsNumber: true })}
-                  className="font-black text-center h-10 w-20 text-lg border-2"
-                />
-                <span className="text-sm text-muted-foreground">dias</span>
+              {/* Atalhos rápidos */}
+              <div className="space-y-2">
+                <span className="text-xs text-muted-foreground">Atalhos rápidos:</span>
+                <div className="grid grid-cols-4 gap-2">
+                  {[
+                    { dias: 1, label: "Só Hoje" },
+                    { dias: 7, label: "1 Semana" },
+                    { dias: 15, label: "15 Dias" },
+                    { dias: 30, label: "1 Mês" },
+                  ].map((item) => (
+                    <Button
+                      key={item.dias}
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setValue("dias_liberados", item.dias)}
+                      className={cn(
+                        "h-10 text-xs font-bold transition-all border-2",
+                        diasLiberados === item.dias
+                          ? (tipoAcesso === "visitante" ? "bg-accent border-accent text-accent-foreground shadow-md" :
+                            tipoAcesso === "prestador" ? "bg-warning border-warning text-warning-foreground shadow-md" :
+                              "bg-primary border-primary text-primary-foreground shadow-md")
+                          : "hover:bg-muted"
+                      )}
+                    >
+                      {item.label}
+                    </Button>
+                  ))}
+                </div>
               </div>
 
-              {/* Resumo visual do período */}
+              {/* Resumo visual */}
               {dataInicio && dataFim && (
                 <div className={cn(
                   "mt-4 p-3 rounded-lg text-center",
@@ -303,10 +374,14 @@ export default function NovaLiberacao() {
                     tipoAcesso === "prestador" ? "bg-warning/10" :
                       "bg-primary/5"
                 )}>
-                  <span className="text-sm text-muted-foreground">Liberado de </span>
-                  <span className="font-black">{format(dataInicio, "dd/MM", { locale: ptBR })}</span>
-                  <span className="text-sm text-muted-foreground"> até </span>
-                  <span className="font-black">{format(dataFim, "dd/MM/yyyy", { locale: ptBR })}</span>
+                  <span className="text-sm">
+                    <span className="text-muted-foreground">Liberado por </span>
+                    <span className="font-black">{diasLiberados} {diasLiberados === 1 ? "dia" : "dias"}</span>
+                    <span className="text-muted-foreground"> • de </span>
+                    <span className="font-bold">{format(dataInicio, "dd/MM", { locale: ptBR })}</span>
+                    <span className="text-muted-foreground"> até </span>
+                    <span className="font-bold">{format(dataFim, "dd/MM/yyyy", { locale: ptBR })}</span>
+                  </span>
                 </div>
               )}
 
