@@ -324,7 +324,7 @@ export default function NovaLiberacao() {
                   >
                     Só Hoje
                   </Button>
-                  <span className="text-xs text-muted-foreground">ou clique acima para selecionar</span>
+                  <span className="text-xs text-muted-foreground">ou clique acima para selecionar o período</span>
                 </div>
               </div>
 
