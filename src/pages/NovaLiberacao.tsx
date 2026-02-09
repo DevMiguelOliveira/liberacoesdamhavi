@@ -198,6 +198,7 @@ export default function NovaLiberacao() {
                       setValue("quadra", val, { shouldValidate: true });
                     }}
                     className="bg-background font-black text-lg uppercase text-center h-8 border-2"
+                    autoFocus
                   />
                   <Input
                     id="lote"
@@ -245,7 +246,7 @@ export default function NovaLiberacao() {
                   placeholder="EX: JOÃO DA SILVA"
                   {...register("nome_pessoa")}
                   className="bg-background uppercase font-bold text-sm h-8 border-2 focus-visible:ring-offset-1"
-                  autoFocus
+
                 />
                 {errors.nome_pessoa && (
                   <p className="text-[10px] text-destructive leading-tight">{errors.nome_pessoa.message}</p>
