@@ -28,6 +28,7 @@ interface Encomenda {
     empresa: string;
     destino: string;
     criado_em: string;
+    observacoes?: string;
 }
 
 export default function EncomendasSection() {
@@ -41,6 +42,7 @@ export default function EncomendasSection() {
     const [nomeEntregador, setNomeEntregador] = useState("");
     const [empresaSelecionada, setEmpresaSelecionada] = useState("");
     const [empresaManual, setEmpresaManual] = useState("");
+    const [observacoes, setObservacoes] = useState("");
 
     // Destino fixo para condomínio
     const destinoFixo = "CON999";
@@ -99,6 +101,7 @@ export default function EncomendasSection() {
                 .update({
                     nome_entregador: editingEncomenda.nome_entregador,
                     empresa: editingEncomenda.empresa,
+                    observacoes: editingEncomenda.observacoes,
                 })
                 .eq("id", editingEncomenda.id);
 
@@ -128,7 +131,8 @@ export default function EncomendasSection() {
             .insert([{
                 nome_entregador: nomeEntregador,
                 empresa: empresaFinal,
-                destino: destinoFixo
+                destino: destinoFixo,
+                observacoes: observacoes || null
             }]);
 
         if (error) {
@@ -140,6 +144,7 @@ export default function EncomendasSection() {
             setNomeEntregador("");
             setEmpresaSelecionada("");
             setEmpresaManual("");
+            setObservacoes("");
             fetchEncomendas();
         }
     };
@@ -206,7 +211,8 @@ export default function EncomendasSection() {
         return (
             encomenda.nome_entregador.toLowerCase().includes(searchLower) ||
             encomenda.empresa.toLowerCase().includes(searchLower) ||
-            encomenda.destino.toLowerCase().includes(searchLower)
+            encomenda.destino.toLowerCase().includes(searchLower) ||
+            (encomenda.observacoes?.toLowerCase().includes(searchLower) || false)
         );
     });
 
@@ -225,7 +231,7 @@ export default function EncomendasSection() {
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                             type="text"
-                            placeholder="BUSCAR POR NOME OU EMPRESA..."
+                            placeholder="BUSCAR POR NOME, EMPRESA OU OBSERVAÇÕES..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value.toUpperCase())}
                             className="pl-10 uppercase font-semibold"
@@ -284,6 +290,15 @@ export default function EncomendasSection() {
                                 )}
                             </div>
 
+                            <div className="flex-1 w-full md:max-w-xs">
+                                <Input
+                                    placeholder="OBSERVAÇÕES (OPCIONAL)"
+                                    value={observacoes}
+                                    onChange={(e) => setObservacoes(e.target.value.toUpperCase())}
+                                    className="bg-white border-slate-300 uppercase font-bold text-sm h-12"
+                                />
+                            </div>
+
                             <Button onClick={handleAddEncomenda} className="gap-2 bg-primary hover:bg-primary/90 shadow-sm w-full md:w-auto min-w-[120px]">
                                 <Plus className="h-4 w-4" />
                                 Registrar
@@ -312,6 +327,7 @@ export default function EncomendasSection() {
                                         <TableHead>Destino</TableHead>
                                         <TableHead>Nome do Entregador</TableHead>
                                         <TableHead>Empresa</TableHead>
+                                        <TableHead>Observações</TableHead>
                                         <TableHead>Data/Hora</TableHead>
                                         <TableHead>Ações</TableHead>
                                     </TableRow>
@@ -329,6 +345,9 @@ export default function EncomendasSection() {
                                                 <Badge variant="secondary" className="bg-orange-200 text-orange-900 hover:bg-orange-300 font-bold px-3 py-1 border border-orange-300 shadow-sm uppercase">
                                                     {encomenda.empresa.toUpperCase()}
                                                 </Badge>
+                                            </TableCell>
+                                            <TableCell className="max-w-[200px] truncate text-slate-500 font-semibold text-xs uppercase" title={encomenda.observacoes}>
+                                                {encomenda.observacoes || "-"}
                                             </TableCell>
                                             <TableCell className="text-muted-foreground text-sm">
                                                 {format(new Date(encomenda.criado_em), "dd/MM/yyyy HH:mm")}
@@ -433,6 +452,16 @@ export default function EncomendasSection() {
                                     value={editingEncomenda.empresa}
                                     onChange={(e) => setEditingEncomenda({ ...editingEncomenda, empresa: e.target.value.toUpperCase() })}
                                     placeholder="DIGITE O NOME DA EMPRESA"
+                                />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="observacoes" className="font-bold">Observações</Label>
+                                <Input
+                                    id="observacoes"
+                                    value={editingEncomenda.observacoes || ""}
+                                    onChange={(e) => setEditingEncomenda({ ...editingEncomenda, observacoes: e.target.value.toUpperCase() })}
+                                    className="uppercase"
+                                    placeholder="OPCIONAL"
                                 />
                             </div>
                         </div>

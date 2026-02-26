@@ -26,6 +26,7 @@ interface Encomenda {
     empresa: string;
     destino: string;
     criado_em: string;
+    observacoes?: string;
 }
 
 export default function HistoricoEncomendas() {
@@ -120,7 +121,8 @@ export default function HistoricoEncomendas() {
         return (
             encomenda.nome_entregador.toLowerCase().includes(searchLower) ||
             encomenda.empresa.toLowerCase().includes(searchLower) ||
-            encomenda.destino.toLowerCase().includes(searchLower)
+            encomenda.destino.toLowerCase().includes(searchLower) ||
+            (encomenda.observacoes?.toLowerCase().includes(searchLower) || false)
         );
     });
 
@@ -180,6 +182,7 @@ export default function HistoricoEncomendas() {
                                         <TableHead>Destino</TableHead>
                                         <TableHead>Nome do Entregador</TableHead>
                                         <TableHead>Empresa</TableHead>
+                                        <TableHead>Observações</TableHead>
                                         <TableHead>Data/Hora</TableHead>
                                         <TableHead className="w-[100px]">Ações</TableHead>
                                     </TableRow>
@@ -197,6 +200,9 @@ export default function HistoricoEncomendas() {
                                                 <Badge variant="outline" className="bg-slate-100 font-normal">
                                                     {encomenda.empresa}
                                                 </Badge>
+                                            </TableCell>
+                                            <TableCell className="max-w-[200px] truncate text-slate-500 font-semibold text-xs uppercase" title={encomenda.observacoes}>
+                                                {encomenda.observacoes || "-"}
                                             </TableCell>
                                             <TableCell className="text-muted-foreground text-sm">
                                                 {format(new Date(encomenda.criado_em), "dd/MM/yyyy HH:mm")}
