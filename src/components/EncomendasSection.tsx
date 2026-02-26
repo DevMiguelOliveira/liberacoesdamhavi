@@ -45,8 +45,8 @@ export default function EncomendasSection() {
     // Destino fixo para condomínio
     const destinoFixo = "CON999";
 
-    const fetchEncomendas = async () => {
-        setIsLoading(true);
+    const fetchEncomendas = async (silent = false) => {
+        if (!silent) setIsLoading(true);
 
         const today = new Date();
         const start = startOfDay(today).toISOString();
@@ -167,7 +167,7 @@ export default function EncomendasSection() {
                 },
                 (payload) => {
                     console.log("📡 [Encomendas] Realtime event recebido:", payload.eventType, payload);
-                    fetchEncomendas();
+                    fetchEncomendas(true);
                 }
             )
             .subscribe((status, err) => {
@@ -190,7 +190,7 @@ export default function EncomendasSection() {
         // Isso garante que mesmo se o realtime falhar, os dados serão atualizados
         const pollingInterval = setInterval(() => {
             console.log("🔄 [Encomendas] Polling de fallback executando...");
-            fetchEncomendas();
+            fetchEncomendas(true);
         }, 30000); // 30 segundos
 
         return () => {

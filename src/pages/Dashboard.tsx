@@ -107,9 +107,9 @@ export default function Dashboard() {
     }
   };
 
-  const fetchTodayLiberacoes = async () => {
+  const fetchTodayLiberacoes = async (silent = false) => {
     console.log("🔄 Iniciando fetchTodayLiberacoes...");
-    setIsLoading(true);
+    if (!silent) setIsLoading(true);
 
     // Get today's date in YYYY-MM-DD format using local time (Brazil/System)
     const todayDate = new Date();
@@ -190,7 +190,7 @@ export default function Dashboard() {
         },
         (payload) => {
           console.log("📡 [Liberações] Realtime event recebido:", payload.eventType, payload);
-          fetchTodayLiberacoes();
+          fetchTodayLiberacoes(true);
         }
       )
       .subscribe((status, err) => {
@@ -213,7 +213,7 @@ export default function Dashboard() {
     // Isso garante que mesmo se o realtime falhar, os dados serão atualizados
     const pollingInterval = setInterval(() => {
       console.log("🔄 [Liberações] Polling de fallback executando...");
-      fetchTodayLiberacoes();
+      fetchTodayLiberacoes(true);
     }, 30000); // 30 segundos
 
     return () => {
