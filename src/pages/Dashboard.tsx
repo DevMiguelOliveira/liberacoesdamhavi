@@ -246,8 +246,8 @@ export default function Dashboard() {
       theme: "secondary",
     },
     {
-      title: "Encomendas",
-      description: "Histórico de entregas (Encomendas)",
+      title: "Entradas CON999",
+      description: "Histórico de entregas (Encomendas) e Entradas CON999.",
       icon: Package,
       path: "/historico-encomendas",
       theme: "warning",
