@@ -140,9 +140,9 @@ export default function EncomendasSection() {
             let fotoUrlFinal = null;
 
             if (fotoBase64) {
-                // Converter base64 para blob
-                const base64Data = fotoBase64.replace(/^data:image\/\w+;base64,/, "");
-                const blob = Buffer.from(base64Data, "base64");
+                // Converter base64 para blob usando fetch (API nativa do navegador que não quebra no Vite)
+                const res = await fetch(fotoBase64);
+                const blob = await res.blob();
                 const fileName = `${uuidv4()}.jpg`;
 
                 // Upload para o Storage do Supabase (bucket encomendas_fotos)
