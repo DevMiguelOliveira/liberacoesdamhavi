@@ -357,11 +357,12 @@ export default function EncomendasSection() {
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        className="h-12 w-12 p-0 border-slate-300 border-dashed hover:border-primary shrink-0"
+                                        className="h-12 px-4 border-2 border-primary border-dashed hover:bg-primary/10 text-primary hover:text-primary/90 shrink-0 gap-2 font-bold transition-all shadow-sm"
                                         onClick={() => setIsCameraOpen(true)}
                                         title="Capturar Foto"
                                     >
-                                        <Camera className="h-5 w-5 text-slate-400 hover:text-primary transition-colors" />
+                                        <Camera className="h-5 w-5" />
+                                        <span>TIRAR FOTO</span>
                                     </Button>
                                 )}
 
