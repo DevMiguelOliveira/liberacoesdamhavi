@@ -6,7 +6,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Loader2, Trash2, Package, Plus, Pencil } from "lucide-react";
+import { Search, Loader2, Trash2, Package, Plus, Pencil, Camera, Image as ImageIcon, X } from "lucide-react";
+import Webcam from "react-webcam";
+import { v4 as uuidv4 } from "uuid";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { format, startOfDay, endOfDay } from "date-fns";
@@ -29,6 +31,7 @@ interface Encomenda {
     destino: string;
     criado_em: string;
     observacoes?: string;
+    foto_url?: string;
 }
 
 export default function EncomendasSection() {
@@ -43,6 +46,11 @@ export default function EncomendasSection() {
     const [empresaSelecionada, setEmpresaSelecionada] = useState("");
     const [empresaManual, setEmpresaManual] = useState("");
     const [observacoes, setObservacoes] = useState("");
+
+    // Estados da Câmera
+    const [isCameraOpen, setIsCameraOpen] = useState(false);
+    const [fotoBase64, setFotoBase64] = useState<string | null>(null);
+    const [viewingImage, setViewingImage] = useState<string | null>(null);
 
     // Destino fixo para condomínio
     const destinoFixo = "CON999";
@@ -126,26 +134,60 @@ export default function EncomendasSection() {
             return;
         }
 
-        const { error } = await supabase
-            .from("encomendas")
-            .insert([{
-                nome_entregador: nomeEntregador,
-                empresa: empresaFinal,
-                destino: destinoFixo,
-                observacoes: observacoes || null
-            }]);
+        setIsLoading(true);
 
-        if (error) {
-            toast.error("Erro ao registrar encomenda");
-            console.error(error);
-        } else {
+        try {
+            let fotoUrlFinal = null;
+
+            if (fotoBase64) {
+                // Converter base64 para blob
+                const base64Data = fotoBase64.replace(/^data:image\/\w+;base64,/, "");
+                const blob = Buffer.from(base64Data, "base64");
+                const fileName = `${uuidv4()}.jpg`;
+
+                // Upload para o Storage do Supabase (bucket encomendas_fotos)
+                const { error: uploadError } = await supabase.storage
+                    .from("encomendas_fotos")
+                    .upload(`fotos/${fileName}`, blob, {
+                        contentType: "image/jpeg",
+                        upsert: false
+                    });
+
+                if (uploadError) {
+                    throw new Error("Falha no upload da foto: " + uploadError.message);
+                }
+
+                // Obter URL Pública
+                const { data: publicUrlData } = supabase.storage
+                    .from("encomendas_fotos")
+                    .getPublicUrl(`fotos/${fileName}`);
+
+                fotoUrlFinal = publicUrlData.publicUrl;
+            }
+
+            const { error } = await supabase
+                .from("encomendas")
+                .insert([{
+                    nome_entregador: nomeEntregador,
+                    empresa: empresaFinal,
+                    destino: destinoFixo,
+                    observacoes: observacoes || null,
+                    foto_url: fotoUrlFinal
+                }]);
+
+            if (error) throw error;
             toast.success("Encomenda registrada com sucesso");
             // Limpar formulário
             setNomeEntregador("");
             setEmpresaSelecionada("");
             setEmpresaManual("");
             setObservacoes("");
+            setFotoBase64(null);
             fetchEncomendas();
+        } catch (error: any) {
+            console.error("Erro ao registrar encomenda:", error);
+            toast.error(error.message || "Erro ao registrar encomenda");
+            setIsLoading(false);
         }
     };
 
@@ -299,10 +341,35 @@ export default function EncomendasSection() {
                                 />
                             </div>
 
-                            <Button onClick={handleAddEncomenda} className="gap-2 bg-primary hover:bg-primary/90 shadow-sm w-full md:w-auto min-w-[120px]">
-                                <Plus className="h-4 w-4" />
-                                Registrar
-                            </Button>
+                            <div className="flex gap-2 w-full md:w-auto mt-2 md:mt-0">
+                                {fotoBase64 ? (
+                                    <div className="relative h-12 w-12 rounded-md overflow-hidden border-2 border-primary shadow-sm group">
+                                        <img src={fotoBase64} alt="Preview" className="h-full w-full object-cover" />
+                                        <div
+                                            className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity"
+                                            onClick={() => setFotoBase64(null)}
+                                            title="Remover Foto"
+                                        >
+                                            <Trash2 className="h-4 w-4 text-white" />
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className="h-12 w-12 p-0 border-slate-300 border-dashed hover:border-primary shrink-0"
+                                        onClick={() => setIsCameraOpen(true)}
+                                        title="Capturar Foto"
+                                    >
+                                        <Camera className="h-5 w-5 text-slate-400 hover:text-primary transition-colors" />
+                                    </Button>
+                                )}
+
+                                <Button onClick={handleAddEncomenda} className="gap-2 bg-primary hover:bg-primary/90 shadow-sm flex-1 md:w-auto min-w-[120px] h-12">
+                                    <Plus className="h-4 w-4" />
+                                    Registrar
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </CardHeader>
@@ -325,6 +392,7 @@ export default function EncomendasSection() {
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Destino</TableHead>
+                                        <TableHead>Foto</TableHead>
                                         <TableHead>Nome do Entregador</TableHead>
                                         <TableHead>Empresa</TableHead>
                                         <TableHead>Observações</TableHead>
@@ -339,6 +407,20 @@ export default function EncomendasSection() {
                                                 <Badge variant="outline" className="bg-blue-100/50 text-blue-900 border-blue-200 font-black px-3 py-1">
                                                     {encomenda.destino.toUpperCase()}
                                                 </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                {encomenda.foto_url ? (
+                                                    <div
+                                                        className="h-10 w-10 rounded-full overflow-hidden border border-slate-200 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all hover:scale-110 shadow-sm"
+                                                        onClick={() => setViewingImage(encomenda.foto_url as string)}
+                                                    >
+                                                        <img src={encomenda.foto_url} alt="Foto" className="h-full w-full object-cover" />
+                                                    </div>
+                                                ) : (
+                                                    <div className="h-10 w-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center" title="Sem foto">
+                                                        <ImageIcon className="h-4 w-4 text-slate-300" />
+                                                    </div>
+                                                )}
                                             </TableCell>
                                             <TableCell className="font-bold uppercase text-slate-900">{encomenda.nome_entregador.toUpperCase()}</TableCell>
                                             <TableCell>
@@ -470,6 +552,62 @@ export default function EncomendasSection() {
                         <Button variant="outline" onClick={() => setEditingEncomenda(null)}>Cancelar</Button>
                         <Button onClick={handleUpdateEncomenda}>Salvar Alterações</Button>
                     </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Modal da Câmera */}
+            <Dialog open={isCameraOpen} onOpenChange={setIsCameraOpen}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Capturar Foto</DialogTitle>
+                    </DialogHeader>
+                    <div className="flex flex-col items-center gap-4 bg-black rounded-lg overflow-hidden position-relative">
+                        <Webcam
+                            audio={false}
+                            screenshotFormat="image/jpeg"
+                            className="w-full h-auto max-h-[400px] object-contain"
+                            videoConstraints={{ facingMode: "environment" }}
+                        >
+                            {({ getScreenshot }) => (
+                                <Button
+                                    className="absolute bottom-4 bg-primary hover:bg-primary/90 text-white shadow-lg rounded-full h-14 w-14 flex items-center justify-center p-0"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        const imageSrc = getScreenshot();
+                                        if (imageSrc) {
+                                            setFotoBase64(imageSrc);
+                                            setIsCameraOpen(false);
+                                        }
+                                    }}
+                                >
+                                    <Camera className="h-6 w-6" />
+                                </Button>
+                            )}
+                        </Webcam>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Modal de Exibição de Foto */}
+            <Dialog open={!!viewingImage} onOpenChange={(open) => !open && setViewingImage(null)}>
+                <DialogContent className="sm:max-w-lg p-1 bg-transparent border-none shadow-none">
+                    <div className="relative flex justify-center w-full">
+                        {viewingImage && (
+                            <img
+                                src={viewingImage}
+                                alt="Foto Ampliada"
+                                className="max-w-full max-h-[80vh] rounded-lg shadow-2xl object-contain border-4 border-white bg-slate-100"
+                            />
+                        )}
+                        <Button
+                            variant="secondary"
+                            size="icon"
+                            className="absolute -top-3 -right-3 h-8 w-8 rounded-full shadow-lg border-2 border-white"
+                            onClick={() => setViewingImage(null)}
+                        >
+                            <X className="h-4 w-4" />
+                        </Button>
+                    </div>
                 </DialogContent>
             </Dialog>
         </>

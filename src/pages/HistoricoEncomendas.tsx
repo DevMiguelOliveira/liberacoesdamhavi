@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Loader2, RefreshCw, Trash2, Package } from "lucide-react";
+import { ArrowLeft, Loader2, RefreshCw, Trash2, Package, Image as ImageIcon, X } from "lucide-react";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -17,6 +17,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 
@@ -27,6 +28,7 @@ interface Encomenda {
     destino: string;
     criado_em: string;
     observacoes?: string;
+    foto_url?: string;
 }
 
 export default function HistoricoEncomendas() {
@@ -35,6 +37,7 @@ export default function HistoricoEncomendas() {
     const [isLoading, setIsLoading] = useState(true);
     const [encomendaToDelete, setEncomendaToDelete] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [viewingImage, setViewingImage] = useState<string | null>(null);
 
     const handleDelete = async () => {
         if (!encomendaToDelete) return;
@@ -180,6 +183,7 @@ export default function HistoricoEncomendas() {
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Destino</TableHead>
+                                        <TableHead>Foto</TableHead>
                                         <TableHead>Nome do Entregador</TableHead>
                                         <TableHead>Empresa</TableHead>
                                         <TableHead>Observações</TableHead>
@@ -194,6 +198,20 @@ export default function HistoricoEncomendas() {
                                                 <Badge variant="outline" className="bg-slate-100 font-normal">
                                                     {encomenda.destino}
                                                 </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                {encomenda.foto_url ? (
+                                                    <div
+                                                        className="h-10 w-10 rounded-full overflow-hidden border border-slate-200 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all hover:scale-110 shadow-sm"
+                                                        onClick={() => setViewingImage(encomenda.foto_url as string)}
+                                                    >
+                                                        <img src={encomenda.foto_url} alt="Foto" className="h-full w-full object-cover" />
+                                                    </div>
+                                                ) : (
+                                                    <div className="h-10 w-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center" title="Sem foto">
+                                                        <ImageIcon className="h-4 w-4 text-slate-300" />
+                                                    </div>
+                                                )}
                                             </TableCell>
                                             <TableCell className="font-medium">{encomenda.nome_entregador}</TableCell>
                                             <TableCell>
@@ -242,6 +260,29 @@ export default function HistoricoEncomendas() {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+
+            {/* Modal de Exibição de Foto */}
+            <Dialog open={!!viewingImage} onOpenChange={(open) => !open && setViewingImage(null)}>
+                <DialogContent className="sm:max-w-lg p-1 bg-transparent border-none shadow-none">
+                    <div className="relative flex justify-center w-full">
+                        {viewingImage && (
+                            <img
+                                src={viewingImage}
+                                alt="Foto Ampliada"
+                                className="max-w-full max-h-[80vh] rounded-lg shadow-2xl object-contain border-4 border-white bg-slate-100"
+                            />
+                        )}
+                        <Button
+                            variant="secondary"
+                            size="icon"
+                            className="absolute -top-3 -right-3 h-8 w-8 rounded-full shadow-lg border-2 border-white"
+                            onClick={() => setViewingImage(null)}
+                        >
+                            <X className="h-4 w-4" />
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
