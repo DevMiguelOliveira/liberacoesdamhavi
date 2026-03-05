@@ -66,7 +66,7 @@ export default function Historico() {
       .from("liberacoes")
       .select("*")
       .order("criado_em", { ascending: false })
-      .limit(200);
+      .limit(2000);
 
     setIsLoading(false);
 

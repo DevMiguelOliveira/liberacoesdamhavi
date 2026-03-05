@@ -102,7 +102,7 @@ export default function Consultar() {
       query = query.eq("status", status as "ativo" | "expirado");
     }
 
-    const { data, error } = await query.limit(100);
+    const { data, error } = await query.limit(2000);
 
     setIsLoading(false);
 
