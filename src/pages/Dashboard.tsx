@@ -62,9 +62,24 @@ export default function Dashboard() {
   const [liberacaoToDelete, setLiberacaoToDelete] = useState<string | null>(null);
   const [editingLiberacao, setEditingLiberacao] = useState<Liberacao | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [newLiberacaoPopup, setNewLiberacaoPopup] = useState<Liberacao | null>(null);
+  const [newLiberacaoPopup, _setNewLiberacaoPopup] = useState<Liberacao | null>(null);
   const [liberacaoToInactivate, setLiberacaoToInactivate] = useState<string | null>(null);
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
+
+  const setNewLiberacaoPopup = (val: Liberacao | null) => {
+    console.log("💾 [Popup Debug] setNewLiberacaoPopup chamado com:", val);
+    if (val === null) {
+      console.trace("💾 [Popup Debug] Rastro de pilha para setNewLiberacaoPopup(null):");
+    }
+    _setNewLiberacaoPopup(val);
+  };
+
+  useEffect(() => {
+    console.log("🪵 [Dashboard Debug] Componente Dashboard MONTOU");
+    return () => {
+      console.log("🪵 [Dashboard Debug] Componente Dashboard DESMONTOU");
+    };
+  }, []);
 
   const toggleGroup = (groupKey: string) => {
     setExpandedGroups((prev) =>
