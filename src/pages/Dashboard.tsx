@@ -798,7 +798,7 @@ export default function Dashboard() {
                                         setLiberacaoToInactivate(lib.id);
                                       }}
                                       className="h-8 w-8 sm:h-10 sm:w-10 text-orange-500 hover:text-orange-600 hover:bg-orange-50 shadow-sm hover:shadow-orange-100 transition-all rounded-full"
-                                      title="Inativar (tirar das ativas de hoje)"
+                                      title="INATIVAR (TIRAR DAS ATIVAS DE HOJE)"
                                     >
                                       <UserX className="h-4 w-4 sm:h-5 sm:w-5" />
                                     </Button>
