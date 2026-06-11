@@ -465,7 +465,7 @@ export default function Dashboard() {
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="BUSCAR POR NOME, DESTINO (QUADRA/LOTE), TIPO OU OBSERVAÇÕES..."
+              placeholder="BUSCAR POR NOME, QUADRA/LOTE, TIPO OU OBSERVAÇÕES..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value.toUpperCase())}
               className="pl-12 h-12 bg-background border-2 font-semibold uppercase tracking-tight shadow-inner"
@@ -495,9 +495,9 @@ export default function Dashboard() {
                     <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Observações</TableHead>
                     <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Tipo</TableHead>
                     <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Validade</TableHead>
-                    <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Status</TableHead>
-                    <TableHead className="font-black text-xs uppercase tracking-widest text-primary">Registro</TableHead>
-                    <TableHead className="text-right pr-6 font-black text-xs uppercase tracking-widest text-primary">Ações</TableHead>
+                    <TableHead className="hidden md:table-cell font-black text-xs uppercase tracking-widest text-primary">Status</TableHead>
+                    <TableHead className="hidden sm:table-cell font-black text-xs uppercase tracking-widest text-primary">Registro</TableHead>
+                    <TableHead className="text-right pr-2 sm:pr-6 font-black text-xs uppercase tracking-widest text-primary">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody className="divide-y divide-muted/30">
@@ -536,44 +536,44 @@ export default function Dashboard() {
                             )}
                           >
                             <TableCell>
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1 sm:gap-2">
                                 <div className={cn(
-                                  "flex flex-col items-center justify-center p-1.5 px-3 rounded-xl border-2 shadow-sm min-w-[3.5rem] transition-colors",
+                                  "flex flex-col items-center justify-center p-1 sm:p-1.5 px-2 sm:px-3 rounded-xl border-2 shadow-sm min-w-[3rem] sm:min-w-[3.5rem] transition-colors",
                                   lib.tipo_acesso === "visitante" ? "bg-accent/10 border-accent/30" : "bg-warning/10 border-warning/30"
                                 )}>
                                   <span className={cn(
-                                    "text-[0.6rem] font-black uppercase tracking-widest opacity-70",
+                                    "text-[0.55rem] sm:text-[0.6rem] font-black uppercase tracking-widest opacity-70",
                                     lib.tipo_acesso === "visitante" ? "text-black" : "text-warning-foreground"
                                   )}>Quadra</span>
                                   <span className={cn(
-                                    "text-xl font-black",
+                                    "text-lg sm:text-xl font-black",
                                     lib.tipo_acesso === "visitante" ? "text-black" : "text-warning-foreground"
                                   )}>{lib.quadra.toUpperCase()}</span>
                                 </div>
                                 <div className={cn(
-                                  "flex flex-col items-center justify-center p-1.5 px-3 rounded-xl border-2 shadow-sm min-w-[3.5rem] transition-colors",
+                                  "flex flex-col items-center justify-center p-1 sm:p-1.5 px-2 sm:px-3 rounded-xl border-2 shadow-sm min-w-[3rem] sm:min-w-[3.5rem] transition-colors",
                                   lib.tipo_acesso === "visitante" ? "bg-accent/10 border-accent/30" : "bg-warning/10 border-warning/30"
                                 )}>
                                   <span className={cn(
-                                    "text-[0.6rem] font-black uppercase tracking-widest opacity-70",
+                                    "text-[0.55rem] sm:text-[0.6rem] font-black uppercase tracking-widest opacity-70",
                                     lib.tipo_acesso === "visitante" ? "text-black" : "text-warning-foreground"
                                   )}>Lote</span>
                                   <span className={cn(
-                                    "text-xl font-black",
+                                    "text-lg sm:text-xl font-black",
                                     lib.tipo_acesso === "visitante" ? "text-black" : "text-warning-foreground"
                                   )}>{lib.lote.toUpperCase()}</span>
                                 </div>
                               </div>
                             </TableCell>
-                            <TableCell className="font-bold uppercase text-slate-900">{lib.nome_pessoa.toUpperCase()}</TableCell>
-                            <TableCell className="max-w-[200px] truncate text-slate-500 font-semibold text-xs uppercase" title={lib.observacoes}>
+                            <TableCell className="font-bold uppercase text-slate-900 dark:text-slate-100 break-words whitespace-normal min-w-[130px] sm:min-w-[160px] text-xs sm:text-sm">{lib.nome_pessoa.toUpperCase()}</TableCell>
+                            <TableCell className="min-w-[120px] max-w-[220px] break-words whitespace-normal text-slate-500 dark:text-slate-400 font-semibold text-xs uppercase" title={lib.observacoes}>
                               {lib.observacoes || "-"}
                             </TableCell>
                             <TableCell>
                               <Badge
                                 variant="secondary"
                                 className={cn(
-                                  "font-black uppercase tracking-tighter px-3 py-1 border-2 shadow-sm",
+                                  "font-black uppercase tracking-tighter px-1.5 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs border-2 shadow-sm",
                                   lib.tipo_acesso === "visitante"
                                     ? "bg-accent text-accent-foreground border-accent-foreground/10 hover:bg-accent/90"
                                     : "bg-warning text-warning-foreground border-warning-foreground/10 hover:bg-warning/90"
@@ -582,10 +582,10 @@ export default function Dashboard() {
                                 {lib.tipo_acesso === "visitante" ? "Visitante" : "Prestador"}
                               </Badge>
                             </TableCell>
-                            <TableCell className="font-black text-slate-700">
+                            <TableCell className="font-black text-slate-700 dark:text-slate-300 text-xs sm:text-sm whitespace-nowrap">
                               Até {format(new Date(lib.data_fim + "T00:00:00"), "dd/MM", { locale: ptBR })}
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="hidden md:table-cell">
                               <Badge
                                 className={cn(
                                   "font-black uppercase px-3 py-1 border shadow-sm",
@@ -597,39 +597,39 @@ export default function Dashboard() {
                                 {new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0)) ? "Ativo" : "Expirado"}
                               </Badge>
                             </TableCell>
-                            <TableCell className="text-slate-500 font-bold text-sm">
+                            <TableCell className="hidden sm:table-cell text-slate-500 dark:text-slate-400 font-bold text-xs sm:text-sm whitespace-nowrap">
                               <span>{format(new Date(lib.criado_em), "dd/MM/yy")}</span>
                               <span className="mx-1 text-slate-300">•</span>
                               <span>{format(new Date(lib.criado_em), "HH:mm")}</span>
                             </TableCell>
-                            <TableCell className="text-right pr-6">
-                              <div className="flex justify-end gap-2">
+                            <TableCell className="text-right pr-2 sm:pr-6">
+                              <div className="flex justify-end gap-0.5 sm:gap-2">
                                 <Button
                                   variant="ghost"
                                   size="icon"
                                   onClick={() => setEditingLiberacao(lib)}
-                                  className="h-10 w-10 text-blue-500 hover:text-blue-600 hover:bg-blue-50 shadow-sm hover:shadow-blue-100 transition-all rounded-full"
+                                  className="h-8 w-8 sm:h-10 sm:w-10 text-blue-500 hover:text-blue-600 hover:bg-blue-50 shadow-sm hover:shadow-blue-100 transition-all rounded-full"
                                   title="EDITAR LIBERAÇÃO"
                                 >
-                                  <Pencil className="h-5 w-5" />
+                                  <Pencil className="h-4 w-4 sm:h-5 sm:w-5" />
                                 </Button>
                                 <Button
                                   variant="ghost"
                                   size="icon"
                                   onClick={() => setLiberacaoToInactivate(lib.id)}
-                                  className="h-10 w-10 text-orange-500 hover:text-orange-600 hover:bg-orange-50 shadow-sm hover:shadow-orange-100 transition-all rounded-full"
+                                  className="h-8 w-8 sm:h-10 sm:w-10 text-orange-500 hover:text-orange-600 hover:bg-orange-50 shadow-sm hover:shadow-orange-100 transition-all rounded-full"
                                   title="Inativar (tirar das ativas de hoje)"
                                 >
-                                  <UserX className="h-5 w-5" />
+                                  <UserX className="h-4 w-4 sm:h-5 sm:w-5" />
                                 </Button>
                                 <Button
                                   variant="ghost"
                                   size="icon"
                                   onClick={() => setLiberacaoToDelete(lib.id)}
-                                  className="h-10 w-10 text-destructive hover:text-destructive-foreground hover:bg-destructive shadow-sm hover:shadow-destructive/40 transition-all rounded-full"
+                                  className="h-8 w-8 sm:h-10 sm:w-10 text-destructive hover:text-destructive-foreground hover:bg-destructive shadow-sm hover:shadow-destructive/40 transition-all rounded-full"
                                   title="EXCLUIR PERMANENTEMENTE"
                                 >
-                                  <Trash2 className="h-5 w-5" />
+                                  <Trash2 className="h-4 w-4 sm:h-5 sm:w-5" />
                                 </Button>
                               </div>
                             </TableCell>
@@ -649,49 +649,49 @@ export default function Dashboard() {
                             title="CLIQUE PARA EXPANDIR E VER LIBERAÇÕES"
                           >
                             <TableCell>
-                              <div className="flex items-center gap-2">
-                                <div className="flex flex-col items-center justify-center p-1.5 px-3 rounded-xl border-2 border-orange-200 bg-orange-50 dark:bg-orange-950/20 shadow-sm min-w-[3.5rem]">
-                                  <span className="text-[0.65rem] font-black uppercase tracking-widest text-orange-600 dark:text-orange-400 opacity-80">Quadra</span>
-                                  <span className="text-xl font-black text-orange-800 dark:text-orange-200">{group.quadra.toUpperCase()}</span>
+                              <div className="flex items-center gap-1 sm:gap-2">
+                                <div className="flex flex-col items-center justify-center p-1 sm:p-1.5 px-2 sm:px-3 rounded-xl border-2 border-orange-200 bg-orange-50 dark:bg-orange-950/20 shadow-sm min-w-[3rem] sm:min-w-[3.5rem]">
+                                  <span className="text-[0.55rem] sm:text-[0.65rem] font-black uppercase tracking-widest text-orange-600 dark:text-orange-400 opacity-80">Quadra</span>
+                                  <span className="text-lg sm:text-xl font-black text-orange-800 dark:text-orange-200">{group.quadra.toUpperCase()}</span>
                                 </div>
-                                <div className="flex flex-col items-center justify-center p-1.5 px-3 rounded-xl border-2 border-orange-200 bg-orange-50 dark:bg-orange-950/20 shadow-sm min-w-[3.5rem]">
-                                  <span className="text-[0.65rem] font-black uppercase tracking-widest text-orange-600 dark:text-orange-400 opacity-80">Lote</span>
-                                  <span className="text-xl font-black text-orange-800 dark:text-orange-200">{group.lote.toUpperCase()}</span>
+                                <div className="flex flex-col items-center justify-center p-1 sm:p-1.5 px-2 sm:px-3 rounded-xl border-2 border-orange-200 bg-orange-50 dark:bg-orange-950/20 shadow-sm min-w-[3rem] sm:min-w-[3.5rem]">
+                                  <span className="text-[0.55rem] sm:text-[0.65rem] font-black uppercase tracking-widest text-orange-600 dark:text-orange-400 opacity-80">Lote</span>
+                                  <span className="text-lg sm:text-xl font-black text-orange-800 dark:text-orange-200">{group.lote.toUpperCase()}</span>
                                 </div>
                               </div>
                             </TableCell>
                             <TableCell colSpan={2}>
                               <div className="flex flex-col">
-                                <span className="text-sm font-black text-orange-800 dark:text-orange-300 uppercase flex items-center gap-2">
-                                  <Users className="h-4 w-4 text-orange-600 dark:text-orange-400 animate-pulse" />
+                                <span className="text-xs sm:text-sm font-black text-orange-800 dark:text-orange-300 uppercase flex items-center gap-2">
+                                  <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-orange-600 dark:text-orange-400 animate-pulse" />
                                   Múltiplas Liberações ({group.list.length}) - CLIQUE PARA VER
                                 </span>
-                                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight mt-0.5 max-w-[350px] sm:max-w-[500px] truncate" title={group.list.map(l => l.nome_pessoa).join(", ")}>
+                                <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight mt-0.5 break-words whitespace-normal block" title={group.list.map(l => l.nome_pessoa).join(", ")}>
                                   {group.list.map(l => l.nome_pessoa).join(", ")}
                                 </span>
                               </div>
                             </TableCell>
                             <TableCell>
-                              <Badge className="bg-orange-500 hover:bg-orange-600 text-white border-none font-black uppercase tracking-tighter px-3 py-1 shadow-sm">
+                              <Badge className="bg-orange-500 hover:bg-orange-600 text-white border-none font-black uppercase tracking-tighter px-1.5 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs shadow-sm">
                                 Múltiplos ({totalVisitantes}V / {totalPrestadores}P)
                               </Badge>
                             </TableCell>
                             <TableCell>
-                              <span className="font-black text-orange-700 dark:text-orange-400 text-[10px] uppercase">
+                              <span className="font-black text-orange-700 dark:text-orange-400 text-[9px] sm:text-[10px] uppercase whitespace-nowrap">
                                 Vários Períodos
                               </span>
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="hidden md:table-cell">
                               <Badge className="bg-success text-success-foreground font-black uppercase px-3 py-1 border shadow-sm">
                                 Ativos
                               </Badge>
                             </TableCell>
-                            <TableCell>
-                              <span className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-tighter">
+                            <TableCell className="hidden sm:table-cell">
+                              <span className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-tighter whitespace-nowrap">
                                 {group.list.length} Registros
                               </span>
                             </TableCell>
-                            <TableCell className="text-right pr-6">
+                            <TableCell className="text-right pr-2 sm:pr-6">
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -699,10 +699,10 @@ export default function Dashboard() {
                                   e.stopPropagation();
                                   toggleGroup(group.key);
                                 }}
-                                className="h-10 w-full sm:w-auto px-4 text-orange-600 hover:text-orange-700 hover:bg-orange-100/50 dark:text-orange-400 dark:hover:bg-orange-950/30 font-black flex items-center justify-center gap-2 rounded-xl border border-orange-200 dark:border-orange-900/50"
+                                className="h-8 sm:h-10 w-full sm:w-auto px-2 sm:px-4 text-orange-600 hover:text-orange-700 hover:bg-orange-100/50 dark:text-orange-400 dark:hover:bg-orange-950/30 font-black flex items-center justify-center gap-1 sm:gap-2 rounded-xl border border-orange-200 dark:border-orange-900/50 text-[10px] sm:text-xs"
                               >
                                 {isExpanded ? "RECOLHER" : "VER LIBERAÇÕES"}
-                                <span className="text-[9px]">{isExpanded ? "▲" : "▼"}</span>
+                                <span className="text-[8px] sm:text-[9px]">{isExpanded ? "▲" : "▼"}</span>
                               </Button>
                             </TableCell>
                           </TableRow>
@@ -718,20 +718,20 @@ export default function Dashboard() {
                                     : "bg-yellow-50/30 hover:bg-yellow-100/30 dark:bg-yellow-950/5 dark:hover:bg-yellow-900/10 border-l-yellow-400"
                                 )}
                               >
-                                <TableCell className="pl-8">
+                                <TableCell className="pl-4 sm:pl-8">
                                   <div className="flex items-center gap-2 opacity-60">
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Liberação</span>
+                                    <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400">Liberação</span>
                                   </div>
                                 </TableCell>
-                                <TableCell className="font-bold uppercase text-slate-800 dark:text-slate-200">{lib.nome_pessoa.toUpperCase()}</TableCell>
-                                <TableCell className="max-w-[200px] truncate text-slate-500 dark:text-slate-400 font-semibold text-xs uppercase" title={lib.observacoes}>
+                                <TableCell className="font-bold uppercase text-slate-800 dark:text-slate-200 break-words whitespace-normal min-w-[130px] sm:min-w-[160px] text-xs sm:text-sm">{lib.nome_pessoa.toUpperCase()}</TableCell>
+                                <TableCell className="min-w-[120px] max-w-[220px] break-words whitespace-normal text-slate-500 dark:text-slate-400 font-semibold text-xs uppercase" title={lib.observacoes}>
                                   {lib.observacoes || "-"}
                                 </TableCell>
                                 <TableCell>
                                   <Badge
                                     variant="secondary"
                                     className={cn(
-                                      "font-black uppercase tracking-tighter px-3 py-1 border-2 shadow-sm",
+                                      "font-black uppercase tracking-tighter px-1.5 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs border-2 shadow-sm",
                                       lib.tipo_acesso === "visitante"
                                         ? "bg-accent text-accent-foreground border-accent-foreground/10 hover:bg-accent/90"
                                         : "bg-warning text-warning-foreground border-warning-foreground/10 hover:bg-warning/90"
@@ -740,10 +740,10 @@ export default function Dashboard() {
                                     {lib.tipo_acesso === "visitante" ? "Visitante" : "Prestador"}
                                   </Badge>
                                 </TableCell>
-                                <TableCell className="font-black text-slate-700 dark:text-slate-300">
+                                <TableCell className="font-black text-slate-700 dark:text-slate-300 text-xs sm:text-sm whitespace-nowrap">
                                   Até {format(new Date(lib.data_fim + "T00:00:00"), "dd/MM", { locale: ptBR })}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className="hidden md:table-cell">
                                   <Badge
                                     className={cn(
                                       "font-black uppercase px-3 py-1 border shadow-sm",
@@ -755,13 +755,13 @@ export default function Dashboard() {
                                     {new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0)) ? "Ativo" : "Expirado"}
                                   </Badge>
                                 </TableCell>
-                                <TableCell className="text-slate-500 dark:text-slate-400 font-bold text-sm">
+                                <TableCell className="hidden sm:table-cell text-slate-500 dark:text-slate-400 font-bold text-xs sm:text-sm whitespace-nowrap">
                                   <span>{format(new Date(lib.criado_em), "dd/MM/yy")}</span>
                                   <span className="mx-1 text-slate-300">•</span>
                                   <span>{format(new Date(lib.criado_em), "HH:mm")}</span>
                                 </TableCell>
-                                <TableCell className="text-right pr-6">
-                                  <div className="flex justify-end gap-2">
+                                <TableCell className="text-right pr-2 sm:pr-6">
+                                  <div className="flex justify-end gap-0.5 sm:gap-2">
                                     <Button
                                       variant="ghost"
                                       size="icon"
@@ -769,10 +769,10 @@ export default function Dashboard() {
                                         e.stopPropagation();
                                         setEditingLiberacao(lib);
                                       }}
-                                      className="h-10 w-10 text-blue-500 hover:text-blue-600 hover:bg-blue-50 shadow-sm hover:shadow-blue-100 transition-all rounded-full"
+                                      className="h-8 w-8 sm:h-10 sm:w-10 text-blue-500 hover:text-blue-600 hover:bg-blue-50 shadow-sm hover:shadow-blue-100 transition-all rounded-full"
                                       title="EDITAR LIBERAÇÃO"
                                     >
-                                      <Pencil className="h-5 w-5" />
+                                      <Pencil className="h-4 w-4 sm:h-5 sm:w-5" />
                                     </Button>
                                     <Button
                                       variant="ghost"
@@ -781,10 +781,10 @@ export default function Dashboard() {
                                         e.stopPropagation();
                                         setLiberacaoToInactivate(lib.id);
                                       }}
-                                      className="h-10 w-10 text-orange-500 hover:text-orange-600 hover:bg-orange-50 shadow-sm hover:shadow-orange-100 transition-all rounded-full"
+                                      className="h-8 w-8 sm:h-10 sm:w-10 text-orange-500 hover:text-orange-600 hover:bg-orange-50 shadow-sm hover:shadow-orange-100 transition-all rounded-full"
                                       title="Inativar (tirar das ativas de hoje)"
                                     >
-                                      <UserX className="h-5 w-5" />
+                                      <UserX className="h-4 w-4 sm:h-5 sm:w-5" />
                                     </Button>
                                     <Button
                                       variant="ghost"
@@ -793,10 +793,10 @@ export default function Dashboard() {
                                         e.stopPropagation();
                                         setLiberacaoToDelete(lib.id);
                                       }}
-                                      className="h-10 w-10 text-destructive hover:text-destructive-foreground hover:bg-destructive shadow-sm hover:shadow-destructive/40 transition-all rounded-full"
+                                      className="h-8 w-8 sm:h-10 sm:w-10 text-destructive hover:text-destructive-foreground hover:bg-destructive shadow-sm hover:shadow-destructive/40 transition-all rounded-full"
                                       title="EXCLUIR PERMANENTEMENTE"
                                     >
-                                      <Trash2 className="h-5 w-5" />
+                                      <Trash2 className="h-4 w-4 sm:h-5 sm:w-5" />
                                     </Button>
                                   </div>
                                 </TableCell>
