@@ -575,6 +575,7 @@ export default function Dashboard() {
                             size="icon"
                             onClick={() => setEditingLiberacao(lib)}
                             className="h-10 w-10 text-blue-500 hover:text-blue-600 hover:bg-blue-50 shadow-sm hover:shadow-blue-100 transition-all rounded-full"
+                            title="EDITAR LIBERAÇÃO"
                           >
                             <Pencil className="h-5 w-5" />
                           </Button>
@@ -592,6 +593,7 @@ export default function Dashboard() {
                             size="icon"
                             onClick={() => setLiberacaoToDelete(lib.id)}
                             className="h-10 w-10 text-destructive hover:text-destructive-foreground hover:bg-destructive shadow-sm hover:shadow-destructive/40 transition-all rounded-full"
+                            title="EXCLUIR PERMANENTEMENTE"
                           >
                             <Trash2 className="h-5 w-5" />
                           </Button>

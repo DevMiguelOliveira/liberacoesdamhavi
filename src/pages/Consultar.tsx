@@ -392,6 +392,7 @@ export default function Consultar() {
                           size="icon"
                           onClick={() => setLiberacaoToDelete(lib.id)}
                           className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                          title="EXCLUIR PERMANENTEMENTE"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

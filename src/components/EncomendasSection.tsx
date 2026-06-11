@@ -442,6 +442,7 @@ export default function EncomendasSection() {
                                                         size="icon"
                                                         onClick={() => setEditingEncomenda(encomenda)}
                                                         className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50"
+                                                        title="EDITAR LIBERAÇÃO"
                                                     >
                                                         <Pencil className="h-4 w-4" />
                                                     </Button>
@@ -450,6 +451,7 @@ export default function EncomendasSection() {
                                                         size="icon"
                                                         onClick={() => setEncomendaToDelete(encomenda.id)}
                                                         className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                                                        title="EXCLUIR PERMANENTEMENTE"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                     </Button>
