@@ -1072,6 +1072,18 @@ export default function Dashboard() {
                     <MessageCircle className="h-4 w-4" />
                     <span>Whatsapp: (14) 99106-0771</span>
                   </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground pl-2 border-l-2 border-orange-500/50">
+                    <span className="text-xs font-bold">Ramal Portaria Social:</span>
+                    <span className="text-sm font-black text-orange-500">95</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground pl-2 border-l-2 border-orange-500/50">
+                    <span className="text-xs font-bold">Ramal Portaria de Serviços:</span>
+                    <span className="text-sm font-black text-orange-500">94</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground pl-2 border-l-2 border-orange-500/50">
+                    <span className="text-xs font-bold">Ramal Correspondência:</span>
+                    <span className="text-sm font-black text-orange-500">100</span>
+                  </div>
                 </div>
               </div>
             </div>
