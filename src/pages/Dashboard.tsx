@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, History, Users, Phone, MessageCircle, Loader2, Trash2, Monitor, Package, Pencil, ArrowUp, ArrowDown, UserX } from "lucide-react";
+import { Plus, Search, History, Users, Phone, MessageCircle, Loader2, Trash2, Monitor, Package, Pencil, ArrowUp, ArrowDown, UserX, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -724,13 +724,11 @@ export default function Dashboard() {
           <div className="bg-white dark:bg-slate-900 border-2 border-primary/20 shadow-2xl rounded-2xl p-6 w-[95%] sm:max-w-[520px] animate-in zoom-in-95 duration-200 relative flex flex-col max-h-[90vh] overflow-y-auto">
             
             <div className="flex flex-col items-center text-center pb-4 border-b">
-              <div className={cn(
-                "rounded-full p-4 mb-3 flex items-center justify-center animate-bounce shadow-md",
-                newLiberacaoPopup.tipo_acesso === "visitante" ? "bg-sky-100 text-sky-600" : "bg-yellow-100 text-yellow-600"
-              )}>
-                <Users className="h-10 w-10" />
+              <div className="rounded-full p-4 mb-3 flex items-center justify-center bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 animate-pulse border-4 border-red-200 dark:border-red-900/50 shadow-lg">
+                <AlertTriangle className="h-12 w-12 animate-pulse" />
               </div>
-              <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white uppercase leading-tight">
+              <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white uppercase leading-tight flex items-center justify-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-red-500 animate-ping inline-block shrink-0" />
                 Nova Liberação Inserida!
               </h2>
               <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">
