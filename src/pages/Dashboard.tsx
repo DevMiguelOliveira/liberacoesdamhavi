@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -63,6 +63,15 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [newLiberacaoPopup, setNewLiberacaoPopup] = useState<Liberacao | null>(null);
   const [liberacaoToInactivate, setLiberacaoToInactivate] = useState<string | null>(null);
+  const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
+
+  const toggleGroup = (groupKey: string) => {
+    setExpandedGroups((prev) =>
+      prev.includes(groupKey)
+        ? prev.filter((k) => k !== groupKey)
+        : [...prev, groupKey]
+    );
+  };
 
   const playNotificationSound = () => {
     try {
@@ -492,115 +501,311 @@ export default function Dashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody className="divide-y divide-muted/30">
-                  {filteredLiberacoes.map((lib) => (
-                    <TableRow
-                      key={lib.id}
-                      className={
-                        lib.tipo_acesso === "visitante"
-                          ? "bg-sky-50/50 hover:bg-sky-100/50 data-[state=selected]:bg-sky-100"
-                          : "bg-yellow-50/50 hover:bg-yellow-100/50 data-[state=selected]:bg-yellow-100"
+                  {(() => {
+                    // Grouping filtered releases by Quadra & Lote (maintaining alphabetical order)
+                    const groupedLiberacoes: { key: string; quadra: string; lote: string; list: Liberacao[] }[] = [];
+                    
+                    filteredLiberacoes.forEach((lib) => {
+                      const key = `${lib.quadra.toUpperCase()}_${lib.lote.toUpperCase()}`;
+                      const existingGroup = groupedLiberacoes.find((g) => g.key === key);
+                      if (existingGroup) {
+                        existingGroup.list.push(lib);
+                      } else {
+                        groupedLiberacoes.push({
+                          key,
+                          quadra: lib.quadra,
+                          lote: lib.lote,
+                          list: [lib],
+                        });
                       }
-                    >
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <div className={cn(
-                            "flex flex-col items-center justify-center p-1.5 px-3 rounded-xl border-2 shadow-sm min-w-[3.5rem] transition-colors",
-                            lib.tipo_acesso === "visitante" ? "bg-accent/10 border-accent/30" : "bg-warning/10 border-warning/30"
-                          )}>
-                            <span className={cn(
-                              "text-[0.6rem] font-black uppercase tracking-widest opacity-70",
-                              lib.tipo_acesso === "visitante" ? "text-black" : "text-warning-foreground"
-                            )}>Quadra</span>
-                            <span className={cn(
-                              "text-xl font-black",
-                              lib.tipo_acesso === "visitante" ? "text-black" : "text-warning-foreground"
-                            )}>{lib.quadra.toUpperCase()}</span>
-                          </div>
-                          <div className={cn(
-                            "flex flex-col items-center justify-center p-1.5 px-3 rounded-xl border-2 shadow-sm min-w-[3.5rem] transition-colors",
-                            lib.tipo_acesso === "visitante" ? "bg-accent/10 border-accent/30" : "bg-warning/10 border-warning/30"
-                          )}>
-                            <span className={cn(
-                              "text-[0.6rem] font-black uppercase tracking-widest opacity-70",
-                              lib.tipo_acesso === "visitante" ? "text-black" : "text-warning-foreground"
-                            )}>Lote</span>
-                            <span className={cn(
-                              "text-xl font-black",
-                              lib.tipo_acesso === "visitante" ? "text-black" : "text-warning-foreground"
-                            )}>{lib.lote.toUpperCase()}</span>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-bold uppercase text-slate-900">{lib.nome_pessoa.toUpperCase()}</TableCell>
-                      <TableCell className="max-w-[200px] truncate text-slate-500 font-semibold text-xs uppercase" title={lib.observacoes}>
-                        {lib.observacoes || "-"}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="secondary"
-                          className={cn(
-                            "font-black uppercase tracking-tighter px-3 py-1 border-2 shadow-sm",
-                            lib.tipo_acesso === "visitante"
-                              ? "bg-accent text-accent-foreground border-accent-foreground/10 hover:bg-accent/90"
-                              : "bg-warning text-warning-foreground border-warning-foreground/10 hover:bg-warning/90"
-                          )}
-                        >
-                          {lib.tipo_acesso === "visitante" ? "Visitante" : "Prestador"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="font-black text-slate-700">
-                        Até {format(new Date(lib.data_fim + "T00:00:00"), "dd/MM", { locale: ptBR })}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          className={cn(
-                            "font-black uppercase px-3 py-1 border shadow-sm",
-                            new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0))
-                              ? "bg-success text-success-foreground hover:bg-success/90"
-                              : "bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          )}
-                        >
-                          {new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0)) ? "Ativo" : "Expirado"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-slate-500 font-bold text-sm">
-                        <span>{format(new Date(lib.criado_em), "dd/MM/yy")}</span>
-                        <span className="mx-1 text-slate-300">•</span>
-                        <span>{format(new Date(lib.criado_em), "HH:mm")}</span>
-                      </TableCell>
-                      <TableCell className="text-right pr-6">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setEditingLiberacao(lib)}
-                            className="h-10 w-10 text-blue-500 hover:text-blue-600 hover:bg-blue-50 shadow-sm hover:shadow-blue-100 transition-all rounded-full"
-                            title="EDITAR LIBERAÇÃO"
+                    });
+
+                    return groupedLiberacoes.map((group) => {
+                      const isExpanded = expandedGroups.includes(group.key);
+                      const hasMultiple = group.list.length > 1;
+
+                      if (!hasMultiple) {
+                        const lib = group.list[0];
+                        return (
+                          <TableRow
+                            key={lib.id}
+                            className={cn(
+                              lib.tipo_acesso === "visitante"
+                                ? "bg-sky-50/50 hover:bg-sky-100/50 data-[state=selected]:bg-sky-100"
+                                : "bg-yellow-50/50 hover:bg-yellow-100/50 data-[state=selected]:bg-yellow-100"
+                            )}
                           >
-                            <Pencil className="h-5 w-5" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setLiberacaoToInactivate(lib.id)}
-                            className="h-10 w-10 text-orange-500 hover:text-orange-600 hover:bg-orange-50 shadow-sm hover:shadow-orange-100 transition-all rounded-full"
-                            title="Inativar (tirar das ativas de hoje)"
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <div className={cn(
+                                  "flex flex-col items-center justify-center p-1.5 px-3 rounded-xl border-2 shadow-sm min-w-[3.5rem] transition-colors",
+                                  lib.tipo_acesso === "visitante" ? "bg-accent/10 border-accent/30" : "bg-warning/10 border-warning/30"
+                                )}>
+                                  <span className={cn(
+                                    "text-[0.6rem] font-black uppercase tracking-widest opacity-70",
+                                    lib.tipo_acesso === "visitante" ? "text-black" : "text-warning-foreground"
+                                  )}>Quadra</span>
+                                  <span className={cn(
+                                    "text-xl font-black",
+                                    lib.tipo_acesso === "visitante" ? "text-black" : "text-warning-foreground"
+                                  )}>{lib.quadra.toUpperCase()}</span>
+                                </div>
+                                <div className={cn(
+                                  "flex flex-col items-center justify-center p-1.5 px-3 rounded-xl border-2 shadow-sm min-w-[3.5rem] transition-colors",
+                                  lib.tipo_acesso === "visitante" ? "bg-accent/10 border-accent/30" : "bg-warning/10 border-warning/30"
+                                )}>
+                                  <span className={cn(
+                                    "text-[0.6rem] font-black uppercase tracking-widest opacity-70",
+                                    lib.tipo_acesso === "visitante" ? "text-black" : "text-warning-foreground"
+                                  )}>Lote</span>
+                                  <span className={cn(
+                                    "text-xl font-black",
+                                    lib.tipo_acesso === "visitante" ? "text-black" : "text-warning-foreground"
+                                  )}>{lib.lote.toUpperCase()}</span>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell className="font-bold uppercase text-slate-900">{lib.nome_pessoa.toUpperCase()}</TableCell>
+                            <TableCell className="max-w-[200px] truncate text-slate-500 font-semibold text-xs uppercase" title={lib.observacoes}>
+                              {lib.observacoes || "-"}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant="secondary"
+                                className={cn(
+                                  "font-black uppercase tracking-tighter px-3 py-1 border-2 shadow-sm",
+                                  lib.tipo_acesso === "visitante"
+                                    ? "bg-accent text-accent-foreground border-accent-foreground/10 hover:bg-accent/90"
+                                    : "bg-warning text-warning-foreground border-warning-foreground/10 hover:bg-warning/90"
+                                )}
+                              >
+                                {lib.tipo_acesso === "visitante" ? "Visitante" : "Prestador"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="font-black text-slate-700">
+                              Até {format(new Date(lib.data_fim + "T00:00:00"), "dd/MM", { locale: ptBR })}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                className={cn(
+                                  "font-black uppercase px-3 py-1 border shadow-sm",
+                                  new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0))
+                                    ? "bg-success text-success-foreground hover:bg-success/90"
+                                    : "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                )}
+                              >
+                                {new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0)) ? "Ativo" : "Expirado"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-slate-500 font-bold text-sm">
+                              <span>{format(new Date(lib.criado_em), "dd/MM/yy")}</span>
+                              <span className="mx-1 text-slate-300">•</span>
+                              <span>{format(new Date(lib.criado_em), "HH:mm")}</span>
+                            </TableCell>
+                            <TableCell className="text-right pr-6">
+                              <div className="flex justify-end gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => setEditingLiberacao(lib)}
+                                  className="h-10 w-10 text-blue-500 hover:text-blue-600 hover:bg-blue-50 shadow-sm hover:shadow-blue-100 transition-all rounded-full"
+                                  title="EDITAR LIBERAÇÃO"
+                                >
+                                  <Pencil className="h-5 w-5" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => setLiberacaoToInactivate(lib.id)}
+                                  className="h-10 w-10 text-orange-500 hover:text-orange-600 hover:bg-orange-50 shadow-sm hover:shadow-orange-100 transition-all rounded-full"
+                                  title="Inativar (tirar das ativas de hoje)"
+                                >
+                                  <UserX className="h-5 w-5" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => setLiberacaoToDelete(lib.id)}
+                                  className="h-10 w-10 text-destructive hover:text-destructive-foreground hover:bg-destructive shadow-sm hover:shadow-destructive/40 transition-all rounded-full"
+                                  title="EXCLUIR PERMANENTEMENTE"
+                                >
+                                  <Trash2 className="h-5 w-5" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      }
+
+                      // Render grouped header row and children below
+                      const totalVisitantes = group.list.filter((l) => l.tipo_acesso === "visitante").length;
+                      const totalPrestadores = group.list.filter((l) => l.tipo_acesso === "prestador").length;
+
+                      return (
+                        <Fragment key={group.key}>
+                          <TableRow
+                            onClick={() => toggleGroup(group.key)}
+                            className="cursor-pointer bg-gradient-to-r from-amber-50/60 to-orange-50/60 hover:from-amber-100/60 hover:to-orange-100/60 font-bold border-l-4 border-l-orange-500 shadow-sm transition-all"
+                            title="CLIQUE PARA EXPANDIR E VER LIBERAÇÕES"
                           >
-                            <UserX className="h-5 w-5" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setLiberacaoToDelete(lib.id)}
-                            className="h-10 w-10 text-destructive hover:text-destructive-foreground hover:bg-destructive shadow-sm hover:shadow-destructive/40 transition-all rounded-full"
-                            title="EXCLUIR PERMANENTEMENTE"
-                          >
-                            <Trash2 className="h-5 w-5" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <div className="flex flex-col items-center justify-center p-1.5 px-3 rounded-xl border-2 border-orange-200 bg-orange-50 dark:bg-orange-950/20 shadow-sm min-w-[3.5rem]">
+                                  <span className="text-[0.65rem] font-black uppercase tracking-widest text-orange-600 dark:text-orange-400 opacity-80">Quadra</span>
+                                  <span className="text-xl font-black text-orange-800 dark:text-orange-200">{group.quadra.toUpperCase()}</span>
+                                </div>
+                                <div className="flex flex-col items-center justify-center p-1.5 px-3 rounded-xl border-2 border-orange-200 bg-orange-50 dark:bg-orange-950/20 shadow-sm min-w-[3.5rem]">
+                                  <span className="text-[0.65rem] font-black uppercase tracking-widest text-orange-600 dark:text-orange-400 opacity-80">Lote</span>
+                                  <span className="text-xl font-black text-orange-800 dark:text-orange-200">{group.lote.toUpperCase()}</span>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell colSpan={2}>
+                              <div className="flex flex-col">
+                                <span className="text-sm font-black text-orange-800 dark:text-orange-300 uppercase flex items-center gap-2">
+                                  <Users className="h-4 w-4 text-orange-600 dark:text-orange-400 animate-pulse" />
+                                  Múltiplas Liberações ({group.list.length}) - CLIQUE PARA VER
+                                </span>
+                                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight mt-0.5 max-w-[350px] sm:max-w-[500px] truncate" title={group.list.map(l => l.nome_pessoa).join(", ")}>
+                                  {group.list.map(l => l.nome_pessoa).join(", ")}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge className="bg-orange-500 hover:bg-orange-600 text-white border-none font-black uppercase tracking-tighter px-3 py-1 shadow-sm">
+                                Múltiplos ({totalVisitantes}V / {totalPrestadores}P)
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <span className="font-black text-orange-700 dark:text-orange-400 text-[10px] uppercase">
+                                Vários Períodos
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <Badge className="bg-success text-success-foreground font-black uppercase px-3 py-1 border shadow-sm">
+                                Ativos
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <span className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-tighter">
+                                {group.list.length} Registros
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-right pr-6">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleGroup(group.key);
+                                }}
+                                className="h-10 w-full sm:w-auto px-4 text-orange-600 hover:text-orange-700 hover:bg-orange-100/50 dark:text-orange-400 dark:hover:bg-orange-950/30 font-black flex items-center justify-center gap-2 rounded-xl border border-orange-200 dark:border-orange-900/50"
+                              >
+                                {isExpanded ? "RECOLHER" : "VER LIBERAÇÕES"}
+                                <span className="text-[9px]">{isExpanded ? "▲" : "▼"}</span>
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+
+                          {isExpanded &&
+                            group.list.map((lib) => (
+                              <TableRow
+                                key={lib.id}
+                                className={cn(
+                                  "border-l-4 animate-in slide-in-from-top-1 duration-100",
+                                  lib.tipo_acesso === "visitante"
+                                    ? "bg-sky-50/30 hover:bg-sky-100/30 dark:bg-sky-950/5 dark:hover:bg-sky-900/10 border-l-sky-400"
+                                    : "bg-yellow-50/30 hover:bg-yellow-100/30 dark:bg-yellow-950/5 dark:hover:bg-yellow-900/10 border-l-yellow-400"
+                                )}
+                              >
+                                <TableCell className="pl-8">
+                                  <div className="flex items-center gap-2 opacity-60">
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Liberação</span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="font-bold uppercase text-slate-800 dark:text-slate-200">{lib.nome_pessoa.toUpperCase()}</TableCell>
+                                <TableCell className="max-w-[200px] truncate text-slate-500 dark:text-slate-400 font-semibold text-xs uppercase" title={lib.observacoes}>
+                                  {lib.observacoes || "-"}
+                                </TableCell>
+                                <TableCell>
+                                  <Badge
+                                    variant="secondary"
+                                    className={cn(
+                                      "font-black uppercase tracking-tighter px-3 py-1 border-2 shadow-sm",
+                                      lib.tipo_acesso === "visitante"
+                                        ? "bg-accent text-accent-foreground border-accent-foreground/10 hover:bg-accent/90"
+                                        : "bg-warning text-warning-foreground border-warning-foreground/10 hover:bg-warning/90"
+                                    )}
+                                  >
+                                    {lib.tipo_acesso === "visitante" ? "Visitante" : "Prestador"}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="font-black text-slate-700 dark:text-slate-300">
+                                  Até {format(new Date(lib.data_fim + "T00:00:00"), "dd/MM", { locale: ptBR })}
+                                </TableCell>
+                                <TableCell>
+                                  <Badge
+                                    className={cn(
+                                      "font-black uppercase px-3 py-1 border shadow-sm",
+                                      new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0))
+                                        ? "bg-success text-success-foreground hover:bg-success/90"
+                                        : "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    )}
+                                  >
+                                    {new Date(lib.data_fim + "T00:00:00") >= new Date(new Date().setHours(0, 0, 0, 0)) ? "Ativo" : "Expirado"}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="text-slate-500 dark:text-slate-400 font-bold text-sm">
+                                  <span>{format(new Date(lib.criado_em), "dd/MM/yy")}</span>
+                                  <span className="mx-1 text-slate-300">•</span>
+                                  <span>{format(new Date(lib.criado_em), "HH:mm")}</span>
+                                </TableCell>
+                                <TableCell className="text-right pr-6">
+                                  <div className="flex justify-end gap-2">
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setEditingLiberacao(lib);
+                                      }}
+                                      className="h-10 w-10 text-blue-500 hover:text-blue-600 hover:bg-blue-50 shadow-sm hover:shadow-blue-100 transition-all rounded-full"
+                                      title="EDITAR LIBERAÇÃO"
+                                    >
+                                      <Pencil className="h-5 w-5" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setLiberacaoToInactivate(lib.id);
+                                      }}
+                                      className="h-10 w-10 text-orange-500 hover:text-orange-600 hover:bg-orange-50 shadow-sm hover:shadow-orange-100 transition-all rounded-full"
+                                      title="Inativar (tirar das ativas de hoje)"
+                                    >
+                                      <UserX className="h-5 w-5" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setLiberacaoToDelete(lib.id);
+                                      }}
+                                      className="h-10 w-10 text-destructive hover:text-destructive-foreground hover:bg-destructive shadow-sm hover:shadow-destructive/40 transition-all rounded-full"
+                                      title="EXCLUIR PERMANENTEMENTE"
+                                    >
+                                      <Trash2 className="h-5 w-5" />
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                        </Fragment>
+                      );
+                    });
+                  })()}
                 </TableBody>
               </Table>
             </div>
