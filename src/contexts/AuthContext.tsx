@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useRef, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -22,8 +22,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [admin, setAdmin] = useState<Admin | null>(null);
+  const [admin, setAdminState] = useState<Admin | null>(null);
   const [loading, setLoading] = useState(true);
+  const adminRef = useRef<Admin | null>(null);
+
+  const setAdmin = (val: Admin | null) => {
+    adminRef.current = val;
+    setAdminState(val);
+  };
 
   const fetchAdmin = async (userId: string) => {
     const { data, error } = await supabase
@@ -48,19 +54,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(session?.user ?? null);
 
         if (session?.user) {
-          // Only trigger loading state if we do not already have the admin loaded.
-          // This prevents token refreshes (TOKEN_REFRESHED) or background updates
-          // from unmounting the component tree when we already have the admin session.
-          if (!admin) {
+          // If admin is not loaded yet, show loading screen to avoid access denied flash
+          if (!adminRef.current) {
             setLoading(true);
-            const adminData = await fetchAdmin(session.user.id);
-            setAdmin(adminData);
-            setLoading(false);
+            setTimeout(async () => {
+              const adminData = await fetchAdmin(session.user.id);
+              setAdmin(adminData);
+              setLoading(false);
+            }, 0);
           } else {
-            // If we already have the admin, just keep the admin state updated silently
-            // without showing the "Carregando..." screen.
-            const adminData = await fetchAdmin(session.user.id);
-            setAdmin(adminData);
+            // Admin is already loaded. Update it silently without setting loading to true
+            setTimeout(async () => {
+              const adminData = await fetchAdmin(session.user.id);
+              setAdmin(adminData);
+            }, 0);
           }
         } else {
           setAdmin(null);
