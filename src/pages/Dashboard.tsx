@@ -61,6 +61,7 @@ export default function Dashboard() {
   const [liberacaoToDelete, setLiberacaoToDelete] = useState<string | null>(null);
   const [editingLiberacao, setEditingLiberacao] = useState<Liberacao | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [newLiberacaoPopup, setNewLiberacaoPopup] = useState<Liberacao | null>(null);
 
   const playNotificationSound = () => {
     try {
@@ -284,6 +285,7 @@ export default function Dashboard() {
             if (isToday) {
               playNotificationSound();
               showNewLiberacaoToast(newLib);
+              setNewLiberacaoPopup(newLib);
             }
           }
           fetchTodayLiberacoes(true);
@@ -695,6 +697,75 @@ export default function Dashboard() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditingLiberacao(null)}>Cancelar</Button>
             <Button onClick={handleUpdateLiberacao}>Salvar Alterações</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Popup de Nova Liberação */}
+      <Dialog open={!!newLiberacaoPopup} onOpenChange={(open) => !open && setNewLiberacaoPopup(null)}>
+        <DialogContent className="sm:max-w-[450px] border-2 border-primary/20 shadow-2xl rounded-2xl animate-in zoom-in-95 duration-200">
+          <DialogHeader className="flex flex-col items-center text-center pb-4 border-b">
+            <div className={cn(
+              "rounded-full p-4 mb-3 flex items-center justify-center animate-bounce shadow-md",
+              newLiberacaoPopup?.tipo_acesso === "visitante" ? "bg-sky-100 text-sky-600" : "bg-yellow-100 text-yellow-600"
+            )}>
+              <Users className="h-10 w-10" />
+            </div>
+            <DialogTitle className="text-2xl font-black tracking-tight text-slate-900 uppercase">
+              Nova Liberação Inserida!
+            </DialogTitle>
+            <DialogDescription className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">
+              {newLiberacaoPopup?.tipo_acesso === "visitante" ? "Acesso de Visitante" : "Acesso de Prestador de Serviço"}
+            </DialogDescription>
+          </DialogHeader>
+
+          {newLiberacaoPopup && (
+            <div className="py-6 space-y-5">
+              <div className="text-center">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Nome</span>
+                <span className="text-xl font-black text-slate-900 uppercase tracking-tight block px-4 break-words">
+                  {newLiberacaoPopup.nome_pessoa}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 pt-2">
+                <div className={cn(
+                  "flex flex-col items-center justify-center p-3 rounded-2xl border-2 shadow-sm",
+                  newLiberacaoPopup.tipo_acesso === "visitante" ? "bg-sky-50/50 border-sky-100" : "bg-yellow-50/50 border-yellow-100"
+                )}>
+                  <span className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-1">Quadra</span>
+                  <span className="text-2xl font-black text-slate-900">{newLiberacaoPopup.quadra.toUpperCase()}</span>
+                </div>
+                <div className={cn(
+                  "flex flex-col items-center justify-center p-3 rounded-2xl border-2 shadow-sm",
+                  newLiberacaoPopup.tipo_acesso === "visitante" ? "bg-sky-50/50 border-sky-100" : "bg-yellow-50/50 border-yellow-100"
+                )}>
+                  <span className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-1">Lote</span>
+                  <span className="text-2xl font-black text-slate-900">{newLiberacaoPopup.lote.toUpperCase()}</span>
+                </div>
+              </div>
+
+              {newLiberacaoPopup.observacoes && (
+                <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 text-center">
+                  <span className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest block mb-1">Observações</span>
+                  <span className="text-sm font-semibold text-slate-600 uppercase italic">
+                    "{newLiberacaoPopup.observacoes}"
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
+          <DialogFooter className="sm:justify-center border-t pt-4">
+            <Button 
+              onClick={() => setNewLiberacaoPopup(null)} 
+              className={cn(
+                "w-full sm:w-auto font-black uppercase text-sm tracking-wider px-8 h-12 shadow-md hover:scale-105 transition-all rounded-xl",
+                newLiberacaoPopup?.tipo_acesso === "visitante" ? "bg-sky-600 hover:bg-sky-700 text-white" : "bg-yellow-500 hover:bg-yellow-600 text-black"
+              )}
+            >
+              Entendido
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
