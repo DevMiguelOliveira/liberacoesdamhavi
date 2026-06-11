@@ -62,6 +62,91 @@ export default function Dashboard() {
   const [editingLiberacao, setEditingLiberacao] = useState<Liberacao | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const playNotificationSound = () => {
+    try {
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      
+      const playTone = (freq: number, startTime: number, duration: number) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, startTime);
+        
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(0.3, startTime + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.start(startTime);
+        osc.stop(startTime + duration);
+      };
+      
+      const now = audioCtx.currentTime;
+      // Beautiful premium chime: E5 (659.25 Hz) then A5 (880 Hz)
+      playTone(659.25, now, 0.4);
+      playTone(880, now + 0.12, 0.5);
+    } catch (error) {
+      console.error("Erro ao reproduzir som de notificação:", error);
+    }
+  };
+
+  const showNewLiberacaoToast = (lib: Liberacao) => {
+    toast.custom((t) => (
+      <div className={cn(
+        "w-full max-w-md bg-white dark:bg-slate-900 shadow-2xl rounded-2xl pointer-events-auto flex ring-1 ring-black/5 p-4 border-l-4 transition-all duration-300 animate-in fade-in slide-in-from-top-5",
+        lib.tipo_acesso === "visitante" ? "border-sky-500" : "border-yellow-500"
+      )}>
+        <div className="flex-1 w-0">
+          <div className="flex items-start">
+            <div className={cn(
+              "flex-shrink-0 pt-0.5 rounded-full p-1.5",
+              lib.tipo_acesso === "visitante" ? "bg-sky-100 text-sky-600" : "bg-yellow-100 text-yellow-600"
+            )}>
+              <Users className="h-5 w-5" />
+            </div>
+            <div className="ml-3 flex-1">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                Nova Liberação Ativa
+              </p>
+              <p className="text-base font-black text-slate-900 dark:text-white uppercase mt-0.5">
+                {lib.nome_pessoa}
+              </p>
+              <div className="mt-1 flex flex-wrap gap-2 items-center">
+                <Badge className={cn(
+                  "font-black text-[10px] px-2 py-0.5 border shadow-sm uppercase",
+                  lib.tipo_acesso === "visitante" ? "bg-sky-500 text-white" : "bg-yellow-500 text-black"
+                )} variant="secondary">
+                  {lib.tipo_acesso === "visitante" ? "Visitante" : "Prestador"}
+                </Badge>
+                <span className="text-xs font-bold text-slate-600">
+                  Quadra {lib.quadra.toUpperCase()} • Lote {lib.lote.toUpperCase()}
+                </span>
+              </div>
+              {lib.observacoes && (
+                <p className="text-xs text-slate-500 mt-1 italic uppercase truncate max-w-[250px]">
+                  "{lib.observacoes}"
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="flex border-l border-slate-200 pl-3 ml-3 items-center">
+          <button
+            onClick={() => toast.dismiss(t)}
+            className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-wider"
+          >
+            Fechar
+          </button>
+        </div>
+      </div>
+    ), {
+      duration: 10000,
+    });
+  };
+
   const handleDelete = async () => {
     if (!liberacaoToDelete) return;
 
@@ -190,6 +275,17 @@ export default function Dashboard() {
         },
         (payload) => {
           console.log("📡 [Liberações] Realtime event recebido:", payload.eventType, payload);
+          if (payload.eventType === "INSERT") {
+            const newLib = payload.new as Liberacao;
+            const today = format(new Date(), "yyyy-MM-dd");
+            const isToday = newLib.status === "ativo" &&
+                            newLib.data_inicio <= today &&
+                            newLib.data_fim >= today;
+            if (isToday) {
+              playNotificationSound();
+              showNewLiberacaoToast(newLib);
+            }
+          }
           fetchTodayLiberacoes(true);
         }
       )
