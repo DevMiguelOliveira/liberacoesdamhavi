@@ -718,15 +718,9 @@ export default function Dashboard() {
       {/* Popup de Nova Liberação */}
       {/* Popup de Nova Liberação Customizado */}
       {newLiberacaoPopup && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-slate-900 border-2 border-primary/20 shadow-2xl rounded-2xl p-6 w-full max-w-[450px] mx-4 animate-in zoom-in-95 duration-200 relative">
-            <button
-              onClick={() => setNewLiberacaoPopup(null)}
-              className="absolute right-4 top-4 rounded-full p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
-
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 border-2 border-primary/20 shadow-2xl rounded-2xl p-6 w-[95%] sm:max-w-[520px] animate-in zoom-in-95 duration-200 relative flex flex-col max-h-[90vh] overflow-y-auto">
+            
             <div className="flex flex-col items-center text-center pb-4 border-b">
               <div className={cn(
                 "rounded-full p-4 mb-3 flex items-center justify-center animate-bounce shadow-md",
@@ -734,18 +728,18 @@ export default function Dashboard() {
               )}>
                 <Users className="h-10 w-10" />
               </div>
-              <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white uppercase">
+              <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white uppercase leading-tight">
                 Nova Liberação Inserida!
               </h2>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">
                 {newLiberacaoPopup.tipo_acesso === "visitante" ? "Acesso de Visitante" : "Acesso de Prestador de Serviço"}
               </span>
             </div>
 
-            <div className="py-6 space-y-5">
+            <div className="py-6 space-y-5 flex-1">
               <div className="text-center">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Nome</span>
-                <span className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight block px-4 break-words">
+                <span className="text-lg sm:text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight block px-2 break-words whitespace-normal leading-snug">
                   {newLiberacaoPopup.nome_pessoa}
                 </span>
               </div>
@@ -756,21 +750,21 @@ export default function Dashboard() {
                   newLiberacaoPopup.tipo_acesso === "visitante" ? "bg-sky-50/50 border-sky-100" : "bg-yellow-50/50 border-yellow-100"
                 )}>
                   <span className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-1">Quadra</span>
-                  <span className="text-2xl font-black text-slate-900 dark:text-slate-100">{newLiberacaoPopup.quadra.toUpperCase()}</span>
+                  <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100">{newLiberacaoPopup.quadra.toUpperCase()}</span>
                 </div>
                 <div className={cn(
                   "flex flex-col items-center justify-center p-3 rounded-2xl border-2 shadow-sm",
                   newLiberacaoPopup.tipo_acesso === "visitante" ? "bg-sky-50/50 border-sky-100" : "bg-yellow-50/50 border-yellow-100"
                 )}>
                   <span className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-1">Lote</span>
-                  <span className="text-2xl font-black text-slate-900 dark:text-slate-100">{newLiberacaoPopup.lote.toUpperCase()}</span>
+                  <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100">{newLiberacaoPopup.lote.toUpperCase()}</span>
                 </div>
               </div>
 
               {newLiberacaoPopup.observacoes && (
                 <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl p-3 text-center">
                   <span className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest block mb-1">Observações</span>
-                  <span className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase italic">
+                  <span className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase italic whitespace-normal break-words leading-relaxed">
                     "{newLiberacaoPopup.observacoes}"
                   </span>
                 </div>
@@ -781,7 +775,7 @@ export default function Dashboard() {
               <Button 
                 onClick={() => setNewLiberacaoPopup(null)} 
                 className={cn(
-                  "w-full sm:w-auto font-black uppercase text-sm tracking-wider px-8 h-12 shadow-md hover:scale-105 transition-all rounded-xl",
+                  "w-full font-black uppercase text-sm tracking-wider px-8 h-12 shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all rounded-xl",
                   newLiberacaoPopup.tipo_acesso === "visitante" ? "bg-sky-600 hover:bg-sky-700 text-white" : "bg-yellow-500 hover:bg-yellow-600 text-black"
                 )}
               >
