@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, History, Users, Phone, MessageCircle, Loader2, Trash2, Monitor, Package, Pencil, ArrowUp, ArrowDown, UserX, AlertTriangle } from "lucide-react";
+import { Plus, Search, History, Users, Phone, MessageCircle, Loader2, Trash2, Monitor, Package, Pencil, ArrowUp, ArrowDown, UserX, AlertTriangle, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -927,71 +927,89 @@ export default function Dashboard() {
       {/* Popup de Nova Liberação Customizado com DialogPrimitive para evitar fechamento indesejado */}
       <DialogPrimitive.Root open={!!newLiberacaoPopup} onOpenChange={() => {}}>
         <DialogPrimitive.Portal>
-          <DialogPrimitive.Overlay className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0" />
+          <DialogPrimitive.Overlay className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0" />
           <DialogPrimitive.Content
             onPointerDownOutside={(e) => e.preventDefault()}
             onEscapeKeyDown={(e) => e.preventDefault()}
-            className="fixed left-[50%] top-[50%] z-[100] w-[95%] sm:max-w-[520px] translate-x-[-50%] translate-y-[-50%] border-2 border-primary/20 bg-white dark:bg-slate-900 p-6 shadow-2xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 focus:outline-none rounded-2xl flex flex-col max-h-[90vh] overflow-y-auto"
+            className="fixed left-[50%] top-[50%] z-[100] w-[95%] sm:max-w-[550px] translate-x-[-50%] translate-y-[-50%] border-4 border-orange-500 bg-white dark:bg-slate-900 shadow-[0_0_50px_rgba(249,115,22,0.6)] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 focus:outline-none rounded-2xl flex flex-col max-h-[90vh] overflow-y-auto p-0"
           >
             {newLiberacaoPopup && (
               <>
-                <div className="flex flex-col items-center text-center pb-4 border-b">
-                  <div className="rounded-full p-4 mb-3 flex items-center justify-center bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 animate-pulse border-4 border-red-200 dark:border-red-900/50 shadow-lg">
-                    <AlertTriangle className="h-12 w-12 animate-pulse" />
+                {/* Header Banner - Coloration that calls attention */}
+                <div className="bg-gradient-to-r from-red-600 via-orange-500 to-red-600 text-white p-5 text-center flex flex-col items-center gap-3 border-b-4 border-orange-500">
+                  <div className="bg-white/20 p-2.5 rounded-full animate-bounce border-2 border-white/40 shadow-inner">
+                    <AlertTriangle className="h-10 w-10 text-white animate-pulse" />
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white uppercase leading-tight flex items-center justify-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-red-500 animate-ping inline-block shrink-0" />
-                    Nova Liberação Inserida!
+                  <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wider text-white leading-tight">
+                    ATENÇÃO: NOVA LIBERAÇÃO ADICIONADA
                   </h2>
-                  <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">
-                    {newLiberacaoPopup.tipo_acesso === "visitante" ? "Acesso de Visitante" : "Acesso de Prestador de Serviço"}
-                  </span>
                 </div>
 
-                <div className="py-6 space-y-5 flex-1">
-                  <div className="text-center">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Nome</span>
-                    <span className="text-lg sm:text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight block px-2 break-words whitespace-normal leading-snug">
+                <div className="p-6 space-y-6 flex-1">
+                  {/* Nome do Visitante/Prestador */}
+                  <div className="text-center bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-100 dark:border-slate-800 shadow-inner">
+                    <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-1">Nome</span>
+                    <span className="text-xl sm:text-2xl font-black text-slate-950 dark:text-white uppercase tracking-tight block px-2 break-words whitespace-normal leading-snug">
                       {newLiberacaoPopup.nome_pessoa}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 pt-2">
-                    <div className={cn(
-                      "flex flex-col items-center justify-center p-3 rounded-2xl border-2 shadow-sm",
-                      newLiberacaoPopup.tipo_acesso === "visitante" ? "bg-sky-50/50 border-sky-100" : "bg-yellow-50/50 border-yellow-100"
-                    )}>
-                      <span className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-1">Quadra</span>
-                      <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100">{newLiberacaoPopup.quadra.toUpperCase()}</span>
+                  {/* Quadra e Lote */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-orange-200 bg-orange-50/50 dark:bg-orange-950/20 shadow-sm">
+                      <span className="text-[0.7rem] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-1">Quadra</span>
+                      <span className="text-2xl sm:text-3xl font-black text-slate-950 dark:text-white">{newLiberacaoPopup.quadra.toUpperCase()}</span>
                     </div>
-                    <div className={cn(
-                      "flex flex-col items-center justify-center p-3 rounded-2xl border-2 shadow-sm",
-                      newLiberacaoPopup.tipo_acesso === "visitante" ? "bg-sky-50/50 border-sky-100" : "bg-yellow-50/50 border-yellow-100"
-                    )}>
-                      <span className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-1">Lote</span>
-                      <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100">{newLiberacaoPopup.lote.toUpperCase()}</span>
+                    <div className="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-orange-200 bg-orange-50/50 dark:bg-orange-950/20 shadow-sm">
+                      <span className="text-[0.7rem] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-1">Lote</span>
+                      <span className="text-2xl sm:text-3xl font-black text-slate-950 dark:text-white">{newLiberacaoPopup.lote.toUpperCase()}</span>
                     </div>
                   </div>
 
+                  {/* Horário de Adição e Tipo de Acesso */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center gap-3 p-4 rounded-2xl border-2 border-slate-200 bg-slate-50/50 dark:border-slate-800 dark:bg-slate-900 shadow-sm">
+                      <Clock className="h-6 w-6 text-orange-500 animate-pulse shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-[0.65rem] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Horário</span>
+                        <span className="text-base font-black text-slate-950 dark:text-white">
+                          {format(new Date(newLiberacaoPopup.criado_em), "HH:mm")}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-4 rounded-2xl border-2 border-slate-200 bg-slate-50/50 dark:border-slate-800 dark:bg-slate-900 shadow-sm">
+                      <div className={cn(
+                        "h-3 w-3 rounded-full shrink-0 animate-ping",
+                        newLiberacaoPopup.tipo_acesso === "visitante" ? "bg-sky-500" : "bg-yellow-500"
+                      )} />
+                      <div className="flex flex-col">
+                        <span className="text-[0.65rem] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Tipo Acesso</span>
+                        <span className="text-sm font-black text-slate-950 dark:text-white uppercase">
+                          {newLiberacaoPopup.tipo_acesso === "visitante" ? "Visitante" : "Prestador"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Observações */}
                   {newLiberacaoPopup.observacoes && (
-                    <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl p-3 text-center">
-                      <span className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest block mb-1">Observações</span>
-                      <span className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase italic whitespace-normal break-words leading-relaxed">
+                    <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150 dark:border-slate-800 rounded-xl p-4 text-center shadow-inner">
+                      <span className="text-[0.65rem] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-1">Observações</span>
+                      <span className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 uppercase italic whitespace-normal break-words leading-relaxed">
                         "{newLiberacaoPopup.observacoes}"
                       </span>
                     </div>
                   )}
                 </div>
 
-                <div className="flex justify-center border-t pt-4">
+                {/* Confirm Button */}
+                <div className="p-6 border-t bg-slate-50 dark:bg-slate-900/50 flex justify-center">
                   <Button 
                     onClick={() => setNewLiberacaoPopup(null)} 
-                    className={cn(
-                      "w-full font-black uppercase text-sm tracking-wider px-8 h-12 shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all rounded-xl",
-                      newLiberacaoPopup.tipo_acesso === "visitante" ? "bg-sky-600 hover:bg-sky-700 text-white" : "bg-yellow-500 hover:bg-yellow-600 text-black"
-                    )}
+                    className="w-full font-black uppercase text-base tracking-widest h-14 shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all rounded-xl bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white border-2 border-white/10"
                   >
-                    Entendido
+                    Entendido!
                   </Button>
                 </div>
               </>
