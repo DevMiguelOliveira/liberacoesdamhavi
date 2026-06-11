@@ -298,9 +298,15 @@ export default function Dashboard() {
           if (payload.eventType === "INSERT") {
             const newLib = payload.new as Liberacao;
             const today = format(new Date(), "yyyy-MM-dd");
+            console.log("🔍 [Realtime Debug] Dados recebidos:");
+            console.log("- Data de Hoje (local):", today);
+            console.log("- Liberação Inicio:", newLib.data_inicio);
+            console.log("- Liberação Fim:", newLib.data_fim);
+            console.log("- Status:", newLib.status);
             const isToday = newLib.status === "ativo" &&
                             newLib.data_inicio <= today &&
                             newLib.data_fim >= today;
+            console.log("- Ativa hoje? (isToday):", isToday);
             if (isToday) {
               playNotificationSound();
               showNewLiberacaoToast(newLib);
