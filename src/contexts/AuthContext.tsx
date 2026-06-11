@@ -47,23 +47,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSession(session);
         setUser(session?.user ?? null);
 
-        if (event === "SIGNED_IN") {
-          // If we already have admin, don't set loading to true to prevent unmount flash
-          if (!admin && session?.user) {
+        if (session?.user) {
+          // Only trigger loading state if we do not already have the admin loaded.
+          // This prevents token refreshes (TOKEN_REFRESHED) or background updates
+          // from unmounting the component tree when we already have the admin session.
+          if (!admin) {
             setLoading(true);
             const adminData = await fetchAdmin(session.user.id);
             setAdmin(adminData);
             setLoading(false);
-          }
-        } else if (event === "SIGNED_OUT") {
-          setAdmin(null);
-          setLoading(false);
-        } else if (event === "TOKEN_REFRESHED" || event === "USER_UPDATED") {
-          // Background events: Do NOT trigger loading state which unmounts the page
-          if (!admin && session?.user) {
+          } else {
+            // If we already have the admin, just keep the admin state updated silently
+            // without showing the "Carregando..." screen.
             const adminData = await fetchAdmin(session.user.id);
             setAdmin(adminData);
           }
+        } else {
+          setAdmin(null);
+          setLoading(false);
         }
       }
     );
