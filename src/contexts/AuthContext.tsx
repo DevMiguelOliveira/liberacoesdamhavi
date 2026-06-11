@@ -43,20 +43,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log("🔑 [Auth Debug] onAuthStateChange event:", event);
         setSession(session);
         setUser(session?.user ?? null);
 
-        if (session?.user) {
-          setLoading(true); // Prevent access denied flash
-          // Use setTimeout to avoid potential deadlock
-          setTimeout(async () => {
+        if (event === "SIGNED_IN") {
+          // If we already have admin, don't set loading to true to prevent unmount flash
+          if (!admin && session?.user) {
+            setLoading(true);
             const adminData = await fetchAdmin(session.user.id);
             setAdmin(adminData);
             setLoading(false);
-          }, 0);
-        } else {
+          }
+        } else if (event === "SIGNED_OUT") {
           setAdmin(null);
           setLoading(false);
+        } else if (event === "TOKEN_REFRESHED" || event === "USER_UPDATED") {
+          // Background events: Do NOT trigger loading state which unmounts the page
+          if (!admin && session?.user) {
+            const adminData = await fetchAdmin(session.user.id);
+            setAdmin(adminData);
+          }
         }
       }
     );

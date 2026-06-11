@@ -955,9 +955,12 @@ export default function Dashboard() {
                   <div className="bg-white/20 p-2.5 rounded-full animate-bounce border-2 border-white/40 shadow-inner">
                     <AlertTriangle className="h-10 w-10 text-white animate-pulse" />
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wider text-white leading-tight">
+                  <DialogPrimitive.Title className="text-xl sm:text-2xl font-black uppercase tracking-wider text-white leading-tight">
                     ATENÇÃO: NOVA LIBERAÇÃO ADICIONADA
-                  </h2>
+                  </DialogPrimitive.Title>
+                  <DialogPrimitive.Description className="sr-only">
+                    Detalhamento da nova liberação adicionada ao sistema
+                  </DialogPrimitive.Description>
                 </div>
 
                 <div className="p-6 space-y-6 flex-1">
