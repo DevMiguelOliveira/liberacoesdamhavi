@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, History, Users, Phone, MessageCircle, Loader2, Trash2, Monitor, Package, Pencil, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Search, History, Users, Phone, MessageCircle, Loader2, Trash2, Monitor, Package, Pencil, ArrowUp, ArrowDown, UserX } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -62,6 +62,7 @@ export default function Dashboard() {
   const [editingLiberacao, setEditingLiberacao] = useState<Liberacao | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [newLiberacaoPopup, setNewLiberacaoPopup] = useState<Liberacao | null>(null);
+  const [liberacaoToInactivate, setLiberacaoToInactivate] = useState<string | null>(null);
 
   const playNotificationSound = () => {
     try {
@@ -165,6 +166,24 @@ export default function Dashboard() {
     }
     setLiberacaoToDelete(null);
     setLiberacaoToDelete(null);
+  };
+
+  const handleInactivate = async () => {
+    if (!liberacaoToInactivate) return;
+
+    const { error } = await supabase
+      .from("liberacoes")
+      .update({ status: "expirado" })
+      .eq("id", liberacaoToInactivate);
+
+    if (error) {
+      toast.error("Erro ao inativar liberação");
+      console.error(error);
+    } else {
+      toast.success("Liberação inativada com sucesso");
+      fetchTodayLiberacoes();
+    }
+    setLiberacaoToInactivate(null);
   };
 
   const handleUpdateLiberacao = async () => {
@@ -593,6 +612,15 @@ export default function Dashboard() {
                           <Button
                             variant="ghost"
                             size="icon"
+                            onClick={() => setLiberacaoToInactivate(lib.id)}
+                            className="h-10 w-10 text-orange-500 hover:text-orange-600 hover:bg-orange-50 shadow-sm hover:shadow-orange-100 transition-all rounded-full"
+                            title="Inativar (tirar das ativas de hoje)"
+                          >
+                            <UserX className="h-5 w-5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={() => setLiberacaoToDelete(lib.id)}
                             className="h-10 w-10 text-destructive hover:text-destructive-foreground hover:bg-destructive shadow-sm hover:shadow-destructive/40 transition-all rounded-full"
                           >
@@ -624,6 +652,23 @@ export default function Dashboard() {
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={!!liberacaoToInactivate} onOpenChange={() => setLiberacaoToInactivate(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Inativar Liberação?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja inativar esta liberação? Ela será removida da lista de ativas de hoje, mas continuará salva no histórico de registros.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleInactivate} className="bg-orange-500 text-white hover:bg-orange-600">
+              Inativar
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
