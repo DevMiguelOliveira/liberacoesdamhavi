@@ -92,25 +92,25 @@ export default function Dashboard() {
   const playNotificationSound = () => {
     try {
       const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      
+
       const playTone = (freq: number, startTime: number, duration: number) => {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        
+
         osc.type = "sine";
         osc.frequency.setValueAtTime(freq, startTime);
-        
+
         gain.gain.setValueAtTime(0, startTime);
         gain.gain.linearRampToValueAtTime(0.3, startTime + 0.05);
         gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
-        
+
         osc.connect(gain);
         gain.connect(audioCtx.destination);
-        
+
         osc.start(startTime);
         osc.stop(startTime + duration);
       };
-      
+
       const now = audioCtx.currentTime;
       // Beautiful premium chime: E5 (659.25 Hz) then A5 (880 Hz)
       playTone(659.25, now, 0.4);
@@ -292,8 +292,8 @@ export default function Dashboard() {
             console.log("- Liberação Fim:", newLib.data_fim);
             console.log("- Status:", newLib.status);
             const isToday = newLib.status === "ativo" &&
-                            newLib.data_inicio <= today &&
-                            newLib.data_fim >= today;
+              newLib.data_inicio <= today &&
+              newLib.data_fim >= today;
             console.log("- Ativa hoje? (isToday):", isToday);
             if (isToday) {
               playNotificationSound();
@@ -520,7 +520,7 @@ export default function Dashboard() {
                   {(() => {
                     // Grouping filtered releases by Quadra & Lote (maintaining alphabetical order)
                     const groupedLiberacoes: { key: string; quadra: string; lote: string; list: Liberacao[] }[] = [];
-                    
+
                     filteredLiberacoes.forEach((lib) => {
                       const key = `${lib.quadra.toUpperCase()}_${lib.lote.toUpperCase()}`;
                       const existingGroup = groupedLiberacoes.find((g) => g.key === key);
@@ -634,7 +634,7 @@ export default function Dashboard() {
                                   size="icon"
                                   onClick={() => setLiberacaoToInactivate(lib.id)}
                                   className="h-8 w-8 sm:h-10 sm:w-10 text-orange-500 hover:text-orange-600 hover:bg-orange-50 shadow-sm hover:shadow-orange-100 transition-all rounded-full"
-                                  title="Inativar (tirar das ativas de hoje)"
+                                  title="INATIVAR (REMOVER DAS ATIVAS DE HOJE)"
                                 >
                                   <UserX className="h-4 w-4 sm:h-5 sm:w-5" />
                                 </Button>
@@ -837,7 +837,7 @@ export default function Dashboard() {
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir Liberação?</AlertDialogTitle>
             <AlertDialogDescription>
-              Tem certeza que deseja excluir esta liberação? Esta ação não pode ser desfeita.
+              Tem certeza que deseja excluir esta liberação? Será removido do Histórico e esta ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -940,7 +940,7 @@ export default function Dashboard() {
 
       {/* Popup de Nova Liberação */}
       {/* Popup de Nova Liberação Customizado com DialogPrimitive para evitar fechamento indesejado */}
-      <DialogPrimitive.Root open={!!newLiberacaoPopup} onOpenChange={() => {}}>
+      <DialogPrimitive.Root open={!!newLiberacaoPopup} onOpenChange={() => { }}>
         <DialogPrimitive.Portal>
           <DialogPrimitive.Overlay className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0" />
           <DialogPrimitive.Content
@@ -1023,8 +1023,8 @@ export default function Dashboard() {
 
                 {/* Confirm Button */}
                 <div className="p-6 border-t bg-slate-50 dark:bg-slate-900/50 flex justify-center">
-                  <Button 
-                    onClick={() => setNewLiberacaoPopup(null)} 
+                  <Button
+                    onClick={() => setNewLiberacaoPopup(null)}
                     className="w-full font-black uppercase text-base tracking-widest h-14 shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all rounded-xl bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white border-2 border-white/10"
                   >
                     Entendido!
@@ -1078,11 +1078,11 @@ export default function Dashboard() {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground pl-2 border-l-2 border-orange-500/50">
                     <span className="text-xs font-bold">Ramal Portaria Social:</span>
-                    <span className="text-sm font-black text-orange-500">95</span>
+                    <span className="text-sm font-black text-orange-500">94</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground pl-2 border-l-2 border-orange-500/50">
                     <span className="text-xs font-bold">Ramal Portaria de Serviços:</span>
-                    <span className="text-sm font-black text-orange-500">94</span>
+                    <span className="text-sm font-black text-orange-500">95</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground pl-2 border-l-2 border-orange-500/50">
                     <span className="text-xs font-bold">Ramal Correspondência:</span>
