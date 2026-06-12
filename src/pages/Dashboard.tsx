@@ -1076,67 +1076,72 @@ export default function Dashboard() {
                     <MessageCircle className="h-4 w-4" />
                     <span>Whats Portaria de Serviços: (17) 98191-0146</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground pl-2 border-l-2 border-orange-500/50">
-                    <span className="text-xs font-bold">Ramal Portaria Social:</span>
-                    <span className="text-sm font-black text-orange-500">94</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground pl-2 border-l-2 border-orange-500/50">
-                    <span className="text-xs font-bold">Ramal Portaria de Serviços:</span>
-                    <span className="text-sm font-black text-orange-500">95</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground pl-2 border-l-2 border-orange-500/50">
-                    <span className="text-xs font-bold">Ramal Correspondência:</span>
-                    <span className="text-sm font-black text-orange-500">100</span>
-                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground pl-2 border-l-2 border-orange-500/50">
+                  <span className="text-xs font-bold">Ramal Financeiro:</span>
+                  <span className="text-sm font-black text-orange-500">93</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground pl-2 border-l-2 border-orange-500/50">
+                  <span className="text-xs font-bold">Ramal Portaria Social:</span>
+                  <span className="text-sm font-black text-orange-500">94</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground pl-2 border-l-2 border-orange-500/50">
+                  <span className="text-xs font-bold">Ramal Portaria de Serviços:</span>
+                  <span className="text-sm font-black text-orange-500">95</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground pl-2 border-l-2 border-orange-500/50">
+                  <span className="text-xs font-bold">Ramal Correspondência:</span>
+                  <span className="text-sm font-black text-orange-500">100</span>
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>
 
-        <Card
-          className="bg-secondary/50 cursor-pointer hover:bg-secondary/70 transition-colors group"
-          onClick={handleCreateShortcut}
-        >
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-4">
-              <div className="rounded-lg bg-accent p-3 group-hover:bg-primary/10 transition-colors">
-                <Monitor className="h-6 w-6 text-accent-foreground group-hover:text-primary transition-colors" />
-              </div>
-              <div>
-                <h3 className="font-semibold group-hover:text-primary transition-colors">Acesso Rápido</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Clique aqui para baixar um atalho para sua Área de Trabalho.
-                </p>
-              </div>
+      <Card
+        className="bg-secondary/50 cursor-pointer hover:bg-secondary/70 transition-colors group"
+        onClick={handleCreateShortcut}
+      >
+        <CardContent className="pt-6">
+          <div className="flex items-start gap-4">
+            <div className="rounded-lg bg-accent p-3 group-hover:bg-primary/10 transition-colors">
+              <Monitor className="h-6 w-6 text-accent-foreground group-hover:text-primary transition-colors" />
             </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Botão flutuante para ir até Liberações Ativas */}
-      <Button
-        onClick={() => {
-          document.getElementById('liberacoes-ativas')?.scrollIntoView({ behavior: 'smooth' });
-        }}
-        className="fixed bottom-20 right-6 h-12 w-auto px-4 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 text-white z-50 transition-all hover:scale-105 flex items-center gap-2"
-        title="Ir para Liberações Ativas"
-      >
-        <Users className="h-5 w-5" />
-        <ArrowUp className="h-4 w-4" />
-      </Button>
-
-      {/* Botão flutuante para ir até Encomendas */}
-      <Button
-        onClick={() => {
-          document.getElementById('encomendas-section')?.scrollIntoView({ behavior: 'smooth' });
-        }}
-        className="fixed bottom-6 right-6 h-12 w-auto px-4 rounded-full shadow-lg bg-orange-500 hover:bg-orange-600 text-white z-50 transition-all hover:scale-105 flex items-center gap-2"
-        title="Ir para Encomendas"
-      >
-        <Package className="h-5 w-5" />
-        <ArrowDown className="h-4 w-4" />
-      </Button>
+            <div>
+              <h3 className="font-semibold group-hover:text-primary transition-colors">Acesso Rápido</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                Clique aqui para baixar um atalho para sua Área de Trabalho.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
+
+      {/* Botão flutuante para ir até Liberações Ativas */ }
+  <Button
+    onClick={() => {
+      document.getElementById('liberacoes-ativas')?.scrollIntoView({ behavior: 'smooth' });
+    }}
+    className="fixed bottom-20 right-6 h-12 w-auto px-4 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 text-white z-50 transition-all hover:scale-105 flex items-center gap-2"
+    title="Ir para Liberações Ativas"
+  >
+    <Users className="h-5 w-5" />
+    <ArrowUp className="h-4 w-4" />
+  </Button>
+
+  {/* Botão flutuante para ir até Encomendas */ }
+  <Button
+    onClick={() => {
+      document.getElementById('encomendas-section')?.scrollIntoView({ behavior: 'smooth' });
+    }}
+    className="fixed bottom-6 right-6 h-12 w-auto px-4 rounded-full shadow-lg bg-orange-500 hover:bg-orange-600 text-white z-50 transition-all hover:scale-105 flex items-center gap-2"
+    title="Ir para Encomendas"
+  >
+    <Package className="h-5 w-5" />
+    <ArrowDown className="h-4 w-4" />
+  </Button>
+    </div >
   );
 }
