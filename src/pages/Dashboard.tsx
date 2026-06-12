@@ -1095,8 +1095,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-          </div>
-        </CardContent>
+          </CardContent>
       </Card>
 
       <Card
