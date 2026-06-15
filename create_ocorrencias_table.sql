@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS public.ocorrencias (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   mensagem TEXT NOT NULL,
-  status TEXT NOT NULL CHECK (status IN ('finalizada', 'pendente')) DEFAULT 'pendente',
+  status TEXT NOT NULL CHECK (status IN ('finalizada', 'pendente', 'recusada')) DEFAULT 'pendente',
   autor TEXT NOT NULL,
   criado_em TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   admin_id UUID REFERENCES public.admins(id) ON DELETE SET NULL

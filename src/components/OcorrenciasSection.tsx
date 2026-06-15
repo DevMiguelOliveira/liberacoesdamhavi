@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
-import { Search, Loader2, Trash2, Plus, Pencil, CheckCircle, AlertTriangle, Calendar, User, RefreshCw, Check } from "lucide-react";
+import { Search, Loader2, Trash2, Plus, Pencil, CheckCircle, AlertTriangle, Calendar, User, RefreshCw, Check, Clock, X } from "lucide-react";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -25,7 +25,7 @@ import { format, startOfDay, endOfDay } from "date-fns";
 interface Ocorrencia {
     id: string;
     mensagem: string;
-    status: "finalizada" | "pendente";
+    status: "finalizada" | "pendente" | "recusada";
     autor: string;
     criado_em: string;
     admin_id?: string;
@@ -181,23 +181,39 @@ export default function OcorrenciasSection() {
         }
     };
 
-    // Alternar status de forma rápida na tabela
-    const handleToggleStatus = async (ocorrencia: Ocorrencia) => {
-        const novoStatus = ocorrencia.status === "finalizada" ? "pendente" : "finalizada";
+    // Alterar status diretamente
+    const handleSetStatus = async (id: string, novoStatus: "finalizada" | "pendente" | "recusada") => {
         try {
             const { error } = await (supabase as any)
                 .from("ocorrencias")
                 .update({ status: novoStatus })
-                .eq("id", ocorrencia.id);
+                .eq("id", id);
 
             if (error) throw error;
 
-            toast.success(`Status alterado para ${novoStatus === "finalizada" ? "Finalizada" : "Pendente"}`);
+            let statusLabel = "Pendente";
+            if (novoStatus === "finalizada") statusLabel = "Finalizada";
+            if (novoStatus === "recusada") statusLabel = "Recusada";
+
+            toast.success(`Status alterado para ${statusLabel}`);
             fetchOcorrencias(true);
         } catch (error) {
-            console.error("Erro ao alternar status:", error);
+            console.error("Erro ao alterar status:", error);
             toast.error("Erro ao alterar status");
         }
+    };
+
+    // Alternar status de forma circular clicando no Badge
+    const handleCycleStatus = async (ocorrencia: Ocorrencia) => {
+        let novoStatus: "finalizada" | "pendente" | "recusada" = "pendente";
+        if (ocorrencia.status === "pendente") {
+            novoStatus = "finalizada";
+        } else if (ocorrencia.status === "finalizada") {
+            novoStatus = "recusada";
+        } else if (ocorrencia.status === "recusada") {
+            novoStatus = "pendente";
+        }
+        await handleSetStatus(ocorrencia.id, novoStatus);
     };
 
     useEffect(() => {
@@ -361,23 +377,31 @@ export default function OcorrenciasSection() {
                                             className={`transition-colors ${
                                                 oc.status === "finalizada"
                                                     ? "bg-emerald-50/20 hover:bg-emerald-100/20 dark:bg-emerald-950/5 dark:hover:bg-emerald-950/10"
+                                                    : oc.status === "recusada"
+                                                    ? "bg-rose-50/20 hover:bg-rose-100/20 dark:bg-rose-950/5 dark:hover:bg-rose-950/10"
                                                     : "bg-orange-50/20 hover:bg-orange-100/20 dark:bg-orange-950/5 dark:hover:bg-orange-950/10"
                                             }`}
                                         >
                                             {/* Status Badge clickable to fast toggle */}
                                             <TableCell className="align-middle">
                                                 <button
-                                                    onClick={() => handleToggleStatus(oc)}
+                                                    onClick={() => handleCycleStatus(oc)}
                                                     className="focus:outline-none transition-transform active:scale-95"
-                                                    title="Clique para alternar o status rapidamente"
+                                                    title="Clique para alternar o status rapidamente (Pendente -> Finalizada -> Recusada)"
                                                 >
-                                                    {oc.status === "finalizada" ? (
+                                                    {oc.status === "finalizada" && (
                                                         <Badge className="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 border-2 border-emerald-200 dark:border-emerald-900/60 font-black uppercase text-[10px] tracking-widest py-1 px-2.5">
                                                             Finalizada
                                                         </Badge>
-                                                    ) : (
+                                                    )}
+                                                    {oc.status === "pendente" && (
                                                         <Badge className="bg-orange-100 dark:bg-orange-900/40 text-orange-800 dark:text-orange-300 border-2 border-orange-200 dark:border-orange-900/60 font-black uppercase text-[10px] tracking-widest py-1 px-2.5">
                                                             Pendente
+                                                        </Badge>
+                                                    )}
+                                                    {oc.status === "recusada" && (
+                                                        <Badge className="bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 border-2 border-red-200 dark:border-red-900/60 font-black uppercase text-[10px] tracking-widest py-1 px-2.5">
+                                                            Recusada
                                                         </Badge>
                                                     )}
                                                 </button>
@@ -397,24 +421,44 @@ export default function OcorrenciasSection() {
 
                                             <TableCell className="text-right pr-6 align-middle">
                                                 <div className="flex justify-end gap-2">
-                                                    {/* Toggle status shortcut button */}
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={() => handleToggleStatus(oc)}
-                                                        className={`h-10 w-10 border transition-all duration-200 rounded-full flex items-center justify-center ${
-                                                            oc.status === "finalizada"
-                                                                ? "text-orange-600 bg-orange-100/80 border-orange-300 hover:bg-orange-500 hover:text-white hover:border-orange-500 shadow-sm"
-                                                                : "text-emerald-600 bg-emerald-100/80 border-emerald-300 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 shadow-sm"
-                                                        }`}
-                                                        title={oc.status === "finalizada" ? "Marcar como Pendente" : "Marcar como Finalizada"}
-                                                    >
-                                                        {oc.status === "finalizada" ? (
-                                                            <AlertTriangle className="h-5 w-5" />
-                                                        ) : (
+                                                    {/* Botão de Marcar como Finalizada */}
+                                                    {oc.status !== "finalizada" && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            onClick={() => handleSetStatus(oc.id, "finalizada")}
+                                                            className="h-10 w-10 text-emerald-600 bg-emerald-100/80 border border-emerald-300 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 shadow-sm transition-all duration-200 rounded-full flex items-center justify-center"
+                                                            title="Marcar como Finalizada"
+                                                        >
                                                             <Check className="h-5 w-5" />
-                                                        )}
-                                                    </Button>
+                                                        </Button>
+                                                    )}
+
+                                                    {/* Botão de Marcar como Pendente */}
+                                                    {oc.status !== "pendente" && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            onClick={() => handleSetStatus(oc.id, "pendente")}
+                                                            className="h-10 w-10 text-orange-600 bg-orange-100/80 border border-orange-300 hover:bg-orange-500 hover:text-white hover:border-orange-500 shadow-sm transition-all duration-200 rounded-full flex items-center justify-center"
+                                                            title="Marcar como Pendente"
+                                                        >
+                                                            <Clock className="h-5 w-5" />
+                                                        </Button>
+                                                    )}
+
+                                                    {/* Botão de Marcar como Recusada */}
+                                                    {oc.status !== "recusada" && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            onClick={() => handleSetStatus(oc.id, "recusada")}
+                                                            className="h-10 w-10 text-red-600 bg-red-100/80 border border-red-300 hover:bg-red-600 hover:text-white hover:border-red-600 shadow-sm transition-all duration-200 rounded-full flex items-center justify-center"
+                                                            title="Marcar como Recusada"
+                                                        >
+                                                            <X className="h-5 w-5" />
+                                                        </Button>
+                                                    )}
 
                                                     <Button
                                                         variant="ghost"
@@ -502,9 +546,9 @@ export default function OcorrenciasSection() {
                                     <button
                                         type="button"
                                         onClick={() => setEditingOcorrencia({ ...editingOcorrencia, status: "pendente" })}
-                                        className={`flex-1 py-2.5 rounded-lg font-black text-xs border-2 uppercase ${
+                                        className={`flex-1 py-2.5 rounded-lg font-black text-xs border-2 uppercase transition-all ${
                                             editingOcorrencia.status === "pendente"
-                                                ? "bg-orange-500 text-white border-orange-500"
+                                                ? "bg-orange-500 text-white border-orange-500 shadow-sm"
                                                 : "bg-white dark:bg-slate-950 text-orange-500 border-orange-200"
                                         }`}
                                     >
@@ -513,13 +557,24 @@ export default function OcorrenciasSection() {
                                     <button
                                         type="button"
                                         onClick={() => setEditingOcorrencia({ ...editingOcorrencia, status: "finalizada" })}
-                                        className={`flex-1 py-2.5 rounded-lg font-black text-xs border-2 uppercase ${
+                                        className={`flex-1 py-2.5 rounded-lg font-black text-xs border-2 uppercase transition-all ${
                                             editingOcorrencia.status === "finalizada"
-                                                ? "bg-emerald-600 text-white border-emerald-600"
+                                                ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
                                                 : "bg-white dark:bg-slate-950 text-emerald-600 border-emerald-200"
                                         }`}
                                     >
                                         Finalizada
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setEditingOcorrencia({ ...editingOcorrencia, status: "recusada" })}
+                                        className={`flex-1 py-2.5 rounded-lg font-black text-xs border-2 uppercase transition-all ${
+                                            editingOcorrencia.status === "recusada"
+                                                ? "bg-red-600 text-white border-red-600 shadow-sm"
+                                                : "bg-white dark:bg-slate-950 text-red-600 border-red-200"
+                                        }`}
+                                    >
+                                        Recusada
                                     </button>
                                 </div>
                             </div>
