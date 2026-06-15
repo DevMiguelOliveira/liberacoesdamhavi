@@ -28,6 +28,7 @@ interface Ocorrencia {
     status: "finalizada" | "pendente" | "recusada";
     autor: string;
     motivo_recusa?: string | null;
+    finalizado_por?: string | null;
     criado_em: string;
     admin_id?: string;
 }
@@ -171,6 +172,13 @@ export default function OcorrenciasSection() {
         }
 
         try {
+            let finalizadoPorValue = editingOcorrencia.finalizado_por;
+            if ((editingOcorrencia.status === "finalizada" || editingOcorrencia.status === "recusada") && !finalizadoPorValue) {
+                finalizadoPorValue = admin?.nome?.toUpperCase() || null;
+            } else if (editingOcorrencia.status === "pendente") {
+                finalizadoPorValue = null;
+            }
+
             const { error } = await (supabase as any)
                 .from("ocorrencias")
                 .update({
@@ -178,6 +186,7 @@ export default function OcorrenciasSection() {
                     status: editingOcorrencia.status,
                     autor: editingOcorrencia.autor.trim().toUpperCase(),
                     motivo_recusa: editingOcorrencia.status === "recusada" ? editingOcorrencia.motivo_recusa?.trim().toUpperCase() : null,
+                    finalizado_por: finalizadoPorValue
                 })
                 .eq("id", editingOcorrencia.id);
 
@@ -211,7 +220,8 @@ export default function OcorrenciasSection() {
                 .from("ocorrencias")
                 .update({ 
                     status: "recusada",
-                    motivo_recusa: motivoRecusaInput.trim().toUpperCase()
+                    motivo_recusa: motivoRecusaInput.trim().toUpperCase(),
+                    finalizado_por: admin?.nome?.toUpperCase() || null
                 })
                 .eq("id", recusaOcorrenciaId);
 
@@ -239,7 +249,8 @@ export default function OcorrenciasSection() {
                 .from("ocorrencias")
                 .update({ 
                     status: novoStatus,
-                    motivo_recusa: null // Limpa a justificativa se mudar de status
+                    motivo_recusa: null, // Limpa a justificativa se mudar de status
+                    finalizado_por: novoStatus === "finalizada" ? admin?.nome?.toUpperCase() || null : null
                 })
                 .eq("id", id);
 
@@ -427,9 +438,16 @@ export default function OcorrenciasSection() {
                                             {/* Status Badge */}
                                             <TableCell className="align-middle">
                                                 {oc.status === "finalizada" && (
-                                                    <Badge className="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 border-2 border-emerald-200 dark:border-emerald-900/60 font-black uppercase text-[10px] tracking-widest py-1 px-2.5">
-                                                        Finalizada
-                                                    </Badge>
+                                                    <div className="flex flex-col gap-1 items-start">
+                                                        <Badge className="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 border-2 border-emerald-200 dark:border-emerald-900/60 font-black uppercase text-[10px] tracking-widest py-1 px-2.5">
+                                                            Finalizada
+                                                        </Badge>
+                                                        {oc.finalizado_por && (
+                                                            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter block leading-tight">
+                                                                Por: {oc.finalizado_por}
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 )}
                                                 {oc.status === "pendente" && (
                                                     <Badge className="bg-orange-100 dark:bg-orange-900/40 text-orange-800 dark:text-orange-300 border-2 border-orange-200 dark:border-orange-900/60 font-black uppercase text-[10px] tracking-widest py-1 px-2.5">
@@ -437,9 +455,16 @@ export default function OcorrenciasSection() {
                                                     </Badge>
                                                 )}
                                                 {oc.status === "recusada" && (
-                                                    <Badge className="bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 border-2 border-red-200 dark:border-red-900/60 font-black uppercase text-[10px] tracking-widest py-1 px-2.5">
-                                                        Recusada
-                                                    </Badge>
+                                                    <div className="flex flex-col gap-1 items-start">
+                                                        <Badge className="bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 border-2 border-red-200 dark:border-red-900/60 font-black uppercase text-[10px] tracking-widest py-1 px-2.5">
+                                                            Recusada
+                                                        </Badge>
+                                                        {oc.finalizado_por && (
+                                                            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter block leading-tight">
+                                                                Por: {oc.finalizado_por}
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 )}
                                             </TableCell>
 
