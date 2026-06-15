@@ -29,6 +29,7 @@ import { toast } from "sonner";
 
 import damhaLogo from "@/assets/logo_damha_nova.jpg";
 import EncomendasSection from "@/components/EncomendasSection";
+import OcorrenciasSection from "@/components/OcorrenciasSection";
 
 interface Liberacao {
   id: string;
@@ -831,6 +832,9 @@ export default function Dashboard() {
 
       {/* Encomendas Section */}
       <EncomendasSection />
+
+      {/* Ocorrências e Notificações Section */}
+      <OcorrenciasSection />
 
       <AlertDialog open={!!liberacaoToDelete} onOpenChange={() => setLiberacaoToDelete(null)}>
         <AlertDialogContent>
