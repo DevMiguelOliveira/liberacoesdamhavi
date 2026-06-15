@@ -311,10 +311,10 @@ export default function OcorrenciasSection() {
                 <CardHeader>
                     <CardTitle className="text-xl flex items-center gap-2">
                         <AlertTriangle className="h-5 w-5 text-amber-500 animate-pulse" />
-                        OCORRÊNCIAS E NOTIFICAÇÕES PARA O CONDOMÍNIO
+                        COMUNICADOS, OCORRÊNCIAS E NOTIFICAÇÕES PARA O CONDOMÍNIO
                     </CardTitle>
                     <CardDescription>
-                        Registro interno de ocorrências, comunicados e notificações da portaria.
+                        Registro interno de comunicados, ocorrências, solicitações e notificações.
                     </CardDescription>
 
                     <div className="relative mt-4">
@@ -333,7 +333,7 @@ export default function OcorrenciasSection() {
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-sm font-black flex items-center gap-2 text-slate-700 dark:text-slate-300 uppercase">
                                 <Plus className="h-4 w-4 text-amber-500" />
-                                Registrar Ocorrência / Notificação
+                                TODAS AS NOTIFICAÇÕES SERÃO ANALISADAS PELA ADMINISTRAÇÃO.
                             </h3>
                             <Badge variant="outline" className="bg-white dark:bg-slate-900 text-xs font-semibold text-muted-foreground border-slate-200 dark:border-slate-800 gap-1">
                                 <Calendar className="h-3 w-3" />
