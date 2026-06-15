@@ -364,6 +364,13 @@ export default function Dashboard() {
       path: "/historico-encomendas",
       theme: "warning",
     },
+    {
+      title: "Ocorrências",
+      description: "Histórico completo de ocorrências e notificações.",
+      icon: AlertTriangle,
+      path: "/historico-ocorrencias",
+      theme: "danger",
+    },
   ];
 
   const handleCreateShortcut = () => {
@@ -417,14 +424,15 @@ export default function Dashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         {menuItems.map((item) => {
           const isPrimary = item.path === "/nova-liberacao";
           const themes = {
             primary: "bg-gradient-to-br from-primary to-success/80 text-white shadow-primary/20 hover:shadow-primary/40",
             accent: "bg-gradient-to-br from-accent to-blue-600 text-white shadow-accent/20 hover:shadow-accent/40",
             secondary: "bg-gradient-to-br from-slate-600 to-slate-800 text-white shadow-slate-200 hover:shadow-slate-300",
-            warning: "bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-orange-100 hover:shadow-orange-200"
+            warning: "bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-orange-100 hover:shadow-orange-200",
+            danger: "bg-gradient-to-br from-red-500 to-rose-600 text-white shadow-red-100 hover:shadow-red-200"
           };
 
           return (
