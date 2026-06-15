@@ -256,18 +256,7 @@ export default function OcorrenciasSection() {
         }
     };
 
-    // Alternar status de forma circular clicando no Badge
-    const handleCycleStatus = async (ocorrencia: Ocorrencia) => {
-        let novoStatus: "finalizada" | "pendente" | "recusada" = "pendente";
-        if (ocorrencia.status === "pendente") {
-            novoStatus = "finalizada";
-        } else if (ocorrencia.status === "finalizada") {
-            novoStatus = "recusada";
-        } else if (ocorrencia.status === "recusada") {
-            novoStatus = "pendente";
-        }
-        await handleSetStatus(ocorrencia.id, novoStatus);
-    };
+
 
     useEffect(() => {
         fetchOcorrencias();
@@ -435,29 +424,23 @@ export default function OcorrenciasSection() {
                                                     : "bg-orange-50/20 hover:bg-orange-100/20 dark:bg-orange-950/5 dark:hover:bg-orange-950/10"
                                             }`}
                                         >
-                                            {/* Status Badge clickable to fast toggle */}
+                                            {/* Status Badge */}
                                             <TableCell className="align-middle">
-                                                <button
-                                                    onClick={() => handleCycleStatus(oc)}
-                                                    className="focus:outline-none transition-transform active:scale-95"
-                                                    title="Clique para alternar o status rapidamente (Pendente -> Finalizada -> Recusada)"
-                                                >
-                                                    {oc.status === "finalizada" && (
-                                                        <Badge className="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 border-2 border-emerald-200 dark:border-emerald-900/60 font-black uppercase text-[10px] tracking-widest py-1 px-2.5">
-                                                            Finalizada
-                                                        </Badge>
-                                                    )}
-                                                    {oc.status === "pendente" && (
-                                                        <Badge className="bg-orange-100 dark:bg-orange-900/40 text-orange-800 dark:text-orange-300 border-2 border-orange-200 dark:border-orange-900/60 font-black uppercase text-[10px] tracking-widest py-1 px-2.5">
-                                                            Pendente
-                                                        </Badge>
-                                                    )}
-                                                    {oc.status === "recusada" && (
-                                                        <Badge className="bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 border-2 border-red-200 dark:border-red-900/60 font-black uppercase text-[10px] tracking-widest py-1 px-2.5">
-                                                            Recusada
-                                                        </Badge>
-                                                    )}
-                                                </button>
+                                                {oc.status === "finalizada" && (
+                                                    <Badge className="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 border-2 border-emerald-200 dark:border-emerald-900/60 font-black uppercase text-[10px] tracking-widest py-1 px-2.5">
+                                                        Finalizada
+                                                    </Badge>
+                                                )}
+                                                {oc.status === "pendente" && (
+                                                    <Badge className="bg-orange-100 dark:bg-orange-900/40 text-orange-800 dark:text-orange-300 border-2 border-orange-200 dark:border-orange-900/60 font-black uppercase text-[10px] tracking-widest py-1 px-2.5">
+                                                        Pendente
+                                                    </Badge>
+                                                )}
+                                                {oc.status === "recusada" && (
+                                                    <Badge className="bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 border-2 border-red-200 dark:border-red-900/60 font-black uppercase text-[10px] tracking-widest py-1 px-2.5">
+                                                        Recusada
+                                                    </Badge>
+                                                )}
                                             </TableCell>
 
                                             <TableCell className="font-bold text-slate-800 dark:text-slate-200 break-words whitespace-normal max-w-lg text-sm uppercase">
