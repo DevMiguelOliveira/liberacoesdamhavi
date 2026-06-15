@@ -27,6 +27,7 @@ interface Ocorrencia {
     mensagem: string;
     status: "finalizada" | "pendente" | "recusada";
     autor: string;
+    motivo_recusa?: string | null;
     criado_em: string;
     admin_id?: string;
 }
@@ -38,6 +39,10 @@ export default function OcorrenciasSection() {
     const [searchTerm, setSearchTerm] = useState("");
     const [ocorrenciaToDelete, setOcorrenciaToDelete] = useState<string | null>(null);
     const [editingOcorrencia, setEditingOcorrencia] = useState<Ocorrencia | null>(null);
+
+    // Estados do diálogo de recusa
+    const [recusaOcorrenciaId, setRecusaOcorrenciaId] = useState<string | null>(null);
+    const [motivoRecusaInput, setMotivoRecusaInput] = useState("");
 
     // Estados do formulário de criação
     const [mensagem, setMensagem] = useState("");
@@ -160,6 +165,11 @@ export default function OcorrenciasSection() {
             return;
         }
 
+        if (editingOcorrencia.status === "recusada" && !editingOcorrencia.motivo_recusa?.trim()) {
+            toast.error("Você deve digitar um motivo para a recusa");
+            return;
+        }
+
         try {
             const { error } = await (supabase as any)
                 .from("ocorrencias")
@@ -167,6 +177,7 @@ export default function OcorrenciasSection() {
                     mensagem: editingOcorrencia.mensagem.trim(),
                     status: editingOcorrencia.status,
                     autor: editingOcorrencia.autor.trim().toUpperCase(),
+                    motivo_recusa: editingOcorrencia.status === "recusada" ? editingOcorrencia.motivo_recusa?.trim().toUpperCase() : null,
                 })
                 .eq("id", editingOcorrencia.id);
 
@@ -181,19 +192,61 @@ export default function OcorrenciasSection() {
         }
     };
 
-    // Alterar status diretamente
-    const handleSetStatus = async (id: string, novoStatus: "finalizada" | "pendente" | "recusada") => {
+    // Abrir o modal de recusa
+    const handleOpenRecusaDialog = (id: string) => {
+        setRecusaOcorrenciaId(id);
+        setMotivoRecusaInput("");
+    };
+
+    // Confirmar a recusa no banco de dados com a justificativa
+    const handleConfirmRecusa = async () => {
+        if (!recusaOcorrenciaId) return;
+        if (!motivoRecusaInput.trim()) {
+            toast.error("Você deve digitar um motivo para recusar a ocorrência");
+            return;
+        }
+
         try {
             const { error } = await (supabase as any)
                 .from("ocorrencias")
-                .update({ status: novoStatus })
+                .update({ 
+                    status: "recusada",
+                    motivo_recusa: motivoRecusaInput.trim().toUpperCase()
+                })
+                .eq("id", recusaOcorrenciaId);
+
+            if (error) throw error;
+
+            toast.success("Ocorrência marcada como Recusada");
+            setRecusaOcorrenciaId(null);
+            setMotivoRecusaInput("");
+            fetchOcorrencias(true);
+        } catch (error) {
+            console.error("Erro ao recusar ocorrência:", error);
+            toast.error("Erro ao alterar status");
+        }
+    };
+
+    // Alterar status diretamente
+    const handleSetStatus = async (id: string, novoStatus: "finalizada" | "pendente" | "recusada") => {
+        if (novoStatus === "recusada") {
+            handleOpenRecusaDialog(id);
+            return;
+        }
+
+        try {
+            const { error } = await (supabase as any)
+                .from("ocorrencias")
+                .update({ 
+                    status: novoStatus,
+                    motivo_recusa: null // Limpa a justificativa se mudar de status
+                })
                 .eq("id", id);
 
             if (error) throw error;
 
             let statusLabel = "Pendente";
             if (novoStatus === "finalizada") statusLabel = "Finalizada";
-            if (novoStatus === "recusada") statusLabel = "Recusada";
 
             toast.success(`Status alterado para ${statusLabel}`);
             fetchOcorrencias(true);
@@ -408,7 +461,13 @@ export default function OcorrenciasSection() {
                                             </TableCell>
 
                                             <TableCell className="font-bold text-slate-800 dark:text-slate-200 break-words whitespace-normal max-w-lg text-sm uppercase">
-                                                {oc.mensagem}
+                                                <div>{oc.mensagem}</div>
+                                                {oc.status === "recusada" && oc.motivo_recusa && (
+                                                    <div className="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400 font-bold bg-red-50/50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 rounded px-2 py-1 max-w-fit">
+                                                        <AlertTriangle className="h-3.5 w-3.5 animate-pulse shrink-0" />
+                                                        <span>MOTIVO DA RECUSA: {oc.motivo_recusa}</span>
+                                                    </div>
+                                                )}
                                             </TableCell>
 
                                             <TableCell className="font-bold text-slate-700 dark:text-slate-300 text-xs uppercase">
@@ -545,7 +604,7 @@ export default function OcorrenciasSection() {
                                 <div className="flex gap-2">
                                     <button
                                         type="button"
-                                        onClick={() => setEditingOcorrencia({ ...editingOcorrencia, status: "pendente" })}
+                                        onClick={() => setEditingOcorrencia({ ...editingOcorrencia, status: "pendente", motivo_recusa: null })}
                                         className={`flex-1 py-2.5 rounded-lg font-black text-xs border-2 uppercase transition-all ${
                                             editingOcorrencia.status === "pendente"
                                                 ? "bg-orange-500 text-white border-orange-500 shadow-sm"
@@ -556,7 +615,7 @@ export default function OcorrenciasSection() {
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={() => setEditingOcorrencia({ ...editingOcorrencia, status: "finalizada" })}
+                                        onClick={() => setEditingOcorrencia({ ...editingOcorrencia, status: "finalizada", motivo_recusa: null })}
                                         className={`flex-1 py-2.5 rounded-lg font-black text-xs border-2 uppercase transition-all ${
                                             editingOcorrencia.status === "finalizada"
                                                 ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
@@ -578,12 +637,62 @@ export default function OcorrenciasSection() {
                                     </button>
                                 </div>
                             </div>
+
+                            {editingOcorrencia.status === "recusada" && (
+                                <div className="grid gap-2 animate-in fade-in-50 duration-200">
+                                    <Label htmlFor="edit-motivo-recusa" className="font-bold text-red-600">Motivo da Recusa</Label>
+                                    <Input
+                                        id="edit-motivo-recusa"
+                                        value={editingOcorrencia.motivo_recusa || ""}
+                                        onChange={(e) => setEditingOcorrencia({ ...editingOcorrencia, motivo_recusa: e.target.value.toUpperCase() })}
+                                        className="uppercase font-bold border-red-300 focus:border-red-500"
+                                        placeholder="DIGITE O MOTIVO DA RECUSA..."
+                                    />
+                                </div>
+                            )}
                         </div>
                     )}
 
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setEditingOcorrencia(null)}>Cancelar</Button>
                         <Button onClick={handleUpdateOcorrencia}>Salvar Alterações</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Dialog Justificar Recusa */}
+            <Dialog open={!!recusaOcorrenciaId} onOpenChange={(open) => !open && setRecusaOcorrenciaId(null)}>
+                <DialogContent className="sm:max-w-[425px] border-4 border-red-500">
+                    <DialogHeader>
+                        <DialogTitle className="text-red-600 flex items-center gap-2 font-black uppercase tracking-tight">
+                            <AlertTriangle className="h-5 w-5 animate-pulse" />
+                            Justificar Recusa
+                        </DialogTitle>
+                        <DialogDescription className="font-semibold text-xs text-muted-foreground">
+                            Digite abaixo o motivo pelo qual esta ocorrência/notificação foi recusada.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="grid gap-4 py-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="motivo-recusa" className="font-bold text-xs uppercase text-slate-600">
+                                Motivo da Recusa
+                            </Label>
+                            <Input
+                                id="motivo-recusa"
+                                placeholder="DIGITE O MOTIVO DA RECUSA..."
+                                value={motivoRecusaInput}
+                                onChange={(e) => setMotivoRecusaInput(e.target.value.toUpperCase())}
+                                className="uppercase font-bold border-red-300 focus:border-red-500 h-12"
+                            />
+                        </div>
+                    </div>
+
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setRecusaOcorrenciaId(null)}>Cancelar</Button>
+                        <Button onClick={handleConfirmRecusa} className="bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-wide">
+                            Confirmar Recusa
+                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS public.ocorrencias (
   mensagem TEXT NOT NULL,
   status TEXT NOT NULL CHECK (status IN ('finalizada', 'pendente', 'recusada')) DEFAULT 'pendente',
   autor TEXT NOT NULL,
+  motivo_recusa TEXT, -- Campo opcional para justificar recusadas
   criado_em TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   admin_id UUID REFERENCES public.admins(id) ON DELETE SET NULL
 );
