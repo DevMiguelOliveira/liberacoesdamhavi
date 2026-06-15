@@ -41,7 +41,6 @@ export default function OcorrenciasSection() {
 
     // Estados do formulário de criação
     const [mensagem, setMensagem] = useState("");
-    const [statusSelecionado, setStatusSelecionado] = useState<"finalizada" | "pendente">("pendente");
     const [autor, setAutor] = useState("");
 
     // Sincronizar o nome do autor com o admin logado como sugestão inicial
@@ -129,7 +128,7 @@ export default function OcorrenciasSection() {
                 .from("ocorrencias")
                 .insert([{
                     mensagem: mensagem.trim(),
-                    status: statusSelecionado,
+                    status: "pendente",
                     autor: autor.trim().toUpperCase(),
                     admin_id: admin?.id || null
                 }]);
@@ -139,7 +138,6 @@ export default function OcorrenciasSection() {
             toast.success("Ocorrência registrada com sucesso!");
             // Limpar formulário mantendo o autor
             setMensagem("");
-            setStatusSelecionado("pendente");
             fetchOcorrencias();
         } catch (error: any) {
             console.error("Erro ao registrar ocorrência:", error);
@@ -287,7 +285,7 @@ export default function OcorrenciasSection() {
 
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
                             {/* Mensagem da Ocorrência */}
-                            <div className="lg:col-span-5 flex flex-col gap-2">
+                            <div className="lg:col-span-7 flex flex-col gap-2">
                                 <Label htmlFor="form-mensagem" className="font-bold text-xs text-slate-600 dark:text-slate-400 uppercase">
                                     Mensagem / Relato da Ocorrência
                                 </Label>
@@ -314,37 +312,6 @@ export default function OcorrenciasSection() {
                                         onChange={(e) => setAutor(e.target.value.toUpperCase())}
                                         className="pl-10 bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 focus:border-amber-500 uppercase font-bold text-sm h-12"
                                     />
-                                </div>
-                            </div>
-
-                            {/* Status Selector - Custom Premium Design */}
-                            <div className="lg:col-span-2 flex flex-col gap-2">
-                                <Label className="font-bold text-xs text-slate-600 dark:text-slate-400 uppercase">
-                                    Status
-                                </Label>
-                                <div className="flex gap-2 h-12">
-                                    <button
-                                        type="button"
-                                        onClick={() => setStatusSelecionado("pendente")}
-                                        className={`flex-1 flex items-center justify-center rounded-lg font-black text-xs transition-all duration-300 border-2 uppercase tracking-wider ${
-                                            statusSelecionado === "pendente"
-                                                ? "bg-orange-500 text-white border-orange-500 shadow-md shadow-orange-500/20 scale-102"
-                                                : "bg-white dark:bg-slate-950 text-orange-500 border-orange-200 dark:border-orange-950/60 hover:bg-orange-50"
-                                        }`}
-                                    >
-                                        Pendente
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setStatusSelecionado("finalizada")}
-                                        className={`flex-1 flex items-center justify-center rounded-lg font-black text-xs transition-all duration-300 border-2 uppercase tracking-wider ${
-                                            statusSelecionado === "finalizada"
-                                                ? "bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-500/20 scale-102"
-                                                : "bg-white dark:bg-slate-950 text-emerald-600 border-emerald-200 dark:border-emerald-950/60 hover:bg-emerald-50"
-                                        }`}
-                                    >
-                                        Finalizada
-                                    </button>
                                 </div>
                             </div>
 
@@ -435,17 +402,17 @@ export default function OcorrenciasSection() {
                                                         variant="ghost"
                                                         size="icon"
                                                         onClick={() => handleToggleStatus(oc)}
-                                                        className={`h-8 w-8 rounded-full ${
+                                                        className={`h-10 w-10 border transition-all duration-200 rounded-full flex items-center justify-center ${
                                                             oc.status === "finalizada"
-                                                                ? "text-orange-500 hover:text-orange-600 hover:bg-orange-50"
-                                                                : "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                                                                ? "text-orange-600 bg-orange-100/80 border-orange-300 hover:bg-orange-500 hover:text-white hover:border-orange-500 shadow-sm"
+                                                                : "text-emerald-600 bg-emerald-100/80 border-emerald-300 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 shadow-sm"
                                                         }`}
                                                         title={oc.status === "finalizada" ? "Marcar como Pendente" : "Marcar como Finalizada"}
                                                     >
                                                         {oc.status === "finalizada" ? (
-                                                            <AlertTriangle className="h-4 w-4" />
+                                                            <AlertTriangle className="h-5 w-5" />
                                                         ) : (
-                                                            <Check className="h-4 w-4" />
+                                                            <Check className="h-5 w-5" />
                                                         )}
                                                     </Button>
 
@@ -453,20 +420,20 @@ export default function OcorrenciasSection() {
                                                         variant="ghost"
                                                         size="icon"
                                                         onClick={() => setEditingOcorrencia(oc)}
-                                                        className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50 rounded-full"
+                                                        className="h-10 w-10 text-blue-600 bg-blue-100/80 border border-blue-300 hover:bg-blue-600 hover:text-white hover:border-blue-600 shadow-sm transition-all duration-200 rounded-full flex items-center justify-center"
                                                         title="EDITAR RELATO"
                                                     >
-                                                        <Pencil className="h-4 w-4" />
+                                                        <Pencil className="h-5 w-5" />
                                                     </Button>
 
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
                                                         onClick={() => setOcorrenciaToDelete(oc.id)}
-                                                        className="h-8 w-8 text-destructive hover:text-destructive-foreground hover:bg-destructive rounded-full"
+                                                        className="h-10 w-10 text-red-600 bg-red-100/80 border border-red-300 hover:bg-red-600 hover:text-white hover:border-red-600 shadow-sm transition-all duration-200 rounded-full flex items-center justify-center"
                                                         title="EXCLUIR REGISTRO"
                                                     >
-                                                        <Trash2 className="h-4 w-4" />
+                                                        <Trash2 className="h-5 w-5" />
                                                     </Button>
                                                 </div>
                                             </TableCell>
