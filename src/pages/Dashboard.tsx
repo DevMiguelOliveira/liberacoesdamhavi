@@ -42,6 +42,9 @@ interface Liberacao {
   status: "ativo" | "expirado";
   criado_em: string;
   observacoes?: string;
+  admins?: {
+    nome: string;
+  } | null;
 }
 
 interface Entrega {
@@ -215,7 +218,7 @@ export default function Dashboard() {
     // Fetch active liberacoes valid for today
     const { data, error } = await supabase
       .from("liberacoes")
-      .select("*")
+      .select("*, admins(nome)")
       .eq("status", "ativo")
       .lte("data_inicio", today)
       .gte("data_fim", today);
@@ -627,7 +630,14 @@ export default function Dashboard() {
                                 </div>
                               </div>
                             </TableCell>
-                            <TableCell className="font-bold uppercase text-slate-900 dark:text-slate-100 break-words whitespace-normal min-w-[130px] sm:min-w-[160px] text-xs sm:text-sm">{lib.nome_pessoa.toUpperCase()}</TableCell>
+                            <TableCell className="font-bold uppercase text-slate-900 dark:text-slate-100 break-words whitespace-normal min-w-[130px] sm:min-w-[160px] text-xs sm:text-sm">
+                              <div>{lib.nome_pessoa.toUpperCase()}</div>
+                              {lib.admins?.nome && (
+                                <div className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter mt-0.5">
+                                  Cadastrado por: {lib.admins.nome}
+                                </div>
+                              )}
+                            </TableCell>
                             <TableCell className="min-w-[120px] max-w-[220px] break-words whitespace-normal text-slate-500 dark:text-slate-400 font-semibold text-xs uppercase" title={lib.observacoes}>
                               {lib.observacoes || "-"}
                             </TableCell>
@@ -785,7 +795,14 @@ export default function Dashboard() {
                                     <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400">Liberação</span>
                                   </div>
                                 </TableCell>
-                                <TableCell className="font-bold uppercase text-slate-800 dark:text-slate-200 break-words whitespace-normal min-w-[130px] sm:min-w-[160px] text-xs sm:text-sm">{lib.nome_pessoa.toUpperCase()}</TableCell>
+                                <TableCell className="font-bold uppercase text-slate-800 dark:text-slate-200 break-words whitespace-normal min-w-[130px] sm:min-w-[160px] text-xs sm:text-sm">
+                                   <div>{lib.nome_pessoa.toUpperCase()}</div>
+                                   {lib.admins?.nome && (
+                                     <div className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter mt-0.5">
+                                       Cadastrado por: {lib.admins.nome}
+                                     </div>
+                                   )}
+                                </TableCell>
                                 <TableCell className="min-w-[120px] max-w-[220px] break-words whitespace-normal text-slate-500 dark:text-slate-400 font-semibold text-xs uppercase" title={lib.observacoes}>
                                   {lib.observacoes || "-"}
                                 </TableCell>

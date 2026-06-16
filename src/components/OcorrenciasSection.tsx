@@ -67,11 +67,11 @@ export default function OcorrenciasSection() {
             const end = endData.toISOString();
 
             // Usando cast (any) para evitar problemas se a tabela ainda não estiver nos types gerados do Supabase
+            // Busca ocorrências pendentes (qualquer data) OU ocorrências criadas hoje
             const { data, error } = await (supabase as any)
                 .from("ocorrencias")
                 .select("*")
-                .gte("criado_em", start)
-                .lte("criado_em", end)
+                .or(`status.eq.pendente,and(criado_em.gte.${start},criado_em.lte.${end})`)
                 .order("criado_em", { ascending: false });
 
             if (error) {
@@ -340,7 +340,7 @@ export default function OcorrenciasSection() {
     // Filtrar ocorrências
     const filteredOcorrencias = ocorrencias.filter((oc) => {
         const searchLower = searchTerm.toLowerCase();
-        const statusPT = oc.status === "finalizada" ? "finalizada" : "pendente";
+        const statusPT = oc.status === "finalizada" ? "finalizada" : oc.status === "recusada" ? "recusada" : "pendente";
         return (
             oc.mensagem.toLowerCase().includes(searchLower) ||
             oc.autor.toLowerCase().includes(searchLower) ||
