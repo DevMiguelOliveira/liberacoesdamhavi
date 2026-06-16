@@ -957,7 +957,7 @@ export default function Dashboard() {
           <DialogPrimitive.Overlay className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0" />
           <DialogPrimitive.Content
             onPointerDownOutside={(e) => e.preventDefault()}
-            onEscapeKeyDown={(e) => e.preventDefault()}
+            onEscapeKeyDown={() => setNewLiberacaoPopup(null)}
             className="fixed left-[50%] top-[50%] z-[100] w-[95%] sm:max-w-[550px] translate-x-[-50%] translate-y-[-50%] border-4 border-orange-500 bg-white dark:bg-slate-900 shadow-[0_0_50px_rgba(249,115,22,0.6)] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 focus:outline-none rounded-2xl flex flex-col max-h-[90vh] overflow-y-auto p-0"
           >
             {newLiberacaoPopup && (

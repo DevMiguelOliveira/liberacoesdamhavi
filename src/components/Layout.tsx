@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,25 @@ import damhaLogo from "@/assets/damha6_logo.jpg";
 export function Layout() {
   const { admin, signOut } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        // Verificar se há algum modal, dialog, alert-dialog ou popover aberto no DOM
+        const isModalOpen = !!document.querySelector(
+          '[role="dialog"], [role="alertdialog"], [data-state="open"], .fixed.inset-0'
+        );
+        if (!isModalOpen && window.location.pathname !== "/") {
+          navigate("/");
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [navigate]);
 
   const handleSignOut = async () => {
     await signOut();
