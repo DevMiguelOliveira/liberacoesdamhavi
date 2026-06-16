@@ -1197,7 +1197,7 @@ export default function Dashboard() {
       onClick={() => {
         document.getElementById('ocorrencias-section')?.scrollIntoView({ behavior: 'smooth' });
       }}
-      className="fixed bottom-6 left-6 z-40 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-full shadow-lg shadow-red-500/20 border border-red-400/20 hover:scale-105 active:scale-95 transition-all duration-300 font-black text-[10px] tracking-wider uppercase"
+      className="fixed bottom-36 right-6 z-40 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-full shadow-lg shadow-red-500/20 border border-red-400/20 hover:scale-105 active:scale-95 transition-all duration-300 font-black text-[10px] tracking-wider uppercase"
       title="Clique para ver ocorrências pendentes"
     >
       <span className="relative flex h-2 w-2">
