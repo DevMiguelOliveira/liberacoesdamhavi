@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,12 +38,6 @@ export default function NovaLiberacao() {
       dias_liberados: 1,
     },
   });
-
-  useEffect(() => {
-    if (admin?.nome) {
-      setValue("cadastrado_por", admin.nome.toUpperCase());
-    }
-  }, [admin, setValue]);
 
   const tipoAcesso = watch("tipo_acesso");
   const dataInicio = watch("data_inicio");
@@ -450,24 +444,14 @@ export default function NovaLiberacao() {
             </div>
 
             {/* SEÇÃO 5: Quem fez a liberação - Obrigatório */}
-            <div className={cn(
-              "p-2 rounded-xl border-2 transition-all",
-              tipoAcesso === "visitante" ? "bg-accent/5 border-accent/30" :
-                tipoAcesso === "prestador" ? "bg-warning/5 border-warning/30" :
-                  "bg-secondary/20 border-secondary"
-            )}>
-              <Label htmlFor="cadastrado_por" className={cn(
-                "flex items-center gap-2 uppercase text-[10px] font-black tracking-wider mb-1 transition-colors",
-                tipoAcesso === "visitante" ? "text-accent" :
-                  tipoAcesso === "prestador" ? "text-warning" :
-                    "text-primary"
-              )}>
+            <div className="p-2 rounded-xl border-2 transition-all bg-amber-500/10 border-amber-500/30 dark:bg-amber-950/10 dark:border-amber-900/40">
+              <Label htmlFor="cadastrado_por" className="flex items-center gap-2 uppercase text-[10px] font-black tracking-wider mb-1 text-amber-600 dark:text-amber-500">
                 Quem fez a liberação (Obrigatório)
               </Label>
               <Input
                 id="cadastrado_por"
                 placeholder="NOME DO PORTEIRO/ADMIN"
-                className="bg-background h-8 text-xs border-2 uppercase font-bold text-sm"
+                className="bg-background h-8 text-xs border-2 uppercase font-bold text-sm focus:border-amber-500 dark:focus:border-amber-500 focus-visible:ring-amber-500/30"
                 {...register("cadastrado_por")}
               />
               {errors.cadastrado_por && (
