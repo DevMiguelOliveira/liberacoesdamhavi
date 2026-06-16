@@ -71,6 +71,13 @@ export const liberacaoSchema = z.object({
     .min(1, "Mínimo de 1 dia")
     .max(365, "Máximo de 365 dias"),
   observacoes: z.string().optional(),
+  cadastrado_por: z
+    .string({
+      required_error: "Nome de quem fez a liberação é obrigatório",
+    })
+    .trim()
+    .min(3, "Nome do operador deve ter pelo menos 3 letras")
+    .max(100, "Nome muito longo"),
 });
 
 export type LiberacaoFormData = z.infer<typeof liberacaoSchema>;

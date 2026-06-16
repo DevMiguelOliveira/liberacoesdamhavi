@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -39,6 +39,12 @@ export default function NovaLiberacao() {
     },
   });
 
+  useEffect(() => {
+    if (admin?.nome) {
+      setValue("cadastrado_por", admin.nome.toUpperCase());
+    }
+  }, [admin, setValue]);
+
   const tipoAcesso = watch("tipo_acesso");
   const dataInicio = watch("data_inicio");
   const diasLiberados = watch("dias_liberados");
@@ -71,6 +77,7 @@ export default function NovaLiberacao() {
       status,
       admin_id: admin.id,
       observacoes: data.observacoes?.trim() || null,
+      cadastrado_por: data.cadastrado_por.trim().toUpperCase(),
     });
 
     setIsLoading(false);
@@ -440,6 +447,32 @@ export default function NovaLiberacao() {
                 className="bg-background h-8 text-xs border-2"
                 {...register("observacoes")}
               />
+            </div>
+
+            {/* SEÇÃO 5: Quem fez a liberação - Obrigatório */}
+            <div className={cn(
+              "p-2 rounded-xl border-2 transition-all",
+              tipoAcesso === "visitante" ? "bg-accent/5 border-accent/30" :
+                tipoAcesso === "prestador" ? "bg-warning/5 border-warning/30" :
+                  "bg-secondary/20 border-secondary"
+            )}>
+              <Label htmlFor="cadastrado_por" className={cn(
+                "flex items-center gap-2 uppercase text-[10px] font-black tracking-wider mb-1 transition-colors",
+                tipoAcesso === "visitante" ? "text-accent" :
+                  tipoAcesso === "prestador" ? "text-warning" :
+                    "text-primary"
+              )}>
+                Quem fez a liberação (Obrigatório)
+              </Label>
+              <Input
+                id="cadastrado_por"
+                placeholder="NOME DO PORTEIRO/ADMIN"
+                className="bg-background h-8 text-xs border-2 uppercase font-bold text-sm"
+                {...register("cadastrado_por")}
+              />
+              {errors.cadastrado_por && (
+                <p className="text-[10px] text-destructive leading-tight mt-1">{errors.cadastrado_por.message}</p>
+              )}
             </div>
 
             {/* Actions - Compacto */}

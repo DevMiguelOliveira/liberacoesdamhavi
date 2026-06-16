@@ -42,6 +42,7 @@ interface Liberacao {
   status: "ativo" | "expirado";
   criado_em: string;
   observacoes?: string;
+  cadastrado_por?: string | null;
   admins?: {
     nome: string;
   } | null;
@@ -191,6 +192,7 @@ export default function Dashboard() {
           quadra: editingLiberacao.quadra,
           lote: editingLiberacao.lote,
           observacoes: editingLiberacao.observacoes,
+          cadastrado_por: editingLiberacao.cadastrado_por?.trim().toUpperCase() || null,
         })
         .eq("id", editingLiberacao.id);
 
@@ -632,9 +634,9 @@ export default function Dashboard() {
                             </TableCell>
                             <TableCell className="font-bold uppercase text-slate-900 dark:text-slate-100 break-words whitespace-normal min-w-[130px] sm:min-w-[160px] text-xs sm:text-sm">
                               <div>{lib.nome_pessoa.toUpperCase()}</div>
-                              {lib.admins?.nome && (
+                              {(lib.cadastrado_por || lib.admins?.nome) && (
                                 <div className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter mt-0.5">
-                                  Cadastrado por: {lib.admins.nome}
+                                  Cadastrado por: {lib.cadastrado_por || lib.admins?.nome}
                                 </div>
                               )}
                             </TableCell>
@@ -797,9 +799,9 @@ export default function Dashboard() {
                                 </TableCell>
                                 <TableCell className="font-bold uppercase text-slate-800 dark:text-slate-200 break-words whitespace-normal min-w-[130px] sm:min-w-[160px] text-xs sm:text-sm">
                                    <div>{lib.nome_pessoa.toUpperCase()}</div>
-                                   {lib.admins?.nome && (
+                                   {(lib.cadastrado_por || lib.admins?.nome) && (
                                      <div className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter mt-0.5">
-                                       Cadastrado por: {lib.admins.nome}
+                                       Cadastrado por: {lib.cadastrado_por || lib.admins?.nome}
                                      </div>
                                    )}
                                 </TableCell>
@@ -992,6 +994,15 @@ export default function Dashboard() {
                   id="obs"
                   value={editingLiberacao.observacoes || ""}
                   onChange={(e) => setEditingLiberacao({ ...editingLiberacao, observacoes: e.target.value.toUpperCase() })}
+                  className="uppercase"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="cadastrado_por_edit" className="font-bold">Quem fez a liberação</Label>
+                <Input
+                  id="cadastrado_por_edit"
+                  value={editingLiberacao.cadastrado_por || ""}
+                  onChange={(e) => setEditingLiberacao({ ...editingLiberacao, cadastrado_por: e.target.value.toUpperCase() })}
                   className="uppercase"
                 />
               </div>
