@@ -45,6 +45,10 @@ export default function OcorrenciasSection() {
     const [recusaOcorrenciaId, setRecusaOcorrenciaId] = useState<string | null>(null);
     const [motivoRecusaInput, setMotivoRecusaInput] = useState("");
 
+    // Estados do diálogo de finalização
+    const [finalizarOcorrenciaId, setFinalizarOcorrenciaId] = useState<string | null>(null);
+    const [finalizadoPorInput, setFinalizadoPorInput] = useState("");
+
     // Estados do formulário de criação
     const [mensagem, setMensagem] = useState("");
     const [autor, setAutor] = useState("");
@@ -244,25 +248,59 @@ export default function OcorrenciasSection() {
             return;
         }
 
+        if (novoStatus === "finalizada") {
+            setFinalizarOcorrenciaId(id);
+            setFinalizadoPorInput(admin?.nome?.toUpperCase() || "");
+            return;
+        }
+
         try {
             const { error } = await (supabase as any)
                 .from("ocorrencias")
                 .update({ 
                     status: novoStatus,
                     motivo_recusa: null, // Limpa a justificativa se mudar de status
-                    finalizado_por: novoStatus === "finalizada" ? admin?.nome?.toUpperCase() || null : null
+                    finalizado_por: null
                 })
                 .eq("id", id);
 
             if (error) throw error;
 
             let statusLabel = "Pendente";
-            if (novoStatus === "finalizada") statusLabel = "Finalizada";
-
             toast.success(`Status alterado para ${statusLabel}`);
             fetchOcorrencias(true);
         } catch (error) {
             console.error("Erro ao alterar status:", error);
+            toast.error("Erro ao alterar status");
+        }
+    };
+
+    // Confirmar a finalização no banco de dados com o identificador
+    const handleConfirmFinalizar = async () => {
+        if (!finalizarOcorrenciaId) return;
+        if (!finalizadoPorInput.trim()) {
+            toast.error("Você deve digitar o nome do finalizador");
+            return;
+        }
+
+        try {
+            const { error } = await (supabase as any)
+                .from("ocorrencias")
+                .update({ 
+                    status: "finalizada",
+                    motivo_recusa: null,
+                    finalizado_por: finalizadoPorInput.trim().toUpperCase()
+                })
+                .eq("id", finalizarOcorrenciaId);
+
+            if (error) throw error;
+
+            toast.success("Ocorrência marcada como Finalizada");
+            setFinalizarOcorrenciaId(null);
+            setFinalizadoPorInput("");
+            fetchOcorrencias(true);
+        } catch (error) {
+            console.error("Erro ao finalizar ocorrência:", error);
             toast.error("Erro ao alterar status");
         }
     };
@@ -700,6 +738,43 @@ export default function OcorrenciasSection() {
                         <Button variant="outline" onClick={() => setRecusaOcorrenciaId(null)}>Cancelar</Button>
                         <Button onClick={handleConfirmRecusa} className="bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-wide">
                             Confirmar Recusa
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Dialog Identificar Finalizador */}
+            <Dialog open={!!finalizarOcorrenciaId} onOpenChange={(open) => !open && setFinalizarOcorrenciaId(null)}>
+                <DialogContent className="sm:max-w-[425px] border-4 border-emerald-500">
+                    <DialogHeader>
+                        <DialogTitle className="text-emerald-600 flex items-center gap-2 font-black uppercase tracking-tight">
+                            <Check className="h-5 w-5 animate-pulse" />
+                            Finalizar Ocorrência
+                        </DialogTitle>
+                        <DialogDescription className="font-semibold text-xs text-muted-foreground">
+                            Confirme ou digite o nome do funcionário/porteiro que está finalizando esta ocorrência.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="grid gap-4 py-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="finalizado-por" className="font-bold text-xs uppercase text-slate-600">
+                                Nome do Finalizador
+                            </Label>
+                            <Input
+                                id="finalizado-por"
+                                placeholder="NOME DO PORTEIRO/ADMIN"
+                                value={finalizadoPorInput}
+                                onChange={(e) => setFinalizadoPorInput(e.target.value.toUpperCase())}
+                                className="uppercase font-bold border-emerald-300 focus:border-emerald-500 h-12"
+                            />
+                        </div>
+                    </div>
+
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setFinalizarOcorrenciaId(null)}>Cancelar</Button>
+                        <Button onClick={handleConfirmFinalizar} className="bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-wide">
+                            Confirmar Finalização
                         </Button>
                     </DialogFooter>
                 </DialogContent>
