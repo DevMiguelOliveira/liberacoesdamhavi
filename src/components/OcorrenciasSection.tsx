@@ -752,7 +752,7 @@ export default function OcorrenciasSection() {
                             Finalizar Ocorrência
                         </DialogTitle>
                         <DialogDescription className="font-semibold text-xs text-muted-foreground">
-                            Confirme ou digite o nome do funcionário/porteiro que está finalizando esta ocorrência.
+                            Confirme ou digite o nome do funcionário que está finalizando esta ocorrência.
                         </DialogDescription>
                     </DialogHeader>
 
