@@ -66,6 +66,7 @@ export default function Dashboard() {
   const [newLiberacaoPopup, _setNewLiberacaoPopup] = useState<Liberacao | null>(null);
   const [liberacaoToInactivate, setLiberacaoToInactivate] = useState<string | null>(null);
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
+  const [pendingOcorrenciasCount, setPendingOcorrenciasCount] = useState(0);
 
   const setNewLiberacaoPopup = (val: Liberacao | null) => {
     console.log("💾 [Popup Debug] setNewLiberacaoPopup chamado com:", val);
@@ -259,6 +260,23 @@ export default function Dashboard() {
     setIsLoading(false);
   };
 
+  const fetchPendingOcorrenciasCount = async () => {
+    try {
+      const { count, error } = await (supabase as any)
+        .from("ocorrencias")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "pendente");
+
+      if (error) {
+        console.error("Erro ao carregar contagem de ocorrencias pendentes:", error);
+      } else {
+        setPendingOcorrenciasCount(count || 0);
+      }
+    } catch (err) {
+      console.error("Erro ao carregar contagem de ocorrencias pendentes:", err);
+    }
+  };
+
   useEffect(() => {
     // Update expired releases in the database
     const updateStatuses = async () => {
@@ -271,6 +289,7 @@ export default function Dashboard() {
 
     updateStatuses();
     fetchTodayLiberacoes();
+    fetchPendingOcorrenciasCount();
 
     // Realtime subscription com logs detalhados
     const channel = supabase
@@ -321,16 +340,34 @@ export default function Dashboard() {
         }
       });
 
+    // Realtime de ocorrências pendentes
+    const ocorrenciasChannel = supabase
+      .channel("dashboard-ocorrencias-pending-channel")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "ocorrencias",
+        },
+        () => {
+          fetchPendingOcorrenciasCount();
+        }
+      )
+      .subscribe();
+
     // Fallback: Polling a cada 30 segundos para garantir sincronização
     // Isso garante que mesmo se o realtime falhar, os dados serão atualizados
     const pollingInterval = setInterval(() => {
       console.log("🔄 [Liberações] Polling de fallback executando...");
       fetchTodayLiberacoes(true);
+      fetchPendingOcorrenciasCount();
     }, 30000); // 30 segundos
 
     return () => {
       console.log("🔌 [Liberações] Removendo subscription e polling...");
       supabase.removeChannel(channel);
+      supabase.removeChannel(ocorrenciasChannel);
       clearInterval(pollingInterval);
     };
   }, []);
@@ -1142,7 +1179,7 @@ export default function Dashboard() {
     <ArrowUp className="h-4 w-4" />
   </Button>
 
-  {/* Botão flutuante para ir até Encomendas */ }
+  {/* Botão flutuante para ir até Encomendas */}
   <Button
     onClick={() => {
       document.getElementById('encomendas-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -1153,6 +1190,34 @@ export default function Dashboard() {
     <Package className="h-5 w-5" />
     <ArrowDown className="h-4 w-4" />
   </Button>
+
+  {/* Popup Lateral de Ocorrências Pendentes */}
+  {pendingOcorrenciasCount > 0 && (
+    <div className="fixed bottom-6 left-6 z-40 max-w-xs sm:max-w-sm bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950/40 dark:to-orange-950/40 border-2 border-red-500/30 dark:border-red-500/50 rounded-2xl p-4 shadow-[0_10px_30px_rgba(239,68,68,0.2)] animate-in slide-in-from-left-10 fade-in duration-500 flex items-start gap-3">
+      <div className="bg-red-500 text-white p-2 rounded-xl animate-pulse shadow-md shrink-0">
+        <AlertTriangle className="h-5 w-5 animate-bounce" />
+      </div>
+      <div className="flex-1 space-y-1">
+        <h4 className="text-xs font-black uppercase tracking-wider text-red-600 dark:text-red-400">
+          Ocorrências Pendentes
+        </h4>
+        <p className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase leading-snug">
+          Existem {pendingOcorrenciasCount} {pendingOcorrenciasCount === 1 ? "ocorrência pendente" : "ocorrências pendentes"} de finalização.
+        </p>
+        <div className="flex gap-2 pt-1">
+          <Button
+            variant="link"
+            className="p-0 h-auto text-xs font-black uppercase text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 gap-1 flex items-center justify-start"
+            onClick={() => {
+              document.getElementById('ocorrencias-section')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            Ver Ocorrências &rarr;
+          </Button>
+        </div>
+      </div>
+    </div>
+  )}
     </div >
   );
 }
