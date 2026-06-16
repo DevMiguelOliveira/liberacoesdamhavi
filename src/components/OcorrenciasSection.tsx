@@ -53,12 +53,6 @@ export default function OcorrenciasSection() {
     const [mensagem, setMensagem] = useState("");
     const [autor, setAutor] = useState("");
 
-    // Sincronizar o nome do autor com o admin logado como sugestão inicial
-    useEffect(() => {
-        if (admin?.nome && !autor) {
-            setAutor(admin.nome.toUpperCase());
-        }
-    }, [admin]);
 
     // Buscar ocorrências do dia atual
     const fetchOcorrencias = async (silent = false) => {
