@@ -1191,32 +1191,22 @@ export default function Dashboard() {
     <ArrowDown className="h-4 w-4" />
   </Button>
 
-  {/* Popup Lateral de Ocorrências Pendentes */}
+  {/* Alerta sutil e intuitivo de ocorrências pendentes */}
   {pendingOcorrenciasCount > 0 && (
-    <div className="fixed bottom-6 left-6 z-40 max-w-xs sm:max-w-sm bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950/40 dark:to-orange-950/40 border-2 border-red-500/30 dark:border-red-500/50 rounded-2xl p-4 shadow-[0_10px_30px_rgba(239,68,68,0.2)] animate-in slide-in-from-left-10 fade-in duration-500 flex items-start gap-3">
-      <div className="bg-red-500 text-white p-2 rounded-xl animate-pulse shadow-md shrink-0">
-        <AlertTriangle className="h-5 w-5 animate-bounce" />
-      </div>
-      <div className="flex-1 space-y-1">
-        <h4 className="text-xs font-black uppercase tracking-wider text-red-600 dark:text-red-400">
-          Ocorrências Pendentes
-        </h4>
-        <p className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase leading-snug">
-          Existem {pendingOcorrenciasCount} {pendingOcorrenciasCount === 1 ? "ocorrência pendente" : "ocorrências pendentes"} de finalização.
-        </p>
-        <div className="flex gap-2 pt-1">
-          <Button
-            variant="link"
-            className="p-0 h-auto text-xs font-black uppercase text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 gap-1 flex items-center justify-start"
-            onClick={() => {
-              document.getElementById('ocorrencias-section')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            Ver Ocorrências &rarr;
-          </Button>
-        </div>
-      </div>
-    </div>
+    <button
+      onClick={() => {
+        document.getElementById('ocorrencias-section')?.scrollIntoView({ behavior: 'smooth' });
+      }}
+      className="fixed bottom-6 left-6 z-40 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-full shadow-lg shadow-red-500/20 border border-red-400/20 hover:scale-105 active:scale-95 transition-all duration-300 font-black text-[10px] tracking-wider uppercase"
+      title="Clique para ver ocorrências pendentes"
+    >
+      <span className="relative flex h-2 w-2">
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+      </span>
+      <AlertTriangle className="h-3.5 w-3.5" />
+      <span>{pendingOcorrenciasCount} {pendingOcorrenciasCount === 1 ? "Pendente" : "Pendentes"}</span>
+    </button>
   )}
     </div >
   );
